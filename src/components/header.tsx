@@ -46,7 +46,7 @@ export default function Header({ tasks }: HeaderProps) {
     
     // Pass this handler to TaskBoard, so TaskCard can call it via onEdit
     // This is a placeholder for where you might connect TaskBoard editing
-    // For now, we assume TaskBoard opens the dialog itself. If not, this is how you'd connect it.
+    // For now, we assume TaskBoard manages its own dialog state for edits. If not, this is how you'd connect it.
     // In our current structure, TaskBoard manages its own dialog state for edits.
 
     return (
@@ -58,7 +58,7 @@ export default function Header({ tasks }: HeaderProps) {
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"
                           fill="currentColor"
-                          className="h-8 w-8 text-primary"
+                          className="h-8 w-8 text-primary animate-logo-pulse"
                         >
                           <path d="M12.383 6.012a2.43 2.43 0 0 0-3.413.568 2.39 2.39 0 0 0 0 3.385l-4.13 4.13a2.39 2.39 0 0 0 0 3.385 2.43 2.43 0 0 0 3.412.568l8.281-8.28a2.39 2.39 0 0 0 0-3.385 2.43 2.43 0 0 0-1.706-1.288z" />
                         </svg>
