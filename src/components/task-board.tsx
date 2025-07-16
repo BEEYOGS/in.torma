@@ -79,7 +79,7 @@ export function TaskBoard({ tasks, loading }: TaskBoardProps) {
                     <SelectValue placeholder="Urutkan berdasarkan..." />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="default">Urutan Default</SelectItem>
+                    <SelectItem value="default">Urutan Awal</SelectItem>
                     <SelectItem value="dueDateAsc">Jatuh Tempo (Terdekat)</SelectItem>
                     <SelectItem value="dueDateDesc">Jatuh Tempo (Terjauh)</SelectItem>
                     <SelectItem value="customerNameAsc">Konsumen (A-Z)</SelectItem>
