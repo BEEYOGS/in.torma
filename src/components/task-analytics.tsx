@@ -10,7 +10,6 @@ import type { Task, TaskSource } from '@/types/task';
 import { subDays, format, parseISO } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig, ChartLegend, ChartLegendContent } from './ui/chart';
-import { utcToZonedTime } from 'date-fns-tz';
 
 interface TaskAnalyticsProps {
     tasks: Task[];
@@ -39,7 +38,10 @@ export function TaskAnalytics({ tasks }: TaskAnalyticsProps) {
         const completedLast7Days = last7Days.map(day => {
             const count = completedTasks.filter(task => {
                 try {
-                    const taskDate = utcToZonedTime(parseISO(task.dueDate!), 'UTC');
+                    // Treat the stored date string as a UTC date to avoid timezone shifts
+                    const taskDate = parseISO(task.dueDate!);
+                    // Adjust for timezone offset to get the original date
+                    taskDate.setMinutes(taskDate.getMinutes() + taskDate.getTimezoneOffset());
                     return format(taskDate, 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd')
                 } catch (e) {
                     return false;

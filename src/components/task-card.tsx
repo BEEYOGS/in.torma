@@ -22,7 +22,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from './ui/badge';
 import { format, parseISO } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { utcToZonedTime } from 'date-fns-tz';
 
 interface TaskCardProps {
   task: Task;
@@ -55,7 +54,13 @@ export function TaskCard({ task, onEdit }: TaskCardProps) {
     }
   };
   
-  const displayDate = task.dueDate ? utcToZonedTime(parseISO(task.dueDate), 'UTC') : null;
+  const displayDate = task.dueDate ? parseISO(task.dueDate) : null;
+  
+  if (displayDate) {
+    // Correct for timezone offset by adding the offset in minutes
+    displayDate.setMinutes(displayDate.getMinutes() + displayDate.getTimezoneOffset());
+  }
+
 
   return (
     <Card className="relative overflow-hidden bg-secondary/10 backdrop-blur-sm border border-border/10 transition-all duration-300 hover:border-border/50 hover:shadow-lg">
