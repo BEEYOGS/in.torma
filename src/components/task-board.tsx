@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -6,8 +7,16 @@ import { updateTaskStatus } from '@/services/task-service';
 import { TaskCard } from './task-card';
 import { TaskDialog } from './task-dialog';
 import { Skeleton } from './ui/skeleton';
+import { cn } from '@/lib/utils';
 
 const columns: TaskStatus[] = ['Proses Desain', 'Menunggu Konfirmasi', 'Selesai'];
+
+const columnStyles: Record<TaskStatus, string> = {
+  'Proses Desain': 'border-primary/50',
+  'Menunggu Konfirmasi': 'border-orange-400/50',
+  'Selesai': 'border-green-500/50',
+};
+
 
 interface TaskBoardProps {
     tasks: Task[];
@@ -73,7 +82,7 @@ export function TaskBoard({ tasks, loading }: TaskBoardProps) {
             onDragOver={onDragOver}
             onDrop={(e) => onDrop(e, status)}
           >
-            <h2 className="text-xl font-headline font-semibold text-white mb-6 border-b-2 border-primary/20 pb-2">
+            <h2 className={cn("text-xl font-headline font-semibold text-white mb-6 border-b-2 pb-2 transition-colors", columnStyles[status])}>
               {status}
             </h2>
             <div className="space-y-4 min-h-[200px]">
