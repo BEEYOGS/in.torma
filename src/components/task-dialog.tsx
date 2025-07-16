@@ -39,7 +39,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format, parseISO } from 'date-fns';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { Task, TaskSource, TaskStatus } from '@/types/task';
 import { addTask, updateTask } from '@/services/task-service';
 import { useToast } from '@/hooks/use-toast';
@@ -63,6 +63,8 @@ interface TaskDialogProps {
 
 export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDialogProps) {
   const { toast } = useToast();
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskSchema),
     defaultValues: task
@@ -239,7 +241,7 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
                 render={({ field }) => (
                     <FormItem className="flex flex-col">
                     <FormLabel>Batas Waktu</FormLabel>
-                    <Popover>
+                    <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                         <PopoverTrigger asChild>
                         <FormControl>
                             <Button
@@ -261,7 +263,11 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
                         <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                             mode="single"
-                            onSelect={field.onChange}
+                            selected={field.value}
+                            onSelect={(date) => {
+                                field.onChange(date);
+                                setIsCalendarOpen(false);
+                            }}
                             initialFocus
                         />
                         </PopoverContent>
