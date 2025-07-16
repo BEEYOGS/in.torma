@@ -155,7 +155,7 @@ export function TaskAnalytics({ tasks }: TaskAnalyticsProps) {
                                             cursor={false}
                                             content={<ChartTooltipContent indicator="dot" />}
                                         />
-                                        <Bar dataKey="Tugas Selesai" fill="var(--color-Tugas-Selesai)" radius={8} />
+                                        <Bar dataKey="Tugas Selesai" fill="hsl(var(--chart-1))" radius={8} />
                                     </BarChart>
                                 </ChartContainer>
                             </CardContent>
