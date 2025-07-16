@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -42,14 +43,74 @@ const prompt = ai.definePrompt({
   input: {schema: CreateTaskInputSchema},
   output: {schema: CreateTaskOutputSchema},
   tools: [webSearch],
-  prompt: `You are an AI assistant that can create tasks from natural language input or answer general questions.
+  prompt: `You are a highly intelligent project manager's assistant for a task management app called "in.torma".
+Your primary function is to process a user's natural language input and determine if it's a request to create a task or a general question.
 
-  If the user input is a task creation request, extract the task details (customer name, description, due date) and set the isTask field to true.
-  If the user input is a general question, use the webSearch tool to find the answer and set the isTask field to false.
+Follow these steps carefully:
+1.  **Analyze the User's Intent**: Read the user's input to determine if they want to create a task or ask a question.
+    - Task requests usually involve actions, customer names, and deadlines.
+    - Questions are general queries that might require external knowledge.
 
-  User Input: {{{userInput}}}
+2.  **If it's a Task Request**:
+    - Set the 'isTask' field to 'true'.
+    - Extract the following details for the 'taskDetails' object:
+        - **customerName**: The name of the person or company the task is for.
+        - **description**: A clear and concise summary of what needs to be done.
+        - **dueDate**: The deadline for the task.
+    - **Date Handling**: You MUST convert relative dates into a strict 'YYYY-MM-DD' format. Today's date is {{currentDate}}.
+        - "besok" -> Tomorrow's date.
+        - "lusa" -> The day after tomorrow's date.
+        - "minggu depan" -> Exactly 7 days from today.
+        - "3 hari lagi" -> Exactly 3 days from today.
+    - Do NOT use the webSearch tool for task requests.
 
-  Respond in JSON format.`,
+3.  **If it's a General Question**:
+    - Set the 'isTask' field to 'false'.
+    - Use the 'webSearch' tool to find a reliable answer.
+    - Place the answer in the 'answer' field.
+    - Leave 'taskDetails' empty.
+
+**Examples:**
+
+*   **User Input**: "buatkan tugas untuk Rinan Corp, desain ulang spanduk, deadline besok"
+*   **Your JSON Output**:
+    \`\`\`json
+    {
+      "isTask": true,
+      "taskDetails": {
+        "customerName": "Rinan Corp",
+        "description": "Desain ulang spanduk",
+        "dueDate": "{{formatDate offset=1 unit='days'}}"
+      }
+    }
+    \`\`\`
+
+*   **User Input**: "Tolong ingatkan saya untuk follow up PT Sejahtera lusa."
+*   **Your JSON Output**:
+    \`\`\`json
+    {
+      "isTask": true,
+      "taskDetails": {
+        "customerName": "PT Sejahtera",
+        "description": "Follow up PT Sejahtera",
+        "dueDate": "{{formatDate offset=2 unit='days'}}"
+      }
+    }
+    \`\`\`
+
+*   **User Input**: "apa itu genkit?"
+*   **Your JSON Output**: (After calling webSearch tool)
+    \`\`\`json
+    {
+      "isTask": false,
+      "answer": "Genkit is an open source framework from Google to build production-ready AI-powered applications."
+    }
+    \`\`\`
+
+---
+**Current User Input**: {{{userInput}}}
+---
+`,
 });
 
 const createTaskFlow = ai.defineFlow(
@@ -59,7 +120,25 @@ const createTaskFlow = ai.defineFlow(
     outputSchema: CreateTaskOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    // Helper to format date for the prompt
+    const formatDate = (offset = 0, unit = 'days') => {
+        const d = new Date();
+        if (unit === 'days') {
+            d.setDate(d.getDate() + offset);
+        }
+        return d.toISOString().split('T')[0];
+    };
+    
+    // Inject current date and a helper function into the prompt context
+    const {output} = await prompt(
+      {...input},
+      {
+        context: {
+          currentDate: formatDate(),
+          formatDate: (params: { offset: number; unit: string; }) => formatDate(params.offset, params.unit),
+        }
+      }
+    );
     return output!;
   }
 );
