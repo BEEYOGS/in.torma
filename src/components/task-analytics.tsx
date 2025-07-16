@@ -28,7 +28,7 @@ export function TaskAnalytics({ tasks }: TaskAnalyticsProps) {
         };
 
         const totalTasks = tasks.length;
-        const activeTasks = tasks.filter(task => task.status === 'Proses Desain' || task.status === 'Menunggu Konfirmasi').length;
+        const activeTasks = tasks.filter(task => task.status === 'Proses Desain' || task.status === 'Proses ACC').length;
         const completedTasksCount = tasks.filter(task => task.status === 'Selesai').length;
 
         // Bar chart data: completed tasks per day for last 7 days
@@ -37,15 +37,14 @@ export function TaskAnalytics({ tasks }: TaskAnalyticsProps) {
 
         const completedLast7Days = last7Days.map(day => {
             const count = completedTasks.filter(task => {
-                try {
-                    // Treat the stored date string as a UTC date to avoid timezone shifts
-                    const taskDate = parseISO(task.dueDate!);
-                    // Adjust for timezone offset to get the original date
-                    taskDate.setMinutes(taskDate.getMinutes() + taskDate.getTimezoneOffset());
-                    return format(taskDate, 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd')
-                } catch (e) {
-                    return false;
+                // By parsing the date string and adding the timezone offset, we treat the date as local
+                // instead of converting it to UTC, which avoids the "off-by-one-day" bug.
+                const taskDate = parseISO(task.dueDate!);
+                if (taskDate) {
+                  taskDate.setMinutes(taskDate.getMinutes() + taskDate.getTimezoneOffset());
+                  return format(taskDate, 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd')
                 }
+                return false;
             }).length;
             return {
                 name: format(day, 'dd/MM'),

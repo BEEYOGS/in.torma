@@ -47,7 +47,7 @@ import { useToast } from '@/hooks/use-toast';
 const taskSchema = z.object({
   customerName: z.string().min(1, 'Nama konsumen wajib diisi.'),
   description: z.string().min(1, 'Deskripsi wajib diisi.'),
-  status: z.enum(['Proses Desain', 'Menunggu Konfirmasi', 'Selesai']),
+  status: z.enum(['Proses Desain', 'Proses ACC', 'Selesai']),
   source: z.enum(['N', 'CS', 'Admin']),
   dueDate: z.date().optional(),
 });
@@ -108,10 +108,11 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
     // Format date to YYYY-MM-DD string, ignoring timezone.
     const toYYYYMMDD = (date: Date | undefined) => {
         if (!date) return undefined;
-        const d = new Date(date);
-        // Adjust for timezone offset to keep the selected date
-        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-        return d.toISOString().split('T')[0];
+        // Construct date string manually to avoid timezone issues
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
     };
 
     const taskData = {
@@ -186,7 +187,7 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
                       defaultValue={field.value}
                       className="flex flex-col space-y-1"
                     >
-                      {(['Proses Desain', 'Menunggu Konfirmasi', 'Selesai'] as TaskStatus[]).map(status => (
+                      {(['Proses Desain', 'Proses ACC', 'Selesai'] as TaskStatus[]).map(status => (
                         <FormItem key={status} className="flex items-center space-x-3 space-y-0">
                           <FormControl>
                             <RadioGroupItem value={status} />

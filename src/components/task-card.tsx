@@ -30,7 +30,7 @@ interface TaskCardProps {
 
 const statusStyles: Record<TaskStatus, { indicator: string, text: string }> = {
   'Proses Desain': { indicator: 'bg-primary', text: 'text-primary' },
-  'Menunggu Konfirmasi': { indicator: 'bg-orange-400', text: 'text-orange-400' },
+  'Proses ACC': { indicator: 'bg-orange-400', text: 'text-orange-400' },
   'Selesai': { indicator: 'bg-green-500', text: 'text-green-500' },
 };
 
@@ -54,6 +54,8 @@ export function TaskCard({ task, onEdit }: TaskCardProps) {
     }
   };
   
+  // By parsing the date string and adding the timezone offset, we treat the date as local
+  // instead of converting it to UTC, which avoids the "off-by-one-day" bug.
   const displayDate = task.dueDate ? parseISO(task.dueDate) : null;
   
   if (displayDate) {
@@ -113,4 +115,5 @@ export function TaskCard({ task, onEdit }: TaskCardProps) {
     </Card>
   );
 }
+
 

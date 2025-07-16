@@ -1,4 +1,4 @@
-export type TaskStatus = 'Proses Desain' | 'Menunggu Konfirmasi' | 'Selesai';
+export type TaskStatus = 'Proses Desain' | 'Proses ACC' | 'Selesai';
 export type TaskSource = 'N' | 'CS' | 'Admin';
 
 export interface Task {
