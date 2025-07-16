@@ -22,6 +22,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from './ui/badge';
 import { format, parseISO } from 'date-fns';
 import { cn } from '@/lib/utils';
+import {utcToZonedTime} from 'date-fns-tz';
 
 interface TaskCardProps {
   task: Task;
@@ -60,6 +61,8 @@ export function TaskCard({ task, onEdit, onDragStart, onDragEnd }: TaskCardProps
       });
     }
   };
+  
+  const displayDate = task.dueDate ? utcToZonedTime(parseISO(task.dueDate), 'UTC') : null;
 
   return (
     <Card
@@ -101,9 +104,9 @@ export function TaskCard({ task, onEdit, onDragStart, onDragEnd }: TaskCardProps
         </div>
       </CardHeader>
       <CardContent className="relative p-4 pt-0 flex justify-between items-center">
-        {task.dueDate ? (
+        {displayDate ? (
           <Badge variant="outline">
-            {format(parseISO(task.dueDate), 'dd MMM yyyy')}
+            {format(displayDate, 'dd MMM yyyy')}
           </Badge>
         ) : <div />}
         <Badge variant="secondary">{task.source}</Badge>

@@ -68,7 +68,8 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
   // Helper function to create default values
   const getDefaultValues = () => {
     if (task) {
-      return { ...task, dueDate: task.dueDate ? parseISO(task.dueDate) : undefined };
+      // For existing tasks, parse the ISO string from DB. Add 'T00:00:00' to treat it as local date.
+      return { ...task, dueDate: task.dueDate ? parseISO(task.dueDate + 'T00:00:00') : undefined };
     }
     if (prefillData) {
       return {
@@ -78,7 +79,7 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
         source: prefillData.source || 'CS',
         dueDate: prefillData.dueDate
           ? typeof prefillData.dueDate === 'string'
-            ? parseISO(prefillData.dueDate)
+            ? parseISO(prefillData.dueDate + 'T00:00:00') // Treat as local date
             : prefillData.dueDate
           : undefined,
       };
@@ -98,16 +99,25 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
   });
 
   useEffect(() => {
-    // Reset form with new default values only when isOpen becomes true
     if (isOpen) {
         form.reset(getDefaultValues());
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, task, prefillData]);
 
   const onSubmit = async (data: TaskFormValues) => {
+    // Format date to YYYY-MM-DD string, ignoring timezone.
+    const toYYYYMMDD = (date: Date) => {
+        const d = new Date(date);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
     const taskData = {
       ...data,
-      dueDate: data.dueDate ? data.dueDate.toISOString().split('T')[0] : undefined,
+      dueDate: data.dueDate ? toYYYYMMDD(data.dueDate) : undefined,
     };
 
     try {
