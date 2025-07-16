@@ -3,11 +3,11 @@
 import { useState, useMemo } from 'react';
 import { Bar, BarChart, Pie, PieChart, ResponsiveContainer } from 'recharts';
 import { Button } from './ui/button';
-import { AreaChart } from 'lucide-react';
+import { AreaChart, CheckCircle, ListTodo, Loader } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import type { Task, TaskSource } from '@/types/task';
 import { subDays, format, parseISO } from 'date-fns';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig, ChartLegend, ChartLegendContent } from './ui/chart';
 
 interface TaskAnalyticsProps {
@@ -18,7 +18,17 @@ export function TaskAnalytics({ tasks }: TaskAnalyticsProps) {
     const [isOpen, setIsOpen] = useState(false);
 
     const analyticsData = useMemo(() => {
-        if (!tasks.length) return { completedLast7Days: [], sourceDistribution: [] };
+        if (!tasks.length) return {
+            completedLast7Days: [],
+            sourceDistribution: [],
+            totalTasks: 0,
+            activeTasks: 0,
+            completedTasks: 0,
+        };
+
+        const totalTasks = tasks.length;
+        const activeTasks = tasks.filter(task => task.status === 'Proses Desain' || task.status === 'Menunggu Konfirmasi').length;
+        const completedTasksCount = tasks.filter(task => task.status === 'Selesai').length;
 
         // Bar chart data: completed tasks per day for last 7 days
         const last7Days = Array.from({ length: 7 }, (_, i) => subDays(new Date(), i)).reverse();
@@ -50,7 +60,13 @@ export function TaskAnalytics({ tasks }: TaskAnalyticsProps) {
             fill: `hsl(var(--chart-${Object.keys(sourceCounts).indexOf(name) + 1}))`
         }));
         
-        return { completedLast7Days, sourceDistribution };
+        return {
+            completedLast7Days,
+            sourceDistribution,
+            totalTasks,
+            activeTasks,
+            completedTasks: completedTasksCount,
+        };
 
     }, [tasks]);
 
@@ -72,6 +88,12 @@ export function TaskAnalytics({ tasks }: TaskAnalyticsProps) {
         return config;
       }, [analyticsData.sourceDistribution]);
 
+    const kpiCards = [
+        { title: "Total Tugas", value: analyticsData.totalTasks, icon: <ListTodo className="h-8 w-8 text-primary" /> },
+        { title: "Tugas Aktif", value: analyticsData.activeTasks, icon: <Loader className="h-8 w-8 text-orange-400" /> },
+        { title: "Tugas Selesai", value: analyticsData.completedTasks, icon: <CheckCircle className="h-8 w-8 text-green-500" /> }
+    ];
+
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
@@ -80,59 +102,77 @@ export function TaskAnalytics({ tasks }: TaskAnalyticsProps) {
                     Dasbor
                 </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-4xl h-[80vh] bg-background/80 backdrop-blur-sm flex flex-col">
+            <DialogContent className="max-w-5xl h-[90vh] bg-background/80 backdrop-blur-lg flex flex-col">
                 <DialogHeader>
-                    <DialogTitle className="font-headline">Dasbor Analitik Tugas</DialogTitle>
+                    <DialogTitle className="font-headline text-2xl">Dasbor Analitik Tugas</DialogTitle>
                     <DialogDescription>
-                        Visualisasi data tugas Anda.
+                        Visualisasi data dan metrik penting dari tugas Anda.
                     </DialogDescription>
                 </DialogHeader>
-                <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-8 py-4 overflow-y-auto">
-                    <Card className="bg-transparent border-border/50">
-                        <CardHeader>
-                            <CardTitle>Tugas Selesai (7 Hari Terakhir)</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <ChartContainer config={barChartConfig} className="min-h-[200px] w-full">
-                                <BarChart accessibilityLayer data={analyticsData.completedLast7Days}>
-                                    <ChartTooltip
-                                        content={<ChartTooltipContent />}
-                                    />
-                                    <Bar dataKey="Tugas Selesai" fill="var(--color-Tugas Selesai)" radius={4} />
-                                </BarChart>
-                            </ChartContainer>
-                        </CardContent>
-                    </Card>
+                <div className="flex-grow space-y-6 py-4 overflow-y-auto pr-4">
+                    {/* KPI Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {kpiCards.map(card => (
+                            <Card key={card.title} className="bg-black/20 backdrop-blur-lg border border-white/10">
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium text-muted-foreground">{card.title}</CardTitle>
+                                    {card.icon}
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="text-4xl font-bold">{card.value}</div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
 
-                    <Card className="bg-transparent border-border/50">
-                        <CardHeader>
-                            <CardTitle>Distribusi Sumber Tugas</CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex items-center justify-center">
-                            <ChartContainer
-                                config={pieChartConfig}
-                                className="mx-auto aspect-square h-[250px]"
-                            >
-                                <PieChart>
-                                    <ChartTooltip
-                                        cursor={false}
-                                        content={<ChartTooltipContent hideLabel />}
-                                    />
-                                    <Pie
-                                        data={analyticsData.sourceDistribution}
-                                        dataKey="value"
-                                        nameKey="name"
-                                        innerRadius={60}
-                                        strokeWidth={5}
-                                    />
-                                     <ChartLegend
-                                        content={<ChartLegendContent nameKey="name" />}
-                                        className="-translate-y-[2rem] flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
-                                    />
-                                </PieChart>
-                            </ChartContainer>
-                        </CardContent>
-                    </Card>
+                    {/* Charts */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <Card className="bg-black/20 backdrop-blur-lg border border-white/10">
+                            <CardHeader>
+                                <CardTitle>Tugas Selesai (7 Hari Terakhir)</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <ChartContainer config={barChartConfig} className="min-h-[250px] w-full">
+                                    <BarChart accessibilityLayer data={analyticsData.completedLast7Days}>
+                                        <ChartTooltip
+                                            content={<ChartTooltipContent />}
+                                        />
+                                        <Bar dataKey="Tugas Selesai" fill="var(--color-Tugas Selesai)" radius={4} />
+                                    </BarChart>
+                                </ChartContainer>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="bg-black/20 backdrop-blur-lg border border-white/10">
+                            <CardHeader>
+                                <CardTitle>Distribusi Sumber Tugas</CardTitle>
+                            </CardHeader>
+                            <CardContent className="flex items-center justify-center pt-6">
+                                <ChartContainer
+                                    config={pieChartConfig}
+                                    className="mx-auto aspect-square h-[250px]"
+                                >
+                                    <PieChart>
+                                        <ChartTooltip
+                                            cursor={false}
+                                            content={<ChartTooltipContent hideLabel />}
+                                        />
+                                        <Pie
+                                            data={analyticsData.sourceDistribution}
+                                            dataKey="value"
+                                            nameKey="name"
+                                            innerRadius={60}
+                                            strokeWidth={5}
+                                        />
+                                        <ChartLegend
+                                            content={<ChartLegendContent nameKey="name" />}
+                                            className="-translate-y-[2rem] flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
+                                        />
+                                    </PieChart>
+                                </ChartContainer>
+                            </CardContent>
+                        </Card>
+                    </div>
                 </div>
             </DialogContent>
         </Dialog>
