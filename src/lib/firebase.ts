@@ -6,7 +6,6 @@ import { getFirestore } from "firebase/firestore";
 const firebaseConfig = {
   apiKey: "AIzaSyAwwTrt3dPC7oICozC6pGvb-xFYm8c3dHg",
   authDomain: "intorma.firebaseapp.com",
-  databaseURL: "https://intorma-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "intorma",
   storageBucket: "intorma.appspot.com",
   messagingSenderId: "1022928523995",
