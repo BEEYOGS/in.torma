@@ -50,13 +50,13 @@ export function TaskCard({ task, onEdit, onDragStart }: TaskCardProps) {
     <Card
       draggable
       onDragStart={(e) => onDragStart(e, task.id)}
-      className="mb-4 bg-background/80 backdrop-blur-sm border-border hover:border-primary transition-all duration-300 group relative p-0"
+      className="mb-4 bg-secondary/50 backdrop-blur-sm border-border hover:border-primary/50 transition-all duration-300 group relative p-0 overflow-hidden"
     >
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       <CardHeader className="relative p-4">
         <div className="flex justify-between items-start">
           <div className="flex-grow">
-            <CardTitle className="text-lg font-headline mb-1">
+            <CardTitle className="text-lg font-headline mb-1 text-foreground">
               {task.customerName}
             </CardTitle>
             <CardDescription>{task.description}</CardDescription>

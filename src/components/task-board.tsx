@@ -64,11 +64,11 @@ export function TaskBoard({ tasks, loading }: TaskBoardProps) {
         {columns.map((status) => (
           <div
             key={status}
-            className="rounded-lg bg-black/20 p-4"
+            className="rounded-lg bg-black/10 p-4"
             onDragOver={onDragOver}
             onDrop={(e) => onDrop(e, status)}
           >
-            <h2 className="text-xl font-headline font-semibold text-white mb-6 border-b-2 border-primary pb-2">
+            <h2 className="text-xl font-headline font-semibold text-white mb-6 border-b-2 border-primary/20 pb-2">
               {status}
             </h2>
             <div className="space-y-4 min-h-[200px]">

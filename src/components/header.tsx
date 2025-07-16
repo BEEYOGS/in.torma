@@ -17,9 +17,9 @@ export default function Header({ tasks }: HeaderProps) {
 
     return (
         <>
-            <header className="sticky top-0 z-10 w-full bg-background/80 backdrop-blur-sm border-b border-border">
+            <header className="sticky top-0 z-10 w-full bg-background/80 backdrop-blur-sm border-b border-border/50">
                 <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
-                    <h1 className="text-2xl font-bold font-headline text-primary">
+                    <h1 className="text-2xl font-bold font-headline text-foreground">
                         KerjaSini
                     </h1>
                     <div className="flex items-center gap-2">
@@ -28,7 +28,7 @@ export default function Header({ tasks }: HeaderProps) {
                             <TaskAnalytics tasks={tasks} />
                             <AiTaskCreator />
                         </div>
-                        <Button onClick={() => setIsDialogOpen(true)}>
+                        <Button onClick={() => setIsDialogOpen(true)} variant="secondary">
                             <PlusCircle className="mr-2 h-4 w-4" />
                             Tambah Tugas
                         </Button>
