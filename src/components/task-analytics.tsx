@@ -1,22 +1,18 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { BarChart, PieChart as RechartsPieChart, Pie, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+import { Bar, BarChart, Pie, PieChart, ResponsiveContainer } from 'recharts';
 import { Button } from './ui/button';
 import { AreaChart } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import type { Task, TaskSource } from '@/types/task';
 import { subDays, format, parseISO } from 'date-fns';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig, ChartLegend, ChartLegendContent } from './ui/chart';
 
 interface TaskAnalyticsProps {
     tasks: Task[];
 }
-
-const COLORS: Record<TaskSource, string> = {
-    'CECE': 'hsl(var(--chart-1))',
-    'CS': 'hsl(var(--chart-2))',
-    'Admin': 'hsl(var(--chart-3))',
-};
 
 export function TaskAnalytics({ tasks }: TaskAnalyticsProps) {
     const [isOpen, setIsOpen] = useState(false);
@@ -51,11 +47,30 @@ export function TaskAnalytics({ tasks }: TaskAnalyticsProps) {
         const sourceDistribution = Object.entries(sourceCounts).map(([name, value]) => ({
             name: name as TaskSource,
             value,
+            fill: `hsl(var(--chart-${Object.keys(sourceCounts).indexOf(name) + 1}))`
         }));
-
+        
         return { completedLast7Days, sourceDistribution };
 
     }, [tasks]);
+
+    const barChartConfig = {
+        "Tugas Selesai": {
+          label: "Tugas Selesai",
+          color: "hsl(var(--chart-1))",
+        },
+    } satisfies ChartConfig;
+
+    const pieChartConfig = useMemo(() => {
+        const config: ChartConfig = {};
+        analyticsData.sourceDistribution.forEach((entry, index) => {
+          config[entry.name] = {
+            label: entry.name,
+            color: `hsl(var(--chart-${index + 1}))`,
+          };
+        });
+        return config;
+      }, [analyticsData.sourceDistribution]);
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -73,52 +88,51 @@ export function TaskAnalytics({ tasks }: TaskAnalyticsProps) {
                     </DialogDescription>
                 </DialogHeader>
                 <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-8 py-4 overflow-y-auto">
-                    <div className="p-4 rounded-lg bg-black/20">
-                        <h3 className="font-headline text-lg mb-4">Tugas Selesai (7 Hari Terakhir)</h3>
-                        <ResponsiveContainer width="100%" height={300}>
-                            <BarChart data={analyticsData.completedLast7Days}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                                <XAxis dataKey="name" stroke="hsl(var(--foreground))" fontSize={12} />
-                                <YAxis stroke="hsl(var(--foreground))" fontSize={12} />
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: 'hsl(var(--background))',
-                                        borderColor: 'hsl(var(--border))',
-                                    }}
-                                />
-                                <Bar dataKey="Tugas Selesai" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-                    <div className="p-4 rounded-lg bg-black/20">
-                        <h3 className="font-headline text-lg mb-4">Distribusi Sumber Tugas</h3>
-                        <ResponsiveContainer width="100%" height={300}>
-                            <RechartsPieChart>
-                                <Pie
-                                    data={analyticsData.sourceDistribution}
-                                    cx="50%"
-                                    cy="50%"
-                                    labelLine={false}
-                                    outerRadius={80}
-                                    fill="#8884d8"
-                                    dataKey="value"
-                                    nameKey="name"
-                                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                                >
-                                    {analyticsData.sourceDistribution.map((entry) => (
-                                        <Cell key={`cell-${entry.name}`} fill={COLORS[entry.name]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: 'hsl(var(--background))',
-                                        borderColor: 'hsl(var(--border))',
-                                    }}
-                                />
-                                <Legend />
-                            </RechartsPieChart>
-                        </ResponsiveContainer>
-                    </div>
+                    <Card className="bg-transparent border-border/50">
+                        <CardHeader>
+                            <CardTitle>Tugas Selesai (7 Hari Terakhir)</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <ChartContainer config={barChartConfig} className="min-h-[200px] w-full">
+                                <BarChart accessibilityLayer data={analyticsData.completedLast7Days}>
+                                    <ChartTooltip
+                                        content={<ChartTooltipContent />}
+                                    />
+                                    <Bar dataKey="Tugas Selesai" fill="var(--color-Tugas Selesai)" radius={4} />
+                                </BarChart>
+                            </ChartContainer>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="bg-transparent border-border/50">
+                        <CardHeader>
+                            <CardTitle>Distribusi Sumber Tugas</CardTitle>
+                        </CardHeader>
+                        <CardContent className="flex items-center justify-center">
+                            <ChartContainer
+                                config={pieChartConfig}
+                                className="mx-auto aspect-square h-[250px]"
+                            >
+                                <PieChart>
+                                    <ChartTooltip
+                                        cursor={false}
+                                        content={<ChartTooltipContent hideLabel />}
+                                    />
+                                    <Pie
+                                        data={analyticsData.sourceDistribution}
+                                        dataKey="value"
+                                        nameKey="name"
+                                        innerRadius={60}
+                                        strokeWidth={5}
+                                    />
+                                     <ChartLegend
+                                        content={<ChartLegendContent nameKey="name" />}
+                                        className="-translate-y-[2rem] flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
+                                    />
+                                </PieChart>
+                            </ChartContainer>
+                        </CardContent>
+                    </Card>
                 </div>
             </DialogContent>
         </Dialog>
