@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Bar, BarChart, Pie, PieChart, ResponsiveContainer } from 'recharts';
+import { Bar, BarChart, CartesianGrid, Pie, PieChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { Button } from './ui/button';
 import { AreaChart, CheckCircle, ListTodo, Loader } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
@@ -133,11 +133,25 @@ export function TaskAnalytics({ tasks }: TaskAnalyticsProps) {
                             </CardHeader>
                             <CardContent>
                                 <ChartContainer config={barChartConfig} className="min-h-[250px] w-full">
-                                    <BarChart accessibilityLayer data={analyticsData.completedLast7Days}>
-                                        <ChartTooltip
-                                            content={<ChartTooltipContent />}
+                                    <BarChart accessibilityLayer data={analyticsData.completedLast7Days} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                                        <CartesianGrid vertical={false} />
+                                        <XAxis
+                                            dataKey="name"
+                                            tickLine={false}
+                                            tickMargin={10}
+                                            axisLine={false}
                                         />
-                                        <Bar dataKey="Tugas Selesai" fill="var(--color-Tugas Selesai)" radius={4} />
+                                         <YAxis
+                                            tickLine={false}
+                                            tickMargin={10}
+                                            axisLine={false}
+                                            allowDecimals={false}
+                                        />
+                                        <ChartTooltip
+                                            cursor={false}
+                                            content={<ChartTooltipContent indicator="dot" />}
+                                        />
+                                        <Bar dataKey="Tugas Selesai" fill="var(--color-Tugas Selesai)" radius={8} />
                                     </BarChart>
                                 </ChartContainer>
                             </CardContent>
