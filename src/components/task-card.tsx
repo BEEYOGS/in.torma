@@ -8,14 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { MoreVertical, Edit, Trash2 } from 'lucide-react';
+import { Eye, Trash2 } from 'lucide-react';
 import type { Task, TaskStatus } from '@/types/task';
 import { deleteTask } from '@/services/task-service';
 import { useToast } from '@/hooks/use-toast';
@@ -64,38 +58,35 @@ export function TaskCard({ task, onEdit, taskNumber }: TaskCardProps) {
   }
 
   return (
-    <Card className="relative overflow-hidden bg-secondary/10 backdrop-blur-sm border border-border/10 transition-all duration-300 hover:border-border/50 hover:shadow-lg">
+    <Card className="relative group overflow-hidden bg-secondary/10 backdrop-blur-sm border border-border/10 transition-all duration-300 hover:border-border/50 hover:shadow-lg">
       <div className="absolute inset-0 -translate-x-full animate-shine bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
       <div>
         <CardHeader className="relative p-4 pb-2">
-          <div className="flex justify-between items-start">
+          <div className="flex justify-between items-start gap-4">
             <div className="flex-grow">
               <CardTitle className="text-base font-headline mb-1 text-foreground">
                 {task.customerName}
               </CardTitle>
               <CardDescription className="text-sm">{task.description}</CardDescription>
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 flex-shrink-0 -mr-2 -mt-2"
+                  className="h-8 w-8"
+                  onClick={() => onEdit(task)}
                 >
-                  <MoreVertical className="h-4 w-4" />
+                  <Eye className="h-4 w-4" />
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-background/80 backdrop-blur-sm">
-                <DropdownMenuItem onClick={() => onEdit(task)}>
-                  <Edit className="mr-2 h-4 w-4" />
-                  <span>Edit</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleDelete} className="text-destructive focus:text-destructive focus:bg-destructive/10">
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  <span>Hapus</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                 <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-destructive/70 hover:text-destructive"
+                  onClick={handleDelete}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="relative p-4 pt-2 flex justify-between items-center">
