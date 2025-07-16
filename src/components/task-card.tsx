@@ -28,10 +28,10 @@ interface TaskCardProps {
   onEdit: (task: Task) => void;
 }
 
-const statusIndicator: Record<TaskStatus, string> = {
-  'Proses Desain': 'bg-primary',
-  'Menunggu Konfirmasi': 'bg-orange-400',
-  'Selesai': 'bg-green-500',
+const statusStyles: Record<TaskStatus, { indicator: string, text: string }> = {
+  'Proses Desain': { indicator: 'bg-primary', text: 'text-primary' },
+  'Menunggu Konfirmasi': { indicator: 'bg-orange-400', text: 'text-orange-400' },
+  'Selesai': { indicator: 'bg-green-500', text: 'text-green-500' },
 };
 
 export function TaskCard({ task, onEdit }: TaskCardProps) {
@@ -57,16 +57,13 @@ export function TaskCard({ task, onEdit }: TaskCardProps) {
   const displayDate = task.dueDate ? parseISO(task.dueDate) : null;
   
   if (displayDate) {
-    // Correct for timezone offset by adding the offset in minutes
     displayDate.setMinutes(displayDate.getMinutes() + displayDate.getTimezoneOffset());
   }
-
 
   return (
     <Card className="relative overflow-hidden bg-secondary/10 backdrop-blur-sm border border-border/10 transition-all duration-300 hover:border-border/50 hover:shadow-lg">
       <div className="absolute inset-0 -translate-x-full animate-shine bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-      <div className={cn("absolute left-0 top-0 h-full w-1.5", statusIndicator[task.status])}></div>
-      <div className="pl-4">
+      <div>
         <CardHeader className="relative p-4 pb-2">
           <div className="flex justify-between items-start">
             <div className="flex-grow">
@@ -99,14 +96,21 @@ export function TaskCard({ task, onEdit }: TaskCardProps) {
           </div>
         </CardHeader>
         <CardContent className="relative p-4 pt-2 flex justify-between items-center">
-          {displayDate ? (
-            <Badge variant="outline">
-              {format(displayDate, 'dd MMM yyyy')}
-            </Badge>
-          ) : <div />}
-          <Badge variant="secondary">{task.source}</Badge>
+          <div className="flex items-center gap-2">
+             <span className={cn("h-2 w-2 rounded-full", statusStyles[task.status].indicator)}></span>
+             <span className={cn("text-xs font-medium", statusStyles[task.status].text)}>{task.status}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            {displayDate ? (
+              <Badge variant="outline">
+                {format(displayDate, 'dd MMM yyyy')}
+              </Badge>
+            ) : <div />}
+            <Badge variant="secondary">{task.source}</Badge>
+          </div>
         </CardContent>
       </div>
     </Card>
   );
 }
+
