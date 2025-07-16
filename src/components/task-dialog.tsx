@@ -48,7 +48,7 @@ const taskSchema = z.object({
   customerName: z.string().min(1, 'Nama konsumen wajib diisi.'),
   description: z.string().min(1, 'Deskripsi wajib diisi.'),
   status: z.enum(['Proses Desain', 'Menunggu Konfirmasi', 'Selesai']),
-  source: z.enum(['CECE', 'CS', 'Admin']),
+  source: z.enum(['N', 'CS', 'Admin']),
   dueDate: z.date().optional(),
 });
 
@@ -68,8 +68,7 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
   // Helper function to create default values
   const getDefaultValues = () => {
     if (task) {
-      // For existing tasks, parse the ISO string from DB. Add 'T00:00:00' to treat it as local date.
-      return { ...task, dueDate: task.dueDate ? parseISO(task.dueDate + 'T00:00:00') : undefined };
+      return { ...task, dueDate: task.dueDate ? parseISO(task.dueDate) : undefined };
     }
     if (prefillData) {
       return {
@@ -79,7 +78,7 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
         source: prefillData.source || 'CS',
         dueDate: prefillData.dueDate
           ? typeof prefillData.dueDate === 'string'
-            ? parseISO(prefillData.dueDate + 'T00:00:00') // Treat as local date
+            ? parseISO(prefillData.dueDate)
             : prefillData.dueDate
           : undefined,
       };
@@ -107,17 +106,17 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
 
   const onSubmit = async (data: TaskFormValues) => {
     // Format date to YYYY-MM-DD string, ignoring timezone.
-    const toYYYYMMDD = (date: Date) => {
+    const toYYYYMMDD = (date: Date | undefined) => {
+        if (!date) return undefined;
         const d = new Date(date);
-        const year = d.getFullYear();
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
+        // Adjust for timezone offset to keep the selected date
+        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+        return d.toISOString().split('T')[0];
     };
 
     const taskData = {
       ...data,
-      dueDate: data.dueDate ? toYYYYMMDD(data.dueDate) : undefined,
+      dueDate: toYYYYMMDD(data.dueDate),
     };
 
     try {
@@ -214,7 +213,7 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {(['CECE', 'CS', 'Admin'] as TaskSource[]).map(source => (
+                      {(['N', 'CS', 'Admin'] as TaskSource[]).map(source => (
                           <SelectItem key={source} value={source}>{source}</SelectItem>
                       ))}
                     </SelectContent>
@@ -251,7 +250,6 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
                         <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                             mode="single"
-                            selected={field.value}
                             onSelect={(date) => {
                                 field.onChange(date);
                                 setIsCalendarOpen(false);

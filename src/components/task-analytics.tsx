@@ -9,6 +9,7 @@ import type { Task, TaskSource } from '@/types/task';
 import { subDays, format, parseISO } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig, ChartLegend, ChartLegendContent } from './ui/chart';
+import { utcToZonedTime } from 'date-fns-tz';
 
 interface TaskAnalyticsProps {
     tasks: Task[];
@@ -37,7 +38,8 @@ export function TaskAnalytics({ tasks }: TaskAnalyticsProps) {
         const completedLast7Days = last7Days.map(day => {
             const count = completedTasks.filter(task => {
                 try {
-                    return format(parseISO(task.dueDate!), 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd')
+                    const taskDate = utcToZonedTime(parseISO(task.dueDate!), 'UTC');
+                    return format(taskDate, 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd')
                 } catch (e) {
                     return false;
                 }
