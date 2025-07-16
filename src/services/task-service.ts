@@ -1,41 +1,89 @@
-import { db } from '@/lib/firebase';
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, onSnapshot, DocumentData } from 'firebase/firestore';
+
+'use client';
+
 import type { Task, TaskStatus } from '@/types/task';
 
-const tasksCollection = collection(db, 'tasks');
+const TASKS_STORAGE_KEY = 'in.torma.tasks';
 
-export const getTasks = async (): Promise<Task[]> => {
-    const snapshot = await getDocs(tasksCollection);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Task));
+// Helper to get tasks from localStorage
+const getTasksFromStorage = (): Task[] => {
+  if (typeof window === 'undefined') {
+    return [];
+  }
+  try {
+    const storedTasks = window.localStorage.getItem(TASKS_STORAGE_KEY);
+    return storedTasks ? JSON.parse(storedTasks) : [];
+  } catch (error) {
+    console.error("Failed to parse tasks from localStorage", error);
+    return [];
+  }
 };
 
-export const listenToTasks = (callback: (tasks: Task[]) => void) => {
-    const q = query(tasksCollection);
-    return onSnapshot(q, (querySnapshot) => {
-        const tasks: Task[] = [];
-        querySnapshot.forEach((doc) => {
-            tasks.push({ id: doc.id, ...doc.data() } as Task);
-        });
-        callback(tasks);
-    });
+// Helper to save tasks to localStorage
+const saveTasksToStorage = (tasks: Task[]) => {
+    if (typeof window === 'undefined') {
+        return;
+    }
+    try {
+        window.localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
+        // Dispatch a custom event to notify other parts of the app that tasks have changed.
+        window.dispatchEvent(new Event('storage'));
+    } catch (error) {
+        console.error("Failed to save tasks to localStorage", error);
+    }
+};
+
+export const getTasks = async (): Promise<Task[]> => {
+  // Simulate async operation to maintain consistency with the previous API
+  return Promise.resolve(getTasksFromStorage());
+};
+
+export const listenToTasks = (callback: (tasks: Task[]) => void): (() => void) => {
+    // Initial call
+    callback(getTasksFromStorage());
+
+    const handleStorageChange = () => {
+        callback(getTasksFromStorage());
+    };
+
+    if (typeof window !== 'undefined') {
+        // Listen for our custom 'storage' event
+        window.addEventListener('storage', handleStorageChange);
+    }
+
+    // Return an unsubscribe function
+    return () => {
+        if (typeof window !== 'undefined') {
+            window.removeEventListener('storage', handleStorageChange);
+        }
+    };
 };
 
 export const addTask = async (task: Omit<Task, 'id'>): Promise<string> => {
-    const docRef = await addDoc(tasksCollection, task);
-    return docRef.id;
+  const tasks = getTasksFromStorage();
+  const newId = new Date().getTime().toString(); // Simple unique ID
+  const newTask: Task = { id: newId, ...task };
+  const updatedTasks = [...tasks, newTask];
+  saveTasksToStorage(updatedTasks);
+  return Promise.resolve(newId);
 };
 
 export const updateTask = async (id: string, updates: Partial<Omit<Task, 'id'>>): Promise<void> => {
-    const taskDoc = doc(db, 'tasks', id);
-    await updateDoc(taskDoc, updates);
+  const tasks = getTasksFromStorage();
+  const updatedTasks = tasks.map(task => 
+    task.id === id ? { ...task, ...updates } : task
+  );
+  saveTasksToStorage(updatedTasks);
+  return Promise.resolve();
 };
 
 export const updateTaskStatus = async (id: string, status: TaskStatus): Promise<void> => {
-    const taskDoc = doc(db, 'tasks', id);
-    await updateDoc(taskDoc, { status });
+  return updateTask(id, { status });
 };
 
 export const deleteTask = async (id: string): Promise<void> => {
-    const taskDoc = doc(db, 'tasks', id);
-    await deleteDoc(taskDoc);
+  const tasks = getTasksFromStorage();
+  const updatedTasks = tasks.filter(task => task.id !== id);
+  saveTasksToStorage(updatedTasks);
+  return Promise.resolve();
 };
