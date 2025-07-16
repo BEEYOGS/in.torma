@@ -2,18 +2,21 @@
 'use client';
 import { useState } from 'react';
 import { Button } from './ui/button';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Search } from 'lucide-react';
 import { TaskDialog } from './task-dialog';
 import { AiTaskCreator } from './ai-task-creator';
 import { DailyBriefing } from './daily-briefing';
 import { TaskAnalytics } from './task-analytics';
 import type { Task } from '@/types/task';
+import { Input } from './ui/input';
 
 interface HeaderProps {
     tasks: Task[];
+    searchTerm: string;
+    onSearchChange: (term: string) => void;
 }
 
-export default function Header({ tasks }: HeaderProps) {
+export default function Header({ tasks, searchTerm, onSearchChange }: HeaderProps) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [prefillData, setPrefillData] = useState<Partial<Task & {dueDate?: string | Date}> | undefined>(undefined);
     const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -70,6 +73,15 @@ export default function Header({ tasks }: HeaderProps) {
                         <div className="hidden md:flex items-center gap-2">
                             <DailyBriefing />
                             <TaskAnalytics tasks={tasks} />
+                            <div className="relative">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                <Input 
+                                    placeholder="Cari tugas..."
+                                    className="pl-10 w-48"
+                                    value={searchTerm}
+                                    onChange={(e) => onSearchChange(e.target.value)}
+                                />
+                            </div>
                             <AiTaskCreator onTaskCreated={handleAiTaskCreate} />
                         </div>
                         <Button onClick={handleOpenDialogForNewTask}>

@@ -21,9 +21,10 @@ import { parseISO } from 'date-fns';
 interface TaskBoardProps {
     tasks: Task[];
     loading: boolean;
+    searchTerm: string;
 }
 
-export function TaskBoard({ tasks, loading }: TaskBoardProps) {
+export function TaskBoard({ tasks, loading, searchTerm }: TaskBoardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [sortOption, setSortOption] = useState('default');
@@ -38,14 +39,19 @@ export function TaskBoard({ tasks, loading }: TaskBoardProps) {
     setEditingTask(null);
   };
 
-  const sortedTasks = useMemo(() => {
+  const filteredAndSortedTasks = useMemo(() => {
     const statusOrder: Record<string, number> = {
       'Proses Desain': 1,
       'Proses ACC': 2,
       'Selesai': 3,
     };
     
-    return [...tasks].sort((a, b) => {
+    const filteredTasks = tasks.filter(task => 
+      task.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      task.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    return [...filteredTasks].sort((a, b) => {
         switch (sortOption) {
             case 'dueDateAsc':
                 if (!a.dueDate) return 1;
@@ -67,7 +73,7 @@ export function TaskBoard({ tasks, loading }: TaskBoardProps) {
                 return 0;
         }
     });
-  }, [tasks, sortOption]);
+  }, [tasks, sortOption, searchTerm]);
 
   if (loading) {
     return (
@@ -104,7 +110,7 @@ export function TaskBoard({ tasks, loading }: TaskBoardProps) {
             </DropdownMenu>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sortedTasks.map((task, index) => (
+          {filteredAndSortedTasks.map((task, index) => (
             <TaskCard
               key={task.id}
               task={task}
