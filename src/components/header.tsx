@@ -14,6 +14,17 @@ interface HeaderProps {
 
 export default function Header({ tasks }: HeaderProps) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [prefillData, setPrefillData] = useState<Partial<Task> | undefined>(undefined);
+
+    const handleOpenDialog = () => {
+        setPrefillData(undefined); // Clear prefill data for new task
+        setIsDialogOpen(true);
+    };
+
+    const handleAiTaskCreate = (data: Partial<Task>) => {
+        setPrefillData(data);
+        setIsDialogOpen(true);
+    };
 
     return (
         <>
@@ -26,16 +37,21 @@ export default function Header({ tasks }: HeaderProps) {
                         <div className="hidden md:flex items-center gap-2">
                             <DailyBriefing />
                             <TaskAnalytics tasks={tasks} />
-                            <AiTaskCreator />
+                            <AiTaskCreator onTaskCreated={handleAiTaskCreate} />
                         </div>
-                        <Button onClick={() => setIsDialogOpen(true)}>
+                        <Button onClick={handleOpenDialog}>
                             <PlusCircle className="mr-2 h-4 w-4" />
                             Tambah Tugas
                         </Button>
                     </div>
                 </div>
             </header>
-            <TaskDialog isOpen={isDialogOpen} onOpenChange={setIsDialogOpen} />
+            <TaskDialog 
+                isOpen={isDialogOpen} 
+                onOpenChange={setIsDialogOpen} 
+                prefillData={prefillData}
+                key={prefillData ? JSON.stringify(prefillData) : 'new-task'} 
+            />
         </>
     );
 }

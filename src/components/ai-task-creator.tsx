@@ -14,17 +14,18 @@ import {
 import { Textarea } from './ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { createTask } from '@/ai/flows/create-task-flow';
-import { TaskDialog } from './task-dialog';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import type { Task } from '@/types/task';
 
-export function AiTaskCreator() {
+interface AiTaskCreatorProps {
+  onTaskCreated: (prefillData: Partial<Task>) => void;
+}
+
+export function AiTaskCreator({ onTaskCreated }: AiTaskCreatorProps) {
   const [isAiOpen, setIsAiOpen] = useState(false);
-  const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [aiAnswer, setAiAnswer] = useState<string | null>(null);
-  const [prefillData, setPrefillData] = useState<Partial<Task> | undefined>(undefined);
   const { toast } = useToast();
 
   const handleAiSubmit = async () => {
@@ -42,8 +43,7 @@ export function AiTaskCreator() {
         if (description) dataToPrefill.description = description;
         if (dueDate) dataToPrefill.dueDate = dueDate;
         
-        setPrefillData(dataToPrefill);
-        setIsTaskDialogOpen(true);
+        onTaskCreated(dataToPrefill);
         setIsAiOpen(false); // Close AI dialog
       } else if (result.answer) {
         setAiAnswer(result.answer);
@@ -107,12 +107,6 @@ export function AiTaskCreator() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
-      <TaskDialog
-        isOpen={isTaskDialogOpen}
-        onOpenChange={setIsTaskDialogOpen}
-        prefillData={prefillData}
-      />
     </>
   );
 }
