@@ -10,13 +10,19 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import { getTasks } from '@/services/task-service';
-import {Task} from '@/types/task';
+import type {Task} from '@/types/task';
 import { googleAI } from '@genkit-ai/googleai';
 import wav from 'wav';
 
 const DailySummaryInputSchema = z.object({
-  userId: z.string().describe('The ID of the user requesting the summary.'),
+  tasks: z.array(z.object({
+    id: z.string(),
+    customerName: z.string(),
+    description: z.string(),
+    status: z.enum(['Proses Desain', 'Proses ACC', 'Selesai']),
+    source: z.enum(['N', 'CS', 'Admin']),
+    dueDate: z.string().optional(),
+  })).describe('An array of active tasks to be summarized.'),
 });
 export type DailySummaryInput = z.infer<typeof DailySummaryInputSchema>;
 
@@ -41,33 +47,16 @@ const summaryPrompt = ai.definePrompt({
       summary: z.string().describe('A concise summary of active tasks.'),
     }),
   },
-  prompt: `You are tasked with creating a daily summary of active tasks for a user.
+  prompt: `You are tasked with creating a daily summary of active tasks for a user. The summary should be in Indonesian.
 
     Given the following tasks:
     {{#each tasks}}
-      - Customer: {{this.customerName}}, Description: {{this.description}}, Status: {{this.designStatus}}, Source: {{this.taskSource}}, Due Date: {{this.dueDate}}
+      - Customer: {{this.customerName}}, Description: {{this.description}}, Status: {{this.status}}, Source: {{this.source}}, Due Date: {{this.dueDate}}
     {{/each}}
 
-    Create a brief and informative summary that the user can listen to.
+    Create a brief and informative summary that the user can listen to. Start with a greeting like "Selamat pagi, berikut rangkuman tugas Anda hari ini."
     `
 });
-
-const ttsPrompt = ai.definePrompt({
-  name: 'ttsPrompt',
-  input: {
-    schema: z.object({
-      summary: z.string().describe('The summary text to convert to speech.'),
-    }),
-  },
-  output: {
-    schema: z.object({
-      media: z.string().describe('The audio data URI of the summary.'),
-    }),
-  },
-  prompt: `Convert the following summary to audio:
-    {{summary}}`,
-});
-
 
 const dailySummaryFlow = ai.defineFlow(
   {
@@ -75,21 +64,18 @@ const dailySummaryFlow = ai.defineFlow(
     inputSchema: DailySummaryInputSchema,
     outputSchema: DailySummaryOutputSchema,
   },
-  async input => {
-    // 1. Fetch active tasks from Firestore
-    const tasks = await getTasks();
+  async ({ tasks }) => {
+    // If there are no tasks, return a simple message.
+    const summaryText = tasks.length > 0 
+      ? (await summaryPrompt({ tasks })).output?.summary
+      : "Anda tidak memiliki tugas aktif saat ini. Selamat menikmati hari Anda!";
 
-    // 2. Generate a summary script using the summaryPrompt
-    const { output: summaryOutput } = await summaryPrompt({
-      tasks: tasks,
-    });
-
-    if (!summaryOutput?.summary) {
+    if (!summaryText) {
       throw new Error('Failed to generate summary.');
     }
 
     const { media } = await ai.generate({
-        model: googleAI.model('gemini-2.5-flash-preview-tts'),
+        model: 'googleai/gemini-2.5-flash-preview-tts',
         config: {
           responseModalities: ['AUDIO'],
           speechConfig: {
@@ -98,11 +84,13 @@ const dailySummaryFlow = ai.defineFlow(
             },
           },
         },
-        prompt: summaryOutput.summary,
+        prompt: summaryText,
       });
+
       if (!media) {
         throw new Error('no media returned');
       }
+
       const audioBuffer = Buffer.from(
         media.url.substring(media.url.indexOf(',') + 1),
         'base64'

@@ -5,8 +5,13 @@ import { Button } from './ui/button';
 import { PlayCircle, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { dailySummary } from '@/ai/flows/daily-summary-flow';
+import type { Task } from '@/types/task';
 
-export function DailyBriefing() {
+interface DailyBriefingProps {
+  tasks: Task[];
+}
+
+export function DailyBriefing({ tasks }: DailyBriefingProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const { toast } = useToast();
@@ -14,8 +19,8 @@ export function DailyBriefing() {
   const handleGetBriefing = async () => {
     setIsLoading(true);
     try {
-      // In a real app, you'd pass a real user ID
-      const result = await dailySummary({ userId: '12345' });
+      const activeTasks = tasks.filter(task => task.status !== 'Selesai');
+      const result = await dailySummary({ tasks: activeTasks });
       if (result.media) {
         const audioInstance = new Audio(result.media);
         setAudio(audioInstance);

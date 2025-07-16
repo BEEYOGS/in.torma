@@ -71,7 +71,7 @@ export default function Header({ tasks, searchTerm, onSearchChange }: HeaderProp
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="hidden md:flex items-center gap-2">
-                            <DailyBriefing />
+                            <DailyBriefing tasks={tasks} />
                             <TaskAnalytics tasks={tasks} />
                             <AiTaskCreator onTaskCreated={handleAiTaskCreate} />
                         </div>
