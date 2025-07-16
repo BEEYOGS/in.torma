@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -22,7 +23,7 @@ interface AiTaskCreatorProps {
 }
 
 export function AiTaskCreator({ onTaskCreated }: AiTaskCreatorProps) {
-  const [isAiOpen, setIsAiOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [aiAnswer, setAiAnswer] = useState<string | null>(null);
@@ -43,8 +44,10 @@ export function AiTaskCreator({ onTaskCreated }: AiTaskCreatorProps) {
         if (description) dataToPrefill.description = description;
         if (dueDate) dataToPrefill.dueDate = dueDate;
         
+        // Close the AI dialog first
+        setIsDialogOpen(false); 
+        // Then call the callback to open the main TaskDialog with prefilled data
         onTaskCreated(dataToPrefill);
-        setIsAiOpen(false); // Close AI dialog
       } else if (result.answer) {
         setAiAnswer(result.answer);
       } else {
@@ -68,17 +71,17 @@ export function AiTaskCreator({ onTaskCreated }: AiTaskCreatorProps) {
       setUserInput('');
       setAiAnswer(null);
     }
-    setIsAiOpen(open);
+    setIsDialogOpen(open);
   }
 
   return (
     <>
-      <Button variant="outline" onClick={() => setIsAiOpen(true)}>
+      <Button variant="outline" onClick={() => setIsDialogOpen(true)}>
         <Wand2 className="mr-2 h-4 w-4" />
         AI Assistant
       </Button>
 
-      <Dialog open={isAiOpen} onOpenChange={handleOpenChange}>
+      <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
         <DialogContent className="sm:max-w-md bg-background/80 backdrop-blur-sm">
           <DialogHeader>
             <DialogTitle className="font-headline">AI Assistant</DialogTitle>

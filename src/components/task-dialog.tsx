@@ -65,66 +65,44 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
   const { toast } = useToast();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
+  // Helper function to create default values
+  const getDefaultValues = () => {
+    if (task) {
+      return { ...task, dueDate: task.dueDate ? parseISO(task.dueDate) : undefined };
+    }
+    if (prefillData) {
+      return {
+        customerName: prefillData.customerName || '',
+        description: prefillData.description || '',
+        status: prefillData.status || 'Proses Desain',
+        source: prefillData.source || 'CS',
+        dueDate: prefillData.dueDate
+          ? typeof prefillData.dueDate === 'string'
+            ? parseISO(prefillData.dueDate)
+            : prefillData.dueDate
+          : undefined,
+      };
+    }
+    return {
+      customerName: '',
+      description: '',
+      status: 'Proses Desain' as TaskStatus,
+      source: 'CS' as TaskSource,
+      dueDate: undefined,
+    };
+  };
+
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskSchema),
-    defaultValues: task
-      ? { ...task, dueDate: task.dueDate ? parseISO(task.dueDate) : undefined }
-      : prefillData
-      ? {
-          customerName: prefillData.customerName || '',
-          description: prefillData.description || '',
-          status: prefillData.status || 'Proses Desain',
-          source: prefillData.source || 'CS',
-          dueDate: prefillData.dueDate
-            ? typeof prefillData.dueDate === 'string'
-              ? parseISO(prefillData.dueDate)
-              : prefillData.dueDate
-            : undefined,
-        }
-      : {
-          customerName: '',
-          description: '',
-          status: 'Proses Desain',
-          source: 'CS',
-          dueDate: undefined,
-        },
+    defaultValues: getDefaultValues(),
   });
 
   useEffect(() => {
-    // Reset form hanya ketika dialog dibuka dengan data baru (task atau prefillData)
-    // Ketergantungan pada isOpen memastikan ini hanya berjalan saat dialog dibuka/ditutup.
-    // Penggunaan `key` di komponen induk (Header) juga membantu memastikan
-    // komponen ini dibuat ulang dengan state yang bersih.
+    // Reset form with new default values only when isOpen becomes true
     if (isOpen) {
-        let valuesToSet;
-        if (task) {
-            valuesToSet = {
-                ...task,
-                dueDate: task.dueDate ? parseISO(task.dueDate) : undefined,
-            };
-        } else if (prefillData) {
-            const dueDate = prefillData.dueDate 
-                ? typeof prefillData.dueDate === 'string' ? parseISO(prefillData.dueDate) : prefillData.dueDate
-                : undefined;
-            valuesToSet = {
-                customerName: prefillData.customerName || '',
-                description: prefillData.description || '',
-                status: prefillData.status || 'Proses Desain',
-                source: prefillData.source || 'CS',
-                dueDate,
-            };
-        } else {
-            valuesToSet = {
-                customerName: '',
-                description: '',
-                status: 'Proses Desain' as TaskStatus,
-                source: 'CS' as TaskSource,
-                dueDate: undefined
-            };
-        }
-        form.reset(valuesToSet);
+        form.reset(getDefaultValues());
     }
-  }, [isOpen, task, prefillData, form]);
+  }, [isOpen, task, prefillData]);
 
   const onSubmit = async (data: TaskFormValues) => {
     const taskData = {

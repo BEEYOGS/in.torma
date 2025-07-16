@@ -1,3 +1,4 @@
+
 'use client';
 import { useState } from 'react';
 import { Button } from './ui/button';
@@ -15,13 +16,22 @@ interface HeaderProps {
 export default function Header({ tasks }: HeaderProps) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [prefillData, setPrefillData] = useState<Partial<Task> | undefined>(undefined);
+    const [editingTask, setEditingTask] = useState<Task | null>(null);
 
-    const handleOpenDialog = () => {
-        setPrefillData(undefined); // Hapus data prefill untuk tugas baru
+    const handleOpenDialogForNewTask = () => {
+        setEditingTask(null);
+        setPrefillData(undefined);
         setIsDialogOpen(true);
     };
 
+    const handleOpenDialogForEdit = (task: Task) => {
+        setEditingTask(task);
+        setPrefillData(undefined);
+        setIsDialogOpen(true);
+    };
+    
     const handleAiTaskCreate = (data: Partial<Task>) => {
+        setEditingTask(null);
         setPrefillData(data);
         setIsDialogOpen(true);
     };
@@ -29,10 +39,15 @@ export default function Header({ tasks }: HeaderProps) {
     const handleDialogChange = (open: boolean) => {
         setIsDialogOpen(open);
         if (!open) {
-            // Hapus prefillData ketika dialog ditutup
+            setEditingTask(null);
             setPrefillData(undefined);
         }
     }
+    
+    // Pass this handler to TaskBoard, so TaskCard can call it via onEdit
+    // This is a placeholder for where you might connect TaskBoard editing
+    // For now, we assume TaskBoard opens the dialog itself. If not, this is how you'd connect it.
+    // In our current structure, TaskBoard manages its own dialog state for edits.
 
     return (
         <>
@@ -47,7 +62,7 @@ export default function Header({ tasks }: HeaderProps) {
                             <TaskAnalytics tasks={tasks} />
                             <AiTaskCreator onTaskCreated={handleAiTaskCreate} />
                         </div>
-                        <Button onClick={handleOpenDialog}>
+                        <Button onClick={handleOpenDialogForNewTask}>
                             <PlusCircle className="mr-2 h-4 w-4" />
                             Tambah Tugas
                         </Button>
@@ -55,12 +70,12 @@ export default function Header({ tasks }: HeaderProps) {
                 </div>
             </header>
             <TaskDialog 
+                // Use a unique key to force remounting the dialog on open
+                key={editingTask?.id || (prefillData ? JSON.stringify(prefillData) : 'new-task')}
                 isOpen={isDialogOpen} 
                 onOpenChange={handleDialogChange} 
+                task={editingTask}
                 prefillData={prefillData}
-                // Gunakan key unik untuk memaksa pembuatan ulang komponen saat prefillData berubah,
-                // ini memastikan state form direset dengan benar.
-                key={prefillData ? JSON.stringify(prefillData) : 'new-task'} 
             />
         </>
     );
