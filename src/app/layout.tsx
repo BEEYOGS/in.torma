@@ -1,11 +1,22 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
+import { Inter, Space_Grotesk } from 'next/font/google';
 
 export const metadata: Metadata = {
   title: 'KerjaSini: Collaborative Task Board',
   description: 'A collaborative task board for teams.',
 };
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-space-grotesk',
+});
 
 export default function RootLayout({
   children,
@@ -14,12 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
-      </head>
-      <body className="font-body antialiased">{children}<Toaster /></body>
+      <body className={`${inter.variable} ${spaceGrotesk.variable} font-body antialiased`}>{children}<Toaster /></body>
     </html>
   );
 }

@@ -64,7 +64,7 @@ export function TaskBoard({ tasks, loading }: TaskBoardProps) {
         {columns.map((status) => (
           <div
             key={status}
-            className="rounded-lg bg-black/10 p-4"
+            className="rounded-lg bg-secondary/20 backdrop-blur-sm border border-border/20 p-4"
             onDragOver={onDragOver}
             onDrop={(e) => onDrop(e, status)}
           >
