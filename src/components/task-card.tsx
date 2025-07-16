@@ -26,6 +26,7 @@ import { cn } from '@/lib/utils';
 interface TaskCardProps {
   task: Task;
   onEdit: (task: Task) => void;
+  taskNumber: number;
 }
 
 const statusStyles: Record<TaskStatus, { indicator: string, text: string }> = {
@@ -34,7 +35,7 @@ const statusStyles: Record<TaskStatus, { indicator: string, text: string }> = {
   'Selesai': { indicator: 'bg-green-500', text: 'text-green-500' },
 };
 
-export function TaskCard({ task, onEdit }: TaskCardProps) {
+export function TaskCard({ task, onEdit, taskNumber }: TaskCardProps) {
   const { toast } = useToast();
 
   const handleDelete = async () => {
@@ -99,7 +100,12 @@ export function TaskCard({ task, onEdit }: TaskCardProps) {
         </CardHeader>
         <CardContent className="relative p-4 pt-2 flex justify-between items-center">
           <div className="flex items-center gap-2">
-             <span className={cn("h-2 w-2 rounded-full", statusStyles[task.status].indicator)}></span>
+             <span className={cn(
+                "h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold text-white",
+                statusStyles[task.status].indicator
+             )}>
+                {taskNumber}
+             </span>
              <span className={cn("text-xs font-medium", statusStyles[task.status].text)}>{task.status}</span>
           </div>
           <div className="flex items-center gap-2">
@@ -115,5 +121,3 @@ export function TaskCard({ task, onEdit }: TaskCardProps) {
     </Card>
   );
 }
-
-

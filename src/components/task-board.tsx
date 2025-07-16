@@ -1,11 +1,13 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import type { Task } from '@/types/task';
 import { TaskCard } from './task-card';
 import { TaskDialog } from './task-dialog';
 import { Skeleton } from './ui/skeleton';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { parseISO } from 'date-fns';
 
 interface TaskBoardProps {
     tasks: Task[];
@@ -15,6 +17,7 @@ interface TaskBoardProps {
 export function TaskBoard({ tasks, loading }: TaskBoardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [sortOption, setSortOption] = useState('default');
   
   const handleEdit = (task: Task) => {
     setEditingTask(task);
@@ -25,6 +28,37 @@ export function TaskBoard({ tasks, loading }: TaskBoardProps) {
     setIsDialogOpen(false);
     setEditingTask(null);
   };
+
+  const sortedTasks = useMemo(() => {
+    const statusOrder: Record<string, number> = {
+      'Proses Desain': 1,
+      'Proses ACC': 2,
+      'Selesai': 3,
+    };
+    
+    return [...tasks].sort((a, b) => {
+        switch (sortOption) {
+            case 'dueDateAsc':
+                if (!a.dueDate) return 1;
+                if (!b.dueDate) return -1;
+                return parseISO(a.dueDate).getTime() - parseISO(b.dueDate).getTime();
+            case 'dueDateDesc':
+                if (!a.dueDate) return 1;
+                if (!b.dueDate) return -1;
+                return parseISO(b.dueDate).getTime() - parseISO(a.dueDate).getTime();
+            case 'customerNameAsc':
+                return a.customerName.localeCompare(b.customerName);
+            case 'customerNameDesc':
+                return b.customerName.localeCompare(a.customerName);
+            case 'status':
+                return statusOrder[a.status] - statusOrder[b.status];
+            default:
+                // The default order is whatever Firebase returns, which is often by creation time.
+                // We don't need to do anything extra.
+                return 0;
+        }
+    });
+  }, [tasks, sortOption]);
 
   if (loading) {
     return (
@@ -39,12 +73,28 @@ export function TaskBoard({ tasks, loading }: TaskBoardProps) {
   return (
     <>
       <div className="container mx-auto p-4 md:p-8">
+        <div className="flex justify-end mb-4">
+            <Select value={sortOption} onValueChange={setSortOption}>
+                <SelectTrigger className="w-[200px]">
+                    <SelectValue placeholder="Urutkan berdasarkan..." />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="default">Urutan Default</SelectItem>
+                    <SelectItem value="dueDateAsc">Jatuh Tempo (Terdekat)</SelectItem>
+                    <SelectItem value="dueDateDesc">Jatuh Tempo (Terjauh)</SelectItem>
+                    <SelectItem value="customerNameAsc">Konsumen (A-Z)</SelectItem>
+                    <SelectItem value="customerNameDesc">Konsumen (Z-A)</SelectItem>
+                    <SelectItem value="status">Status</SelectItem>
+                </SelectContent>
+            </Select>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tasks.map((task) => (
+          {sortedTasks.map((task, index) => (
             <TaskCard
               key={task.id}
               task={task}
               onEdit={handleEdit}
+              taskNumber={index + 1}
             />
           ))}
         </div>
