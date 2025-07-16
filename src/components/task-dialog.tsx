@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -77,16 +78,18 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
     if (isOpen) {
         let valuesToSet;
         if (task) {
-        valuesToSet = {
-            ...task,
-            dueDate: task.dueDate ? parseISO(task.dueDate) : undefined,
-        };
+            valuesToSet = {
+                ...task,
+                dueDate: task.dueDate ? parseISO(task.dueDate) : undefined,
+            };
         } else if (prefillData) {
-            const dueDate = prefillData.dueDate ? new Date(prefillData.dueDate) : undefined;
+            const dueDate = prefillData.dueDate 
+                ? typeof prefillData.dueDate === 'string' ? parseISO(prefillData.dueDate) : prefillData.dueDate
+                : undefined;
             valuesToSet = {
                 ...form.getValues(),
                 ...prefillData,
-                dueDate: dueDate,
+                dueDate,
             };
         } else {
             valuesToSet = {
