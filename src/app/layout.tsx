@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { Inter, Space_Grotesk } from 'next/font/google';
 
 export const metadata: Metadata = {
-  title: 'KerjaSini: Collaborative Task Board',
+  title: 'in.torma: Collaborative Task Board',
   description: 'A collaborative task board for teams.',
 };
 

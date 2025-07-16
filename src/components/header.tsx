@@ -53,9 +53,19 @@ export default function Header({ tasks }: HeaderProps) {
         <>
             <header className="sticky top-0 z-40 w-full bg-background/60 backdrop-blur-lg border-b border-border/30">
                 <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
-                    <h1 className="text-2xl font-bold font-headline text-foreground tracking-tight">
-                        KerjaSini
-                    </h1>
+                    <div className="flex items-center gap-2">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          className="h-8 w-8 text-primary"
+                        >
+                          <path d="M12.383 6.012a2.43 2.43 0 0 0-3.413.568 2.39 2.39 0 0 0 0 3.385l-4.13 4.13a2.39 2.39 0 0 0 0 3.385 2.43 2.43 0 0 0 3.412.568l8.281-8.28a2.39 2.39 0 0 0 0-3.385 2.43 2.43 0 0 0-1.706-1.288z" />
+                        </svg>
+                        <h1 className="text-2xl font-bold font-headline text-foreground tracking-tight">
+                            in.torma
+                        </h1>
+                    </div>
                     <div className="flex items-center gap-2">
                         <div className="hidden md:flex items-center gap-2">
                             <DailyBriefing />
