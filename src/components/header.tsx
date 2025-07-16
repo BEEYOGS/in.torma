@@ -73,15 +73,6 @@ export default function Header({ tasks, searchTerm, onSearchChange }: HeaderProp
                         <div className="hidden md:flex items-center gap-2">
                             <DailyBriefing />
                             <TaskAnalytics tasks={tasks} />
-                            <div className="relative">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                <Input 
-                                    placeholder="Cari tugas..."
-                                    className="pl-10 w-48"
-                                    value={searchTerm}
-                                    onChange={(e) => onSearchChange(e.target.value)}
-                                />
-                            </div>
                             <AiTaskCreator onTaskCreated={handleAiTaskCreate} />
                         </div>
                         <Button onClick={handleOpenDialogForNewTask}>

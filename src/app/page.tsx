@@ -23,7 +23,7 @@ export default function Home() {
     <main className="min-h-screen flex flex-col bg-background">
       <Header tasks={tasks} searchTerm={searchTerm} onSearchChange={setSearchTerm} />
       <div className="flex-grow">
-        <TaskBoard tasks={tasks} loading={loading} searchTerm={searchTerm} />
+        <TaskBoard tasks={tasks} loading={loading} searchTerm={searchTerm} onSearchChange={setSearchTerm}/>
       </div>
     </main>
   );

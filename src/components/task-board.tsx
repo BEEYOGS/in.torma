@@ -15,16 +15,18 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { ArrowUpDown } from 'lucide-react';
+import { ArrowUpDown, Search } from 'lucide-react';
 import { parseISO } from 'date-fns';
+import { Input } from './ui/input';
 
 interface TaskBoardProps {
     tasks: Task[];
     loading: boolean;
     searchTerm: string;
+    onSearchChange: (term: string) => void;
 }
 
-export function TaskBoard({ tasks, loading, searchTerm }: TaskBoardProps) {
+export function TaskBoard({ tasks, loading, searchTerm, onSearchChange }: TaskBoardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [sortOption, setSortOption] = useState('default');
@@ -88,7 +90,16 @@ export function TaskBoard({ tasks, loading, searchTerm }: TaskBoardProps) {
   return (
     <>
       <div className="container mx-auto p-4 md:p-8">
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-end items-center gap-2 mb-4">
+            <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input 
+                    placeholder="Cari tugas..."
+                    className="pl-10 w-48"
+                    value={searchTerm}
+                    onChange={(e) => onSearchChange(e.target.value)}
+                />
+            </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon">
