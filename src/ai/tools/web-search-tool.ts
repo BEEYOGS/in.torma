@@ -1,12 +1,12 @@
-import {defineTool} from 'genkit';
+import { ai } from '@/ai/genkit';
 import {z} from 'zod';
 
-export const webSearch = defineTool(
+export const webSearch = ai.defineTool(
   {
     name: 'webSearch',
     description: 'Searches the web for the given query.',
-    input: {schema: z.string()},
-    output: {schema: z.string()},
+    inputSchema: z.string(),
+    outputSchema: z.string(),
   },
   async query => {
     console.log(`[Web Search] Searching for: ${query}`);
