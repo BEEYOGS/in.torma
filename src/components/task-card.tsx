@@ -72,10 +72,10 @@ export function TaskCard({ task, onEdit, onDragStart, onDragEnd }: TaskCardProps
       <CardHeader className="relative p-4">
         <div className="flex justify-between items-start">
           <div className="flex-grow">
-            <CardTitle className="text-lg font-headline mb-1 text-foreground">
+            <CardTitle className="text-base font-headline mb-1 text-foreground">
               {task.customerName}
             </CardTitle>
-            <CardDescription>{task.description}</CardDescription>
+            <CardDescription className="text-sm">{task.description}</CardDescription>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
