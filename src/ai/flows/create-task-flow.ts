@@ -40,7 +40,12 @@ export async function createTask(input: CreateTaskInput): Promise<CreateTaskOutp
 
 const prompt = ai.definePrompt({
   name: 'createTaskPrompt',
-  input: {schema: CreateTaskInputSchema},
+  input: {schema: CreateTaskInputSchema.extend({
+    currentDate: z.string(),
+    tomorrow: z.string(),
+    dayAfterTomorrow: z.string(),
+    nextWeek: z.string(),
+  })},
   output: {schema: CreateTaskOutputSchema},
   tools: [webSearch],
   prompt: `You are a highly intelligent project manager's assistant for a task management app called "in.torma".
@@ -57,11 +62,12 @@ Follow these steps carefully:
         - **customerName**: The name of the person or company the task is for.
         - **description**: A clear and concise summary of what needs to be done.
         - **dueDate**: The deadline for the task.
-    - **Date Handling**: You MUST convert relative dates into a strict 'YYYY-MM-DD' format. Today's date is {{currentDate}}.
-        - "besok" -> Tomorrow's date.
-        - "lusa" -> The day after tomorrow's date.
-        - "minggu depan" -> Exactly 7 days from today.
-        - "3 hari lagi" -> Exactly 3 days from today.
+    - **Date Handling**: You MUST convert relative dates into a strict 'YYYY-MM-DD' format.
+        - Today's date is {{currentDate}}.
+        - "besok" -> {{tomorrow}}.
+        - "lusa" -> {{dayAfterTomorrow}}.
+        - "minggu depan" -> {{nextWeek}}.
+        - "3 hari lagi" -> Calculate 3 days from {{currentDate}}.
     - Do NOT use the webSearch tool for task requests.
 
 3.  **If it's a General Question**:
@@ -80,7 +86,7 @@ Follow these steps carefully:
       "taskDetails": {
         "customerName": "Rinan Corp",
         "description": "Desain ulang spanduk",
-        "dueDate": "{{formatDate offset=1 unit='days'}}"
+        "dueDate": "{{tomorrow}}"
       }
     }
     \`\`\`
@@ -93,7 +99,7 @@ Follow these steps carefully:
       "taskDetails": {
         "customerName": "PT Sejahtera",
         "description": "Follow up PT Sejahtera",
-        "dueDate": "{{formatDate offset=2 unit='days'}}"
+        "dueDate": "{{dayAfterTomorrow}}"
       }
     }
     \`\`\`
@@ -119,26 +125,24 @@ const createTaskFlow = ai.defineFlow(
     inputSchema: CreateTaskInputSchema,
     outputSchema: CreateTaskOutputSchema,
   },
-  async input => {
-    // Helper to format date for the prompt
-    const formatDate = (offset = 0, unit = 'days') => {
-        const d = new Date();
-        if (unit === 'days') {
-            d.setDate(d.getDate() + offset);
-        }
-        return d.toISOString().split('T')[0];
-    };
+  async (input) => {
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(now.getDate() + 1);
+    const dayAfterTomorrow = new Date(now);
+    dayAfterTomorrow.setDate(now.getDate() + 2);
+    const nextWeek = new Date(now);
+    nextWeek.setDate(now.getDate() + 7);
     
-    // Inject current date and a helper function into the prompt context
-    const {output} = await prompt(
-      {...input},
-      {
-        context: {
-          currentDate: formatDate(),
-          formatDate: (params: { offset: number; unit: string; }) => formatDate(params.offset, params.unit),
-        }
-      }
-    );
+    const formatDate = (d: Date) => d.toISOString().split('T')[0];
+
+    const {output} = await prompt({
+      ...input,
+      currentDate: formatDate(now),
+      tomorrow: formatDate(tomorrow),
+      dayAfterTomorrow: formatDate(dayAfterTomorrow),
+      nextWeek: formatDate(nextWeek),
+    });
     return output!;
   }
 );
