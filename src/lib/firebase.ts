@@ -3,7 +3,7 @@ import { getFirestore } from "firebase/firestore";
 
 // Konfigurasi ini menggunakan kredensial untuk proyek 'intorma'
 const firebaseConfig = {
-  apiKey: "AIzaSyAEGE0OwI8spapTkjF1_r3k9ygKhByAiNs",
+  apiKey: "AIzaSyBSYkEuBKcfweUlk_AEz8dzBO_UC7NNl3Q",
   authDomain: "intorma.firebaseapp.com",
   projectId: "intorma",
   storageBucket: "intorma.appspot.com",
