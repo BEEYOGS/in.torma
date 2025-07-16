@@ -30,7 +30,12 @@ export function TaskBoard({ tasks, loading }: TaskBoardProps) {
   
   const onDragStart = (e: React.DragEvent<HTMLDivElement>, taskId: string) => {
     e.dataTransfer.setData('taskId', taskId);
+    e.currentTarget.style.opacity = '0.5';
   };
+  
+  const onDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
+    e.currentTarget.style.opacity = '1';
+  }
   
   const onDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -46,7 +51,7 @@ export function TaskBoard({ tasks, loading }: TaskBoardProps) {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-4 md:p-8">
+      <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 p-4 md:p-8">
         {columns.map(col => (
           <div key={col} className="space-y-4">
             <Skeleton className="h-8 w-1/2" />
@@ -60,11 +65,11 @@ export function TaskBoard({ tasks, loading }: TaskBoardProps) {
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 p-4 md:p-8">
+      <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 p-4 md:p-8">
         {columns.map((status) => (
           <div
             key={status}
-            className="rounded-lg bg-secondary/20 backdrop-blur-sm border border-border/20 p-4"
+            className="rounded-lg bg-secondary/10 backdrop-blur-sm border border-border/10 p-4 transition-colors duration-300"
             onDragOver={onDragOver}
             onDrop={(e) => onDrop(e, status)}
           >
@@ -80,6 +85,7 @@ export function TaskBoard({ tasks, loading }: TaskBoardProps) {
                     task={task}
                     onEdit={handleEdit}
                     onDragStart={onDragStart}
+                    onDragEnd={onDragEnd}
                   />
                 ))}
             </div>

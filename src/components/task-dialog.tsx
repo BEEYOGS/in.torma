@@ -127,7 +127,7 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] bg-background/50 backdrop-blur-lg border border-border/30">
+      <DialogContent className="sm:max-w-[425px] bg-background/80 backdrop-blur-lg border border-border/30">
         <DialogHeader>
           <DialogTitle className="font-headline">{task ? 'Edit Tugas' : 'Tambah Tugas Baru'}</DialogTitle>
           <DialogDescription>

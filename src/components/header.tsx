@@ -17,9 +17,9 @@ export default function Header({ tasks }: HeaderProps) {
 
     return (
         <>
-            <header className="sticky top-0 z-10 w-full bg-background/50 backdrop-blur-lg border-b border-border/30">
+            <header className="sticky top-0 z-40 w-full bg-background/60 backdrop-blur-lg border-b border-border/30">
                 <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
-                    <h1 className="text-2xl font-bold font-headline text-foreground">
+                    <h1 className="text-2xl font-bold font-headline text-foreground tracking-tight">
                         KerjaSini
                     </h1>
                     <div className="flex items-center gap-2">

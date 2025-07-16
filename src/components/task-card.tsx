@@ -25,9 +25,10 @@ interface TaskCardProps {
   task: Task;
   onEdit: (task: Task) => void;
   onDragStart: (e: React.DragEvent<HTMLDivElement>, taskId: string) => void;
+  onDragEnd: (e: React.DragEvent<HTMLDivElement>) => void;
 }
 
-export function TaskCard({ task, onEdit, onDragStart }: TaskCardProps) {
+export function TaskCard({ task, onEdit, onDragStart, onDragEnd }: TaskCardProps) {
   const { toast } = useToast();
 
   const handleDelete = async () => {
@@ -50,9 +51,10 @@ export function TaskCard({ task, onEdit, onDragStart }: TaskCardProps) {
     <Card
       draggable
       onDragStart={(e) => onDragStart(e, task.id)}
-      className="mb-4 bg-secondary/30 backdrop-blur-lg border border-border/20 hover:border-primary/50 transition-all duration-300 group relative p-0 overflow-hidden"
+      onDragEnd={onDragEnd}
+      className="mb-4 bg-black/20 backdrop-blur-lg border border-white/10 hover:border-primary/50 transition-all duration-300 group relative p-0 overflow-hidden"
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      <div className="absolute -inset-px bg-gradient-to-br from-primary/50 via-transparent to-secondary/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
       <CardHeader className="relative p-4">
         <div className="flex justify-between items-start">
           <div className="flex-grow">
@@ -71,7 +73,7 @@ export function TaskCard({ task, onEdit, onDragStart }: TaskCardProps) {
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="bg-background/80 backdrop-blur-sm">
               <DropdownMenuItem onClick={() => onEdit(task)}>
                 <Edit className="mr-2 h-4 w-4" />
                 <span>Edit</span>
@@ -84,7 +86,7 @@ export function TaskCard({ task, onEdit, onDragStart }: TaskCardProps) {
           </DropdownMenu>
         </div>
       </CardHeader>
-      <CardContent className="p-4 pt-0 flex justify-between items-center">
+      <CardContent className="relative p-4 pt-0 flex justify-between items-center">
         {task.dueDate ? (
           <Badge variant="outline">
             {format(parseISO(task.dueDate), 'dd MMM yyyy')}
