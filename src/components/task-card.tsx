@@ -64,6 +64,7 @@ export function TaskCard({ task, onEdit }: TaskCardProps) {
 
   return (
     <Card className="relative overflow-hidden bg-secondary/10 backdrop-blur-sm border border-border/10 transition-all duration-300 hover:border-border/50 hover:shadow-lg">
+      <div className="absolute inset-0 -translate-x-full animate-shine bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
       <div className={cn("absolute left-0 top-0 h-full w-1.5", statusIndicator[task.status])}></div>
       <div className="pl-4">
         <CardHeader className="relative p-4 pb-2">

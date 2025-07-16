@@ -108,10 +108,10 @@
 }
 
 @keyframes shine {
-  0% {
+  from {
     transform: translateX(-100%) skewX(-30deg);
   }
-  100% {
+  to {
     transform: translateX(200%) skewX(-30deg);
   }
 }
@@ -145,5 +145,5 @@ body {
 }
 
 .animate-shine {
-    animation: shine 4s ease-in-out infinite;
+  animation: shine 4s ease-in-out infinite;
 }
