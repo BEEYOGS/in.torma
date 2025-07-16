@@ -17,7 +17,7 @@ export default function Header({ tasks }: HeaderProps) {
     const [prefillData, setPrefillData] = useState<Partial<Task> | undefined>(undefined);
 
     const handleOpenDialog = () => {
-        setPrefillData(undefined); // Clear prefill data for new task
+        setPrefillData(undefined); // Hapus data prefill untuk tugas baru
         setIsDialogOpen(true);
     };
 
@@ -25,6 +25,14 @@ export default function Header({ tasks }: HeaderProps) {
         setPrefillData(data);
         setIsDialogOpen(true);
     };
+
+    const handleDialogChange = (open: boolean) => {
+        setIsDialogOpen(open);
+        if (!open) {
+            // Hapus prefillData ketika dialog ditutup
+            setPrefillData(undefined);
+        }
+    }
 
     return (
         <>
@@ -48,8 +56,10 @@ export default function Header({ tasks }: HeaderProps) {
             </header>
             <TaskDialog 
                 isOpen={isDialogOpen} 
-                onOpenChange={setIsDialogOpen} 
+                onOpenChange={handleDialogChange} 
                 prefillData={prefillData}
+                // Gunakan key unik untuk memaksa pembuatan ulang komponen saat prefillData berubah,
+                // ini memastikan state form direset dengan benar.
                 key={prefillData ? JSON.stringify(prefillData) : 'new-task'} 
             />
         </>
