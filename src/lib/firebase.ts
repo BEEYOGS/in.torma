@@ -1,8 +1,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
-// TODO: Replace the following with your app's Firebase project configuration
-// For more information, see: https://firebase.google.com/docs/web/setup#available-libraries
+// Konfigurasi ini menggunakan kredensial untuk proyek 'intorma'
 const firebaseConfig = {
   apiKey: "AIzaSyAEGE0OwI8spapTkjF1_r3k9ygKhByAiNs",
   authDomain: "intorma.firebaseapp.com",
