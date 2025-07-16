@@ -261,7 +261,6 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
                         <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                             mode="single"
-                            selected={field.value}
                             onSelect={field.onChange}
                             initialFocus
                         />
