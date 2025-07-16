@@ -5,10 +5,10 @@ export const webSearch = ai.defineTool(
   {
     name: 'webSearch',
     description: 'Searches the web for the given query.',
-    inputSchema: z.string(),
+    inputSchema: z.object({ query: z.string() }),
     outputSchema: z.string(),
   },
-  async query => {
+  async ({ query }) => {
     console.log(`[Web Search] Searching for: ${query}`);
     // In a real application, you would implement a web search API call here.
     // For this example, we'll return a mock answer.
