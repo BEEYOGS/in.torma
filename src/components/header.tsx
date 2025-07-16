@@ -15,7 +15,7 @@ interface HeaderProps {
 
 export default function Header({ tasks }: HeaderProps) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [prefillData, setPrefillData] = useState<Partial<Task> | undefined>(undefined);
+    const [prefillData, setPrefillData] = useState<Partial<Task & {dueDate?: string | Date}> | undefined>(undefined);
     const [editingTask, setEditingTask] = useState<Task | null>(null);
 
     const handleOpenDialogForNewTask = () => {
@@ -30,7 +30,7 @@ export default function Header({ tasks }: HeaderProps) {
         setIsDialogOpen(true);
     };
     
-    const handleAiTaskCreate = (data: Partial<Task>) => {
+    const handleAiTaskCreate = (data: Partial<Task & {dueDate?: string | Date}>) => {
         setEditingTask(null);
         setPrefillData(data);
         setIsDialogOpen(true);
