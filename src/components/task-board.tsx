@@ -6,7 +6,16 @@ import type { Task } from '@/types/task';
 import { TaskCard } from './task-card';
 import { TaskDialog } from './task-dialog';
 import { Skeleton } from './ui/skeleton';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Button } from './ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
+import { ArrowUpDown } from 'lucide-react';
 import { parseISO } from 'date-fns';
 
 interface TaskBoardProps {
@@ -74,19 +83,25 @@ export function TaskBoard({ tasks, loading }: TaskBoardProps) {
     <>
       <div className="container mx-auto p-4 md:p-8">
         <div className="flex justify-end mb-4">
-            <Select value={sortOption} onValueChange={setSortOption}>
-                <SelectTrigger className="w-[200px]">
-                    <SelectValue placeholder="Urutkan berdasarkan..." />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="default">Urutan Awal</SelectItem>
-                    <SelectItem value="dueDateAsc">Jatuh Tempo (Terdekat)</SelectItem>
-                    <SelectItem value="dueDateDesc">Jatuh Tempo (Terjauh)</SelectItem>
-                    <SelectItem value="customerNameAsc">Konsumen (A-Z)</SelectItem>
-                    <SelectItem value="customerNameDesc">Konsumen (Z-A)</SelectItem>
-                    <SelectItem value="status">Status</SelectItem>
-                </SelectContent>
-            </Select>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <ArrowUpDown className="h-4 w-4" />
+                  <span className="sr-only">Urutkan</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Urutkan berdasarkan</DropdownMenuLabel>
+                <DropdownMenuRadioGroup value={sortOption} onValueChange={setSortOption}>
+                  <DropdownMenuRadioItem value="default">Urutan Awal</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="dueDateAsc">Jatuh Tempo (Terdekat)</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="dueDateDesc">Jatuh Tempo (Terjauh)</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="customerNameAsc">Konsumen (A-Z)</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="customerNameDesc">Konsumen (Z-A)</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="status">Status</DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {sortedTasks.map((task, index) => (
