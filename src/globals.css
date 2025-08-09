@@ -1,0 +1,173 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 4%; /* Deep Black */
+    --foreground: 210 20% 98%;
+
+    --card: 240 6% 10%;
+    --card-foreground: 210 20% 98%;
+
+    --popover: 240 6% 10%;
+    --popover-foreground: 210 20% 98%;
+
+    --primary: 40 90% 60%; /* Firebase Amber */
+    --primary-foreground: 220 25% 10%;
+
+    --secondary: 240 5% 15%;
+    --secondary-foreground: 210 20% 98%;
+
+    --muted: 240 5% 15%;
+    --muted-foreground: 218 11% 65%;
+
+    --accent: 240 5% 15%;
+    --accent-foreground: 210 20% 98%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 20% 98%;
+    
+    --border: 240 4% 18%;
+    --input: 240 5% 15%;
+    --ring: 40 90% 60%; /* Firebase Amber for focus rings */
+    --radius: 0.5rem;
+
+    --chart-1: 40 90% 60%;
+    --chart-2: 260 85% 65%;
+    --chart-3: 170 80% 45%;
+    --chart-4: 340 90% 60%;
+    --chart-5: 200 80% 55%;
+  }
+
+  .dark {
+    --background: 240 10% 4%; /* Deep Black */
+    --foreground: 210 20% 98%;
+
+    --card: 240 6% 10%;
+    --card-foreground: 210 20% 98%;
+
+    --popover: 240 6% 10%;
+    --popover-foreground: 210 20% 98%;
+
+    --primary: 40 90% 60%; /* Firebase Amber */
+    --primary-foreground: 220 25% 10%;
+
+    --secondary: 240 5% 15%;
+    --secondary-foreground: 210 20% 98%;
+
+    --muted: 240 5% 15%;
+    --muted-foreground: 218 11% 65%;
+
+    --accent: 240 5% 15%;
+    --accent-foreground: 210 20% 98%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 20% 98%;
+    
+    --border: 240 4% 18%;
+    --input: 240 5% 15%;
+    --ring: 40 90% 60%; /* Firebase Amber for focus rings */
+    --radius: 0.5rem;
+
+    --chart-1: 40 90% 60%;
+    --chart-2: 260 85% 65%;
+    --chart-3: 170 80% 45%;
+    --chart-4: 340 90% 60%;
+    --chart-5: 200 80% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@keyframes background-pan {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes shine {
+  from {
+    transform: translateX(-100%) skewX(-30deg);
+  }
+  to {
+    transform: translateX(200%) skewX(-30deg);
+  }
+}
+
+@keyframes logo-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes status-pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes blinking-caret {
+  from, to { border-color: transparent }
+  50% { border-color: var(--caret-color, hsl(var(--primary))); }
+}
+
+body {
+    background-image: linear-gradient(
+      -45deg,
+      hsl(var(--background)),
+      hsl(220, 15%, 8%),
+      hsl(var(--background)),
+      hsl(220, 15%, 8%)
+    );
+    background-size: 400% 400%;
+    animation: background-pan 15s ease-in-out infinite;
+}
+
+.animate-shine {
+  animation: shine 4s ease-in-out infinite;
+}
+
+.glass-card {
+    @apply bg-card/60 backdrop-blur-lg border border-white/10 rounded-lg shadow-lg;
+}
+
+.glass-header {
+    @apply bg-background/80 backdrop-blur-lg;
+}
+
+/* For mobile tab trigger active state */
+.dark .data-\[state\=active\]\:bg-background {
+    --tw-bg-opacity: 0.8;
+    backdrop-filter: blur(16px);
+}
+
+.typing-cursor::after {
+  content: '';
+  display: inline-block;
+  width: 1px;
+  height: 1em;
+  margin-left: 2px;
+  border-right: 2px solid var(--caret-color, hsl(var(--primary)));
+  animation: blinking-caret 1s infinite;
+}
