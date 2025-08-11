@@ -82,7 +82,7 @@ const useTypingAnimation = (text: string, isOverlay?: boolean) => {
                     // Wait for 3 seconds before restarting
                     timeoutRef.current = setTimeout(animate, 3000); 
                 }
-            }, 50);
+            }, 150);
         };
 
         animate();
