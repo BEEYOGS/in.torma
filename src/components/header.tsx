@@ -31,42 +31,37 @@ export function Header({
   
   const Logo = () => (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
       viewBox="0 0 24 24"
-      className="h-8 w-8"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-6 w-6 text-primary"
     >
-      <defs>
-        <linearGradient id="status-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-           <stop offset="0%" style={{ stopColor: 'hsl(var(--chart-3))' }} />
-           <stop offset="100%" style={{ stopColor: 'hsl(var(--chart-1))' }} />
-        </linearGradient>
-      </defs>
-      <g className="animate-spin-slow" style={{ transformOrigin: 'center', transformBox: 'fill-box' }}>
-        <circle
-            cx="12"
-            cy="12"
-            r="10"
-            fill="none"
-            stroke="hsl(var(--primary) / 0.1)"
-            strokeWidth="2"
-        />
-        <path
-            className="animate-draw-circle"
-            d="M12,2 a10,10 0 0,1 0,20 a10,10 0 0,1 0,-20"
-            fill="none"
-            stroke="url(#status-gradient)"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeDasharray="62.83"
-            strokeDashoffset="62.83"
-        />
-      </g>
+      <rect
+        x="4"
+        y="4"
+        width="6"
+        height="16"
+        rx="2"
+        fill="currentColor"
+        opacity="0.6"
+      />
+      <rect
+        x="14"
+        y="4"
+        width="6"
+        height="10"
+        rx="2"
+        fill="currentColor"
+      />
     </svg>
   );
 
+
   return (
     <header className={cn("sticky top-0 z-30 flex h-16 items-center gap-4 border-b px-4 backdrop-blur-lg sm:px-6", "glass-header border-white/10")}>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         <Logo />
         <h1 className="text-xl font-bold font-headline text-foreground tracking-tight">
           in.torma
