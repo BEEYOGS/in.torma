@@ -45,10 +45,12 @@ const generateConceptImageFlow = ai.defineFlow(
   },
   async ({ description }) => {
     
+    // First, invoke the prompt with the input data to get a structured prompt object.
+    const promptWithInput = await imageGenerationPrompt({ description });
+
     const {media} = await ai.generate({
       model: 'googleai/gemini-2.0-flash-preview-image-generation',
-      prompt: imageGenerationPrompt,
-      input: { description },
+      prompt: promptWithInput, // Pass the fully resolved prompt
       config: {
         // IMPORTANT: This model requires both TEXT and IMAGE modalities.
         responseModalities: ['IMAGE', 'TEXT'],
