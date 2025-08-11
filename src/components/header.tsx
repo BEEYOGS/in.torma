@@ -1,17 +1,16 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import type { Task } from '@/types/task';
 import { DailyBriefing } from '@/components/daily-briefing';
-import { TaskAnalytics } from '@/components/task-analytics';
-import { AiTaskCreator } from '@/components/ai-task-creator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, Search, Ellipsis, AreaChart, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
+import { AiTaskCreator } from './ai-task-creator';
 
 interface HeaderProps {
   tasks: Task[];
@@ -19,6 +18,8 @@ interface HeaderProps {
   onNewTask: () => void;
   searchTerm: string;
   onSearchTermChange: (term: string) => void;
+  isAnalyticsOpen: boolean;
+  onAnalyticsOpenChange: (open: boolean) => void;
 }
 
 export function Header({ 
@@ -26,9 +27,10 @@ export function Header({
   onAiTaskCreate, 
   onNewTask,
   searchTerm,
-  onSearchTermChange
+  onSearchTermChange,
+  isAnalyticsOpen,
+  onAnalyticsOpenChange
 }: HeaderProps) {
-  const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
 
   const Logo = () => (
     <svg
@@ -71,8 +73,7 @@ export function Header({
     </svg>
   );
 
-
-  const MainMenu = ({ isMobile = false }) => (
+  const MainMenu = () => (
     <DropdownMenu>
         <Tooltip>
             <TooltipTrigger asChild>
@@ -93,7 +94,7 @@ export function Header({
         </Tooltip>
         <DropdownMenuContent align="end" className="bg-popover/80 backdrop-blur-lg border-white/10 w-56">
             <DropdownMenuLabel>Fitur</DropdownMenuLabel>
-            <DropdownMenuItem onSelect={() => setIsAnalyticsOpen(true)}>
+            <DropdownMenuItem onSelect={() => onAnalyticsOpenChange(true)}>
                 <AreaChart className="mr-2 h-4 w-4"/>
                 <span>Dasbor Analitik</span>
             </DropdownMenuItem>
@@ -124,7 +125,6 @@ export function Header({
 
   return (
     <>
-    <TaskAnalytics tasks={tasks} isOpen={isAnalyticsOpen} onOpenChange={setIsAnalyticsOpen} />
     <header className={cn("sticky top-0 z-30 flex h-16 items-center gap-4 border-b px-4 backdrop-blur-lg sm:px-6", "glass-header border-white/10")}>
       <div className="flex items-center gap-3">
         <Logo />
@@ -149,7 +149,7 @@ export function Header({
         <MainMenu />
       </nav>
        <div className="flex items-center gap-1 md:hidden ml-auto">
-         <MainMenu isMobile />
+         <MainMenu />
        </div>
       
       <Button onClick={onNewTask} className="hidden md:inline-flex">

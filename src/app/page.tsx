@@ -9,11 +9,13 @@ import type { Task, TaskStatus } from '@/types/task';
 import { TaskDialog } from '@/components/task-dialog';
 import { EmptyState } from '@/components/empty-state';
 import { MobileFooter } from '@/components/mobile-footer';
+import { TaskAnalytics } from '@/components/task-analytics';
 
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
   const [prefillData, setPrefillData] = useState<Partial<Task & {dueDate?: string | Date}> | undefined>(undefined);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -65,6 +67,8 @@ export default function Home() {
         onNewTask={() => handleOpenDialogForNewTask()}
         searchTerm={searchTerm}
         onSearchTermChange={setSearchTerm}
+        isAnalyticsOpen={isAnalyticsOpen}
+        onAnalyticsOpenChange={setIsAnalyticsOpen}
       />
       <main className="flex-grow p-4 md:p-8 pb-24 md:pb-8">
         {loading ? (
@@ -94,10 +98,12 @@ export default function Home() {
           task={editingTask}
           prefillData={prefillData}
       />
+      <TaskAnalytics tasks={tasks} isOpen={isAnalyticsOpen} onOpenChange={setIsAnalyticsOpen} />
       <MobileFooter
         tasks={tasks}
         onNewTask={() => handleOpenDialogForNewTask()}
         onAiTaskCreate={handleAiTaskCreate}
+        onAnalyticsOpen={() => setIsAnalyticsOpen(true)}
         searchTerm={searchTerm}
         onSearchTermChange={setSearchTerm}
       />

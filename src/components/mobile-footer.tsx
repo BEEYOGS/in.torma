@@ -3,23 +3,27 @@
 
 import React, { useState } from 'react';
 import { Button } from './ui/button';
-import { Plus, Search, Wand2, Youtube, Music } from 'lucide-react';
+import { Plus, Search, Wand2, AreaChart, Users } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from './ui/dialog';
 import { Input } from './ui/input';
 import { AiTaskCreator } from './ai-task-creator';
 import type { Task } from '@/types/task';
+import { DailyBriefing } from './daily-briefing';
 
 interface MobileFooterProps {
     tasks: Task[];
     onNewTask: () => void;
     onAiTaskCreate: (data: Partial<Task & { dueDate?: string | Date }>) => void;
+    onAnalyticsOpen: () => void;
     searchTerm: string;
     onSearchTermChange: (term: string) => void;
 }
 
 export function MobileFooter({ 
+    tasks,
     onNewTask, 
     onAiTaskCreate, 
+    onAnalyticsOpen,
     searchTerm, 
     onSearchTermChange 
 }: MobileFooterProps) {
@@ -55,16 +59,14 @@ export function MobileFooter({
                     <div className="w-12" /> 
 
                     <div className="flex-1 grid grid-cols-2 gap-1 text-center">
-                        <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="h-auto w-full flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-foreground p-2">
-                            <IconButton>
-                                <Youtube className="h-6 w-6" />
-                            </IconButton>
-                        </a>
-                        <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer" className="h-auto w-full flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-foreground p-2">
-                             <IconButton>
-                                <Music className="h-6 w-6" />
-                            </IconButton>
-                        </a>
+                       <IconButton label="Dasbor" onClick={onAnalyticsOpen}>
+                          <AreaChart className="h-6 w-6" />
+                       </IconButton>
+                       <DailyBriefing tasks={tasks}>
+                           <IconButton label="Briefing">
+                                <Users className="h-6 w-6" />
+                           </IconButton>
+                       </DailyBriefing>
                     </div>
                 </div>
             </div>
@@ -106,7 +108,7 @@ const IconButton = React.forwardRef<
         ref={ref}
         variant="ghost" 
         size="icon" 
-        className="flex flex-col h-auto w-full gap-1 text-muted-foreground hover:text-foreground" 
+        className="flex flex-col h-auto w-full gap-1 text-muted-foreground hover:text-foreground p-2" 
         {...props}
     >
         {children}
