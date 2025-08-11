@@ -64,6 +64,7 @@ const useTypingAnimation = (text: string, isOverlay?: boolean) => {
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
+        if (!text) return;
         if (isOverlay) {
             setDisplayedText(text);
             return;
@@ -265,7 +266,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                 Tindakan ini akan menghapus tugas secara permanen.
             </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter className="sm:justify-center">
+            <AlertDialogFooter>
               <AlertDialogCancel className="w-full sm:w-auto">Batal</AlertDialogCancel>
               <AlertDialogAction className="bg-primary w-full sm:w-auto" onClick={handleDelete}>Lanjutkan</AlertDialogAction>
             </AlertDialogFooter>
@@ -275,3 +276,5 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 });
 
 TaskCard.displayName = "TaskCard";
+
+    
