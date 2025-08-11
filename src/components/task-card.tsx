@@ -117,9 +117,11 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
     )}>
         <TaskDescriptionSpeaker task={task} />
         <ConceptImageGenerator task={task}>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-primary/80 hover:text-primary">
-            <Sparkles className="h-4 w-4" />
-            </Button>
+            {(openDialog) => (
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-primary/80 hover:text-primary" onClick={openDialog}>
+                    <Sparkles className="h-4 w-4" />
+                </Button>
+            )}
         </ConceptImageGenerator>
         <Button
           variant="ghost"
@@ -161,10 +163,12 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                       <span>Edit</span>
                   </DropdownMenuItem>
                   <ConceptImageGenerator task={task}>
-                      <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                          <Sparkles className="mr-2 h-4 w-4 text-primary" />
-                          <span>Konsep Visual AI</span>
+                    {(openDialog) => (
+                      <DropdownMenuItem onSelect={openDialog}>
+                        <Sparkles className="mr-2 h-4 w-4 text-primary" />
+                        <span>Konsep Visual AI</span>
                       </DropdownMenuItem>
+                    )}
                   </ConceptImageGenerator>
                    <DropdownMenuItem onClick={handleDelete} className="text-destructive">
                        <Trash2 className="mr-2 h-4 w-4" />

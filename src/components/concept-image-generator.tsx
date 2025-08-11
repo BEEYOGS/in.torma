@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -11,7 +12,7 @@ import type { Task } from '@/types/task';
 
 interface ConceptImageGeneratorProps {
   task: Task;
-  children: React.ReactNode;
+  children: (openDialog: () => void) => React.ReactNode;
 }
 
 export function ConceptImageGenerator({ task, children }: ConceptImageGeneratorProps) {
@@ -38,7 +39,6 @@ export function ConceptImageGenerator({ task, children }: ConceptImageGeneratorP
         title: 'Gagal Membuat Gambar',
         description: 'Terjadi kesalahan saat berkomunikasi dengan AI. Coba lagi nanti.',
       });
-      // Close the dialog on error
       setIsOpen(false);
     } finally {
       setIsLoading(false);
@@ -48,18 +48,20 @@ export function ConceptImageGenerator({ task, children }: ConceptImageGeneratorP
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
     if(open) {
-        // Reset state and generate image when dialog opens
         handleGenerateImage();
     } else {
-        // Reset state when dialog closes
         setImageUrl(null);
         setIsLoading(false);
     }
   }
 
+  const openDialog = () => {
+    handleOpenChange(true);
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      {children(openDialog)}
       <DialogContent className="max-w-2xl bg-background/80 backdrop-blur-lg">
         <DialogHeader>
           <DialogTitle className="font-headline">Konsep Visual AI</DialogTitle>
