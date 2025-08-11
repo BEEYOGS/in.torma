@@ -11,10 +11,9 @@ import { cn } from '@/lib/utils';
 
 interface TaskDescriptionSpeakerProps {
   task: Task;
-  isMobile?: boolean;
 }
 
-export function TaskDescriptionSpeaker({ task, isMobile = false }: TaskDescriptionSpeakerProps) {
+export function TaskDescriptionSpeaker({ task }: TaskDescriptionSpeakerProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const { toast } = useToast();
@@ -60,12 +59,11 @@ export function TaskDescriptionSpeaker({ task, isMobile = false }: TaskDescripti
     <Button 
         variant="ghost" 
         size="icon" 
-        className={cn("h-8 w-8 text-sky-400/80 hover:text-sky-400", isMobile && "w-auto px-2 justify-start")}
+        className={cn("h-8 w-8 text-sky-400/80 hover:text-sky-400")}
         onClick={handlePlaySound}
         disabled={isLoading}
     >
       {audio ? <X className="h-4 w-4" /> : (isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-4 w-4" />)}
-      {isMobile && <span className="ml-2 text-xs">Dengar</span>}
     </Button>
   );
 }

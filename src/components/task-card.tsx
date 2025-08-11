@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Pencil, GripVertical, Sparkles, Trash2, MoreVertical, AlertCircle } from 'lucide-react';
 import type { Task, TaskStatus } from '@/types/task';
 import { deleteTask } from '@/services/task-service';
@@ -33,7 +33,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { buttonVariants } from './ui/button';
 
 interface TaskCardProps extends React.HTMLAttributes<HTMLDivElement> {
   task: Task;
@@ -84,9 +83,11 @@ const useTypingAnimation = (text: string, isEnabled: boolean = true) => {
             } else {
                 // Pause at the end, then restart
                 timeoutId = setTimeout(() => {
-                    setDisplayedText('');
-                    charIndex = 0;
-                    type();
+                    if (isMounted) {
+                        setDisplayedText('');
+                        charIndex = 0;
+                        type();
+                    }
                 }, pauseBeforeRestart);
             }
         };
@@ -247,7 +248,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                         <GripVertical className="h-5 w-5" />
                     </div>
                 )}
-                 <TaskDescriptionSpeaker task={task} isMobile={isMobile} />
+                 <TaskDescriptionSpeaker task={task} />
                  <span
                     className={cn(
                     "text-xs font-medium min-w-[80px] text-left",
