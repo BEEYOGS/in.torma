@@ -66,10 +66,11 @@ export function Header({
   const YoutubeMusicIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-6 w-6">
       <circle cx="12" cy="12" r="12" fill="#FF0000"/>
-      <circle cx="12" cy="12" r="6" fill="#FFFFFF"/>
+      <circle cx="12" cy="12" r="6" fill="transparent" stroke="black" strokeWidth="1"/>
       <path d="M10 15V9L15 12L10 15Z" fill="black"/>
     </svg>
   );
+
 
   const MainMenu = ({ isMobile = false }) => (
     <DropdownMenu>
