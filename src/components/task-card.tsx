@@ -22,6 +22,17 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import React, { useState, useEffect } from 'react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { Dialog, DialogTrigger } from './ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 interface TaskCardProps extends React.HTMLAttributes<HTMLDivElement> {
   task: Task;
@@ -66,8 +77,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const animatedStatus = useTypingAnimation(task.status);
   const [isConceptDialogOpen, setIsConceptDialogOpen] = useState(false);
 
-  const handleDelete = async (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent triggering other click events
+  const handleDelete = async () => {
     try {
       await deleteTask(task.id);
       toast({
@@ -111,14 +121,16 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
         >
             <Pencil className="h-4 w-4" />
         </Button>
-        <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-destructive/70 hover:text-destructive pointer-events-auto"
-            onClick={handleDelete}
-        >
-            <Trash2 className="h-4 w-4" />
-        </Button>
+        <AlertDialogTrigger asChild>
+            <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-destructive/70 hover:text-destructive pointer-events-auto"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <Trash2 className="h-4 w-4" />
+            </Button>
+        </AlertDialogTrigger>
     </div>
   )
 
@@ -149,11 +161,12 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                     <Sparkles className="mr-2 h-4 w-4 text-primary" />
                     <span>Konsep Visual AI</span>
                 </DropdownMenuItem>
-
-                 <DropdownMenuItem onSelect={(e) => { e.preventDefault(); handleDelete(e as any) }} className="text-destructive">
-                     <Trash2 className="mr-2 h-4 w-4" />
-                     <span>Hapus</span>
-                 </DropdownMenuItem>
+                <AlertDialogTrigger asChild>
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive">
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        <span>Hapus</span>
+                    </DropdownMenuItem>
+                </AlertDialogTrigger>
             </DropdownMenuContent>
         </DropdownMenu>
     </div>
@@ -209,12 +222,26 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   )
 
   return (
-    <Dialog open={isConceptDialogOpen} onOpenChange={setIsConceptDialogOpen}>
-        <div ref={ref} {...props}>
-            {cardContent}
-        </div>
-        {isConceptDialogOpen && <ConceptImageGenerator task={task} />}
-    </Dialog>
+    <AlertDialog>
+        <Dialog open={isConceptDialogOpen} onOpenChange={setIsConceptDialogOpen}>
+            <div ref={ref} {...props}>
+                {cardContent}
+            </div>
+            {isConceptDialogOpen && <ConceptImageGenerator task={task} />}
+        </Dialog>
+        <AlertDialogContent className="glass-card">
+            <AlertDialogHeader>
+            <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
+            <AlertDialogDescription>
+                Tindakan ini tidak dapat dibatalkan. Ini akan menghapus tugas secara permanen dari penyimpanan.
+            </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">Lanjutkan</AlertDialogAction>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+    </AlertDialog>
   );
 });
 
