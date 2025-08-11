@@ -141,6 +141,60 @@ export function Header({
         </DropdownMenu>
 
       </nav>
+       <div className="flex items-center gap-1 md:hidden">
+         <DropdownMenu>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <DropdownMenuTrigger asChild>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-muted-foreground hover:text-foreground md:hidden"
+                            aria-label="App Menu"
+                        >
+                            <Grid3x3 />
+                        </Button>
+                    </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>Menu Lainnya</p>
+                </TooltipContent>
+            </Tooltip>
+            <DropdownMenuContent align="end" className="bg-popover/80 backdrop-blur-lg border-white/10 w-56">
+                <DropdownMenuLabel>Fitur</DropdownMenuLabel>
+                <DropdownMenuItem asChild>
+                    <TaskAnalytics tasks={tasks}>
+                        <button className="w-full flex items-center">
+                            <AreaChart className="mr-2 h-4 w-4"/>
+                            <span>Dasbor Analitik</span>
+                        </button>
+                    </TaskAnalytics>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                     <DailyBriefing tasks={tasks}>
+                         <button className="w-full flex items-center">
+                            <Users className="mr-2 h-4 w-4"/>
+                            <span>Rangkuman Harian</span>
+                         </button>
+                     </DailyBriefing>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                 <DropdownMenuLabel>Tautan Eksternal</DropdownMenuLabel>
+                <DropdownMenuItem asChild>
+                    <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full">
+                        <Youtube className="mr-2 h-4 w-4"/>
+                        <span>Buka YouTube</span>
+                    </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                     <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full">
+                        <Music className="mr-2 h-4 w-4"/>
+                        <span>Buka YouTube Music</span>
+                    </a>
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+       </div>
       
       <Button onClick={onNewTask} className="hidden md:inline-flex">
         <Plus className="mr-2 h-4 w-4" />

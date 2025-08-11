@@ -54,14 +54,14 @@ function MobileEmptyColumn() {
                     <polyline points="14 2 14 8 20 8"></polyline>
                 </svg>
             </div>
-            <p className="text-sm">Seret tugas ke sini</p>
+            <p className="text-sm">Kolom ini kosong.</p>
        </div>
     )
 }
 
 function DesktopEmptyColumn() {
   return (
-    <div className="flex flex-col items-center justify-center text-center p-4 text-xs text-muted-foreground/50 border-2 border-dashed border-border/20 rounded-lg">
+    <div className="flex flex-col items-center justify-center text-center p-4 text-xs text-muted-foreground/50 border-2 border-dashed border-border/20 rounded-lg min-h-[100px]">
       <p>Seret tugas ke sini</p>
     </div>
   )
