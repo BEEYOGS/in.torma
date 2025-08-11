@@ -92,6 +92,8 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const animatedStatus = useTypingAnimation(task.status);
   // State to manage whether the image generation has been initiated for the dialog
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isConceptDialogOpen, setIsConceptDialogOpen] = useState(false);
+
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent triggering other click events
@@ -155,41 +157,35 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   )
 
   const MobileActions = () => (
-      <div className="flex-shrink-0">
-          <Dialog onOpenChange={(open) => !open && setIsGenerating(false)}>
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreVertical className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                    align="end"
-                    className="bg-popover/80 backdrop-blur-lg border-white/10"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <DropdownMenuItem onSelect={() => onEdit?.(task)}>
-                        <Pencil className="mr-2 h-4 w-4" />
-                        <span>Edit</span>
-                    </DropdownMenuItem>
-                    
-                    <DialogTrigger asChild>
-                      <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                        <Sparkles className="mr-2 h-4 w-4 text-primary" />
-                        <span>Konsep Visual AI</span>
-                      </DropdownMenuItem>
-                    </DialogTrigger>
+    <div className="flex-shrink-0">
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <MoreVertical className="h-4 w-4" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+                align="end"
+                className="bg-popover/80 backdrop-blur-lg border-white/10"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <DropdownMenuItem onSelect={() => onEdit?.(task)}>
+                    <Pencil className="mr-2 h-4 w-4" />
+                    <span>Edit</span>
+                </DropdownMenuItem>
+                
+                <DropdownMenuItem onSelect={() => setIsConceptDialogOpen(true)}>
+                    <Sparkles className="mr-2 h-4 w-4 text-primary" />
+                    <span>Konsep Visual AI</span>
+                </DropdownMenuItem>
 
-                     <DropdownMenuItem onSelect={(e) => { e.preventDefault(); handleDelete(e as any) }} className="text-destructive">
-                         <Trash2 className="mr-2 h-4 w-4" />
-                         <span>Hapus</span>
-                     </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-            {/* The DialogContent is now a sibling to the DropdownMenu, controlled by the DialogTrigger inside it */}
-            <ConceptImageGenerator task={task} onOpen={handleDialogContentOpen} />
-          </Dialog>
-      </div>
+                 <DropdownMenuItem onSelect={(e) => { e.preventDefault(); handleDelete(e as any) }} className="text-destructive">
+                     <Trash2 className="mr-2 h-4 w-4" />
+                     <span>Hapus</span>
+                 </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    </div>
   )
 
   const cardContent = (
@@ -237,6 +233,11 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
               </div>
           </CardContent>
       </Card>
+      
+      {/* Dialog is now outside the card, controlled by local state */}
+      <Dialog open={isConceptDialogOpen} onOpenChange={setIsConceptDialogOpen}>
+        <ConceptImageGenerator task={task} onOpen={handleDialogContentOpen} />
+      </Dialog>
     </>
   )
 
