@@ -44,17 +44,17 @@ const statusStyles: Record<TaskStatus, { text: string; hoverOutline: string, col
   'Proses Desain': {
     text: 'text-orange-500',
     hoverOutline: 'hover:outline-orange-500/50',
-    color: 'rgb(249 115 22)', // orange-500
+    color: 'hsl(24, 95%, 53%)', // orange-500
   },
   'Proses ACC': {
     text: 'text-sky-500',
     hoverOutline: 'hover:outline-sky-500/50',
-    color: 'rgb(14 165 233)', // sky-500
+    color: 'hsl(204, 90%, 53%)', // sky-500
   },
   'Selesai': {
     text: 'text-green-500',
     hoverOutline: 'hover:outline-green-500/50',
-    color: 'rgb(34 197 94)', // green-500
+    color: 'hsl(142, 71%, 45%)', // green-500
   },
 };
 
@@ -75,15 +75,18 @@ const useTypingAnimation = (text: string, isEnabled: boolean = true) => {
         let charIndex = 0;
         let isPaused = false;
         let pauseUntil = 0;
+        let timeoutId: NodeJS.Timeout;
 
         const animate = (timestamp: number) => {
             if (!isMounted) return;
 
             if (isPaused) {
                 if (timestamp >= pauseUntil) {
-                    isPaused = false;
-                    charIndex = 0;
-                    setDisplayedText('');
+                   timeoutId = setTimeout(() => {
+                     isPaused = false;
+                     charIndex = 0;
+                     setDisplayedText('');
+                   }, pauseBeforeRestart);
                 }
             } else {
                 if (timestamp - lastUpdateTime >= typingSpeed) {
@@ -96,7 +99,7 @@ const useTypingAnimation = (text: string, isEnabled: boolean = true) => {
                         charIndex++;
                     } else {
                         isPaused = true;
-                        pauseUntil = timestamp + pauseBeforeRestart;
+                        pauseUntil = timestamp;
                     }
                 }
             }
@@ -109,6 +112,7 @@ const useTypingAnimation = (text: string, isEnabled: boolean = true) => {
         return () => {
             isMounted = false;
             cancelAnimationFrame(animationFrameId);
+            clearTimeout(timeoutId);
         };
     }, [text, isEnabled, pauseBeforeRestart]);
 
@@ -287,7 +291,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
             </AlertDialogHeader>
             <AlertDialogFooter className="flex-row justify-end gap-2">
                 <AlertDialogCancel>Batal</AlertDialogCancel>
-                <AlertDialogAction className="bg-destructive" onClick={handleDelete}>Lanjutkan</AlertDialogAction>
+                <AlertDialogAction className="bg-destructive hover:bg-destructive/90" onClick={handleDelete}>Lanjutkan</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>
