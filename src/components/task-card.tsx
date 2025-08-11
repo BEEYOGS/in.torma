@@ -73,7 +73,6 @@ const useTypingAnimation = (text: string, isOverlay?: boolean) => {
             let i = 0;
             setDisplayedText('');
             
-            // Clear any existing timeouts to prevent multiple loops
             if (intervalRef.current) clearInterval(intervalRef.current);
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
@@ -83,7 +82,6 @@ const useTypingAnimation = (text: string, isOverlay?: boolean) => {
                     i++;
                 } else {
                     if (intervalRef.current) clearInterval(intervalRef.current);
-                    // Wait for 3 seconds before restarting
                     timeoutRef.current = setTimeout(animate, 3000); 
                 }
             }, 150);
@@ -267,9 +265,9 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                 Tindakan ini akan menghapus tugas secara permanen.
             </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter>
+            <AlertDialogFooter className="flex-col-reverse sm:flex-row !justify-center sm:!justify-end sm:space-x-2">
+              <AlertDialogCancel className="w-full sm:w-auto">Batal</AlertDialogCancel>
               <AlertDialogAction className="w-full sm:w-auto" onClick={handleDelete}>Lanjutkan</AlertDialogAction>
-              <AlertDialogCancel className="w-full sm:w-auto mt-2 sm:mt-0">Batal</AlertDialogCancel>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>
