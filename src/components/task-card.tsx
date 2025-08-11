@@ -29,20 +29,20 @@ interface TaskCardProps extends React.HTMLAttributes<HTMLDivElement> {
   isOverlay?: boolean;
 }
 
-const statusStyles: Record<TaskStatus, { text: string; hover: string, color: string }> = {
+const statusStyles: Record<TaskStatus, { text: string; hoverOutline: string, color: string }> = {
   'Proses Desain': {
     text: 'text-orange-500',
-    hover: 'hover:border-orange-500/50 hover:shadow-lg hover:shadow-orange-500/10',
+    hoverOutline: 'hover:outline-orange-500/50',
     color: 'rgb(249 115 22)', // orange-500
   },
   'Proses ACC': {
     text: 'text-sky-500',
-    hover: 'hover:border-sky-500/50 hover:shadow-lg hover:shadow-sky-500/10',
+    hoverOutline: 'hover:outline-sky-500/50',
     color: 'rgb(14 165 233)', // sky-500
   },
   'Selesai': {
     text: 'text-green-500',
-    hover: 'hover:border-green-500/50 hover:shadow-lg hover:shadow-green-500/10',
+    hoverOutline: 'hover:outline-green-500/50',
     color: 'rgb(34 197 94)', // green-500
   },
 };
@@ -116,7 +116,6 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
     <div className={cn(
         "absolute top-2 right-2 flex items-center gap-1 transition-opacity opacity-0 group-hover:opacity-100 pointer-events-none"
     )}>
-        <TaskDescriptionSpeaker task={task} />
         <Button 
             variant="ghost" 
             size="icon" 
@@ -189,8 +188,8 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 
   const cardContent = (
     <Card className={cn(
-        "relative group overflow-hidden bg-card/20 border border-white/10 transition-all duration-300 shadow-md shadow-transparent",
-        statusStyles[task.status].hover,
+        "relative group overflow-hidden bg-card/20 border border-white/10 transition-all duration-300 outline outline-1 outline-transparent",
+        statusStyles[task.status].hoverOutline,
         isOverlay && "ring-2 ring-primary"
     )}>
         <CardHeader className="relative p-4 pb-2">
@@ -244,5 +243,3 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 });
 
 TaskCard.displayName = "TaskCard";
-
-    
