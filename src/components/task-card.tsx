@@ -168,7 +168,12 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                     <span>Edit</span>
                 </DropdownMenuItem>
                 
-                <DropdownMenuItem onSelect={(e) => { e.preventDefault(); setIsConceptDialogOpen(true); }}>
+                <DropdownMenuItem 
+                    onClick={(e) => { 
+                        e.preventDefault(); 
+                        setIsConceptDialogOpen(true); 
+                    }}
+                >
                     <Sparkles className="mr-2 h-4 w-4 text-primary" />
                     <span>Konsep Visual AI</span>
                 </DropdownMenuItem>
