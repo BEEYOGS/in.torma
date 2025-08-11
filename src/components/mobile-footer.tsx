@@ -55,12 +55,12 @@ export function MobileFooter({
                     <div className="w-12" /> 
 
                     <div className="flex-1 grid grid-cols-2 gap-1 text-center">
-                        <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">
+                        <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="h-auto w-full flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-foreground p-2">
                             <IconButton label="YouTube">
                                 <Youtube className="h-6 w-6" />
                             </IconButton>
                         </a>
-                        <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer">
+                        <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer" className="h-auto w-full flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-foreground p-2">
                              <IconButton label="Music">
                                 <Music className="h-6 w-6" />
                             </IconButton>
