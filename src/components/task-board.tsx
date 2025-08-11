@@ -264,7 +264,6 @@ function Column({ id, status, tasks, onEditTask, activeTask }: ColumnProps) {
     const isColumnEmpty = tasks.length === 0;
     const isDraggingOverEmptyColumn = activeTask && activeTask.status !== status && isColumnEmpty;
 
-
     return (
       <div
         ref={setNodeRef}
