@@ -278,7 +278,7 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
                 )}
                 />
             <DialogFooter>
-              <Button type="submit">Simpan</Button>
+              <Button type="submit" className="shadow-[0_0_20px_hsl(var(--primary)/50%)]">Simpan</Button>
             </DialogFooter>
           </form>
         </Form>
