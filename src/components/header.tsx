@@ -121,13 +121,11 @@ export function Header({
                 <DropdownMenuItem asChild>
                     <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer flex items-center">
                         <Youtube className="mr-2 h-4 w-4"/>
-                        <span>Buka YouTube</span>
                     </a>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                      <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer flex items-center">
                         <Music className="mr-2 h-4 w-4"/>
-                        <span>Buka YouTube Music</span>
                     </a>
                 </DropdownMenuItem>
             </DropdownMenuContent>
@@ -176,13 +174,11 @@ export function Header({
                 <DropdownMenuItem asChild>
                     <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer flex items-center">
                         <Youtube className="mr-2 h-4 w-4"/>
-                        <span>Buka YouTube</span>
                     </a>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                      <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer flex items-center">
                         <Music className="mr-2 h-4 w-4"/>
-                        <span>Buka YouTube Music</span>
                     </a>
                 </DropdownMenuItem>
             </DropdownMenuContent>
