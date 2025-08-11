@@ -10,9 +10,10 @@ import { TaskDialog } from '@/components/task-dialog';
 import { EmptyState } from '@/components/empty-state';
 import { MobileFooter } from '@/components/mobile-footer';
 import { TaskAnalytics } from '@/components/task-analytics';
+import { subDays } from 'date-fns';
 
 export default function Home() {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
@@ -22,7 +23,7 @@ export default function Home() {
 
   useEffect(() => {
     const unsubscribe = listenToTasks((fetchedTasks) => {
-      setTasks(fetchedTasks);
+      setAllTasks(fetchedTasks);
       setLoading(false);
     });
     return () => unsubscribe();
@@ -54,7 +55,14 @@ export default function Home() {
     }
   }
 
-  const filteredTasks = tasks.filter(task => 
+  const sevenDaysAgo = subDays(new Date(), 7);
+
+  const visibleTasks = allTasks.filter(task => {
+    const taskDate = new Date(parseInt(task.id, 10));
+    return taskDate >= sevenDaysAgo;
+  });
+
+  const filteredTasks = visibleTasks.filter(task => 
     task.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     task.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -62,7 +70,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-transparent">
       <Header 
-        tasks={tasks}
+        tasks={allTasks}
         onAiTaskCreate={handleAiTaskCreate}
         onNewTask={() => handleOpenDialogForNewTask()}
         searchTerm={searchTerm}
@@ -82,7 +90,7 @@ export default function Home() {
                 <h3 className="text-lg font-semibold">Tidak ada hasil</h3>
                 <p>Coba kata kunci pencarian yang lain.</p>
             </div>
-        ) : tasks.length === 0 ? (
+        ) : visibleTasks.length === 0 ? (
           <EmptyState />
         ) : (
           <TaskBoard 
@@ -98,9 +106,9 @@ export default function Home() {
           task={editingTask}
           prefillData={prefillData}
       />
-      <TaskAnalytics tasks={tasks} isOpen={isAnalyticsOpen} onOpenChange={setIsAnalyticsOpen} />
+      <TaskAnalytics tasks={allTasks} isOpen={isAnalyticsOpen} onOpenChange={setIsAnalyticsOpen} />
       <MobileFooter
-        tasks={tasks}
+        tasks={allTasks}
         onNewTask={() => handleOpenDialogForNewTask()}
         onAiTaskCreate={handleAiTaskCreate}
         onAnalyticsOpen={() => setIsAnalyticsOpen(true)}

@@ -48,7 +48,7 @@ const taskSchema = z.object({
   customerName: z.string().min(1, 'Nama konsumen wajib diisi.'),
   description: z.string().min(1, 'Deskripsi wajib diisi.'),
   status: z.enum(['Proses Desain', 'Proses ACC', 'Selesai']),
-  source: z.enum(['N', 'CS', 'Admin']),
+  source: z.enum(['N', 'CS', 'Admin', 'G']),
   dueDate: z.date().optional(),
 });
 
@@ -221,7 +221,7 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="bg-popover/80 backdrop-blur-lg border-white/10">
-                      {(['N', 'CS', 'Admin'] as TaskSource[]).map(source => (
+                      {(['N', 'CS', 'Admin', 'G'] as TaskSource[]).map(source => (
                           <SelectItem key={source} value={source}>{source}</SelectItem>
                       ))}
                     </SelectContent>

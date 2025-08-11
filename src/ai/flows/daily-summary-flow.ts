@@ -20,7 +20,7 @@ const DailySummaryInputSchema = z.object({
     customerName: z.string(),
     description: z.string(),
     status: z.enum(['Proses Desain', 'Proses ACC', 'Selesai']),
-    source: z.enum(['N', 'CS', 'Admin']),
+    source: z.enum(['N', 'CS', 'Admin', 'G']),
     dueDate: z.string().optional(),
   })).describe('An array of active tasks to be summarized.'),
 });

@@ -1,5 +1,5 @@
 export type TaskStatus = 'Proses Desain' | 'Proses ACC' | 'Selesai';
-export type TaskSource = 'N' | 'CS' | 'Admin';
+export type TaskSource = 'N' | 'CS' | 'Admin' | 'G';
 
 export interface Task {
   id: string;
