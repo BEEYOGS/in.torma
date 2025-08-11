@@ -22,13 +22,10 @@ const GenerateConceptImageOutputSchema = z.object({
 });
 export type GenerateConceptImageOutput = z.infer<typeof GenerateConceptImageOutputSchema>;
 
-// This is the exported function that the UI calls.
-// It simply calls the Genkit flow.
 export async function generateConceptImage(input: GenerateConceptImageInput): Promise<GenerateConceptImageOutput> {
   return generateConceptImageFlow(input);
 }
 
-// This is the Genkit flow definition.
 const generateConceptImageFlow = ai.defineFlow(
   {
     name: 'generateConceptImageFlow',
@@ -36,17 +33,12 @@ const generateConceptImageFlow = ai.defineFlow(
     outputSchema: GenerateConceptImageOutputSchema,
   },
   async ({ description }) => {
-    // Create a simple, direct text prompt for the image generation model.
     const textPrompt = `A digital painting of concept art for: ${description}, high detail, cinematic lighting.`;
 
     const {media} = await ai.generate({
-      // IMPORTANT: Use the correct model for image generation.
       model: 'googleai/gemini-2.0-flash-preview-image-generation',
-      // The prompt should be a simple string.
       prompt: textPrompt,
       config: {
-        // According to the latest documentation, this model requires both TEXT and IMAGE.
-        // Even if we only expect an image, this configuration is necessary.
         responseModalities: ['IMAGE', 'TEXT'],
       },
     });

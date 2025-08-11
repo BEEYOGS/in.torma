@@ -1,14 +1,14 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
-import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
+import { DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { generateConceptImage } from '@/ai/flows/generate-concept-image-flow';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Wand2 } from 'lucide-react';
 import type { Task } from '@/types/task';
-import { Dialog } from '@radix-ui/react-dialog';
+import { Button } from './ui/button';
 
 interface ConceptImageGeneratorProps {
   task: Task;
@@ -41,20 +41,13 @@ export function ConceptImageGenerator({ task }: ConceptImageGeneratorProps) {
       setIsLoading(false);
     }
   };
-  
-  useEffect(() => {
-    // This effect now triggers when the dialog is opened by the parent.
-    handleGenerateImage();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [task.id]); // Rerun only if the task itself changes
-
 
   return (
       <DialogContent className="max-w-2xl bg-background/80 backdrop-blur-lg">
         <DialogHeader>
           <DialogTitle className="font-headline">Konsep Visual AI</DialogTitle>
           <DialogDescription>
-            Berikut adalah konsep visual yang dibuat oleh AI berdasarkan deskripsi: "{task.description}"
+            Buat konsep visual berdasarkan deskripsi tugas: "{task.description}"
           </DialogDescription>
         </DialogHeader>
         <div className="relative flex items-center justify-center min-h-[400px] bg-secondary/30 rounded-md overflow-hidden">
@@ -64,7 +57,7 @@ export function ConceptImageGenerator({ task }: ConceptImageGeneratorProps) {
                 <p>AI sedang menggambar...</p>
             </div>
           )}
-          {imageUrl && (
+          {!isLoading && imageUrl && (
             <Image 
                 src={imageUrl} 
                 alt={`AI concept for ${task.description}`} 
@@ -74,7 +67,18 @@ export function ConceptImageGenerator({ task }: ConceptImageGeneratorProps) {
                 unoptimized
             />
           )}
+          {!isLoading && !imageUrl && (
+            <div className="flex flex-col items-center gap-4 text-muted-foreground">
+              <Wand2 className="h-12 w-12"/>
+              <p>Klik tombol di bawah untuk memulai.</p>
+            </div>
+          )}
         </div>
+        <DialogFooter>
+          <Button onClick={handleGenerateImage} disabled={isLoading} className="w-full">
+            {isLoading ? 'Membuat...' : 'Buat Gambar Konsep'}
+          </Button>
+        </DialogFooter>
       </DialogContent>
   );
 }

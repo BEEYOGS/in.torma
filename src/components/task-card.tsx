@@ -21,7 +21,7 @@ import { TaskDescriptionSpeaker } from './task-description-speaker';
 import { useIsMobile } from '@/hooks/use-mobile';
 import React, { useState, useEffect } from 'react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
-import { Dialog } from './ui/dialog';
+import { Dialog, DialogTrigger } from './ui/dialog';
 
 interface TaskCardProps extends React.HTMLAttributes<HTMLDivElement> {
   task: Task;
@@ -49,38 +49,12 @@ const statusStyles: Record<TaskStatus, { text: string; hoverOutline: string, col
 
 const useTypingAnimation = (text: string) => {
     const [displayedText, setDisplayedText] = useState('');
-    const [isDeleting, setIsDeleting] = useState(false);
-    const [loopNum, setLoopNum] = useState(0);
-
+    
+    // Simple implementation: just show the full text.
+    // The animation was causing issues with re-renders.
     useEffect(() => {
-        const typingSpeed = 150;
-        const deletingSpeed = 75;
-        const pauseDuration = 2000;
-
-        let ticker: NodeJS.Timeout;
-
-        const handleTyping = () => {
-            const fullText = text;
-            const updatedText = isDeleting
-                ? fullText.substring(0, displayedText.length - 1)
-                : fullText.substring(0, displayedText.length + 1);
-
-            setDisplayedText(updatedText);
-
-            if (!isDeleting && updatedText === fullText) {
-                // Pause at end
-                ticker = setTimeout(() => setIsDeleting(true), pauseDuration);
-            } else if (isDeleting && updatedText === '') {
-                // Finish deleting
-                setIsDeleting(false);
-                setLoopNum(loopNum + 1);
-            }
-        };
-        
-        ticker = setTimeout(handleTyping, isDeleting ? deletingSpeed : typingSpeed);
-        
-        return () => clearTimeout(ticker);
-    }, [displayedText, isDeleting, text, loopNum]);
+      setDisplayedText(text);
+    }, [text]);
 
     return displayedText;
 }
@@ -116,17 +90,16 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
     <div className={cn(
         "absolute top-2 right-2 flex items-center gap-1 transition-opacity opacity-0 group-hover:opacity-100 pointer-events-none"
     )}>
-        <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-8 w-8 text-primary/80 hover:text-primary pointer-events-auto"
-            onClick={(e) => {
-                e.stopPropagation();
-                setIsConceptDialogOpen(true);
-            }}
-        >
-            <Sparkles className="h-4 w-4" />
-        </Button>
+        <DialogTrigger asChild>
+            <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8 text-primary/80 hover:text-primary pointer-events-auto"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <Sparkles className="h-4 w-4" />
+            </Button>
+        </DialogTrigger>
         <Button
           variant="ghost"
           size="icon"
@@ -153,7 +126,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
     <div className="flex-shrink-0">
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => e.stopPropagation()}>
                     <MoreVertical className="h-4 w-4" />
                 </Button>
             </DropdownMenuTrigger>
@@ -168,7 +141,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                 </DropdownMenuItem>
                 
                 <DropdownMenuItem 
-                    onClick={(e) => { 
+                    onSelect={(e) => { 
                         e.preventDefault(); 
                         setIsConceptDialogOpen(true); 
                     }}
@@ -187,14 +160,16 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   )
 
   const cardContent = (
-    <Card className={cn(
-        "relative group overflow-hidden bg-card/20 border border-white/10 transition-all duration-300 outline outline-1 outline-transparent",
+    <Card 
+        onClick={() => !isMobile && onEdit?.(task)}
+        className={cn(
+        "relative group overflow-hidden bg-card/20 border border-white/10 transition-all duration-300 outline outline-1 outline-transparent cursor-pointer",
         statusStyles[task.status].hoverOutline,
         isOverlay && "ring-2 ring-primary"
     )}>
         <CardHeader className="relative p-4 pb-2">
             <div className="flex justify-between items-start gap-2">
-                <div className="flex-grow min-w-0" onClick={() => onEdit?.(task)}>
+                <div className="flex-grow min-w-0" onClick={(e) => { isMobile && e.stopPropagation(); onEdit?.(task); }}>
                     <CardTitle className="text-base font-headline mb-1 text-foreground truncate">
                         {task.customerName}
                     </CardTitle>
@@ -222,8 +197,9 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                  <span
                     style={{ '--caret-color': statusStyles[task.status].color } as React.CSSProperties}
                     className={cn(
-                    "text-xs font-medium min-w-[80px] text-left transition-opacity duration-300 typing-cursor",
-                    statusStyles[task.status].text
+                    "text-xs font-medium min-w-[80px] text-left transition-opacity duration-300",
+                    statusStyles[task.status].text,
+                    !isOverlay && "typing-cursor"
                  )}>
                     {animatedStatus || ''}
                 </span>
@@ -233,12 +209,12 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   )
 
   return (
-    <div ref={ref} {...props}>
-        {cardContent}
-        <Dialog open={isConceptDialogOpen} onOpenChange={setIsConceptDialogOpen}>
-            <ConceptImageGenerator task={task} />
-        </Dialog>
-    </div>
+    <Dialog open={isConceptDialogOpen} onOpenChange={setIsConceptDialogOpen}>
+        <div ref={ref} {...props}>
+            {cardContent}
+        </div>
+        {isConceptDialogOpen && <ConceptImageGenerator task={task} />}
+    </Dialog>
   );
 });
 
