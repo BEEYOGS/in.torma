@@ -72,7 +72,7 @@ const useTypingAnimation = (text: string, isOverlay?: boolean) => {
 
         const animate = () => {
             let i = 0;
-            setDisplayedText('');
+            setDisplayedText(''); 
             
             if (intervalRef.current) clearInterval(intervalRef.current);
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -244,7 +244,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                     statusStyles[task.status].text,
                     !isOverlay && "typing-cursor"
                  )}>
-                    {animatedStatus || ''}
+                    {animatedStatus}
                 </span>
             </div>
         </CardContent>
