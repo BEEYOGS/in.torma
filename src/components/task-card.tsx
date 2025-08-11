@@ -58,14 +58,28 @@ const statusStyles: Record<TaskStatus, { text: string; hoverOutline: string, col
   },
 };
 
-const useTypingAnimation = (text: string) => {
+const useTypingAnimation = (text: string, isOverlay?: boolean) => {
     const [displayedText, setDisplayedText] = useState('');
-    
-    // Simple implementation: just show the full text.
-    // The animation was causing issues with re-renders.
+
     useEffect(() => {
-      setDisplayedText(text);
-    }, [text]);
+      if (isOverlay) {
+        setDisplayedText(text);
+        return;
+      }
+      
+      let i = 0;
+      setDisplayedText('');
+      const intervalId = setInterval(() => {
+        setDisplayedText(text.slice(0, i + 1));
+        i++;
+        if (i >= text.length) {
+          clearInterval(intervalId);
+        }
+      }, 50);
+
+      return () => clearInterval(intervalId);
+    }, [text, isOverlay]);
+
 
     return displayedText;
 }
@@ -74,7 +88,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   ({ task, onEdit, isOverlay, ...props }, ref) => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const animatedStatus = useTypingAnimation(task.status);
+  const animatedStatus = useTypingAnimation(task.status, isOverlay);
   const [isConceptDialogOpen, setIsConceptDialogOpen] = useState(false);
 
   const handleDelete = async () => {
@@ -236,9 +250,9 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                 Tindakan ini akan menghapus tugas secara permanen.
             </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter>
-            <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>Lanjutkan</AlertDialogAction>
+            <AlertDialogFooter className="sm:justify-start">
+              <AlertDialogAction className="w-full sm:w-auto" onClick={handleDelete}>Lanjutkan</AlertDialogAction>
+              <AlertDialogCancel className="w-full sm:w-auto mt-2 sm:mt-0">Batal</AlertDialogCancel>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>
