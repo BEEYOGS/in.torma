@@ -42,6 +42,13 @@ const generateConceptImageFlow = ai.defineFlow(
       config: {
         // According to documentation, both 'TEXT' and 'IMAGE' are required.
         responseModalities: ['TEXT', 'IMAGE'],
+        // Relax safety settings to reduce chances of blocking harmless prompts.
+        safetySettings: [
+          {
+            category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+            threshold: 'BLOCK_NONE',
+          },
+        ]
       },
     });
 
