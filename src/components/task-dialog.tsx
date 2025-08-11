@@ -61,6 +61,12 @@ interface TaskDialogProps {
   prefillData?: Partial<TaskFormValues & { dueDate?: string | Date }>;
 }
 
+const statusColorMap: Record<TaskStatus, string> = {
+    'Proses Desain': 'bg-orange-500',
+    'Proses ACC': 'bg-sky-500',
+    'Selesai': 'bg-green-500',
+};
+
 export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDialogProps) {
   const { toast } = useToast();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -190,7 +196,10 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
                           <FormControl>
                             <RadioGroupItem value={status} />
                           </FormControl>
-                          <FormLabel className="font-normal">{status}</FormLabel>
+                          <div className="flex items-center gap-2">
+                             <span className={cn("h-2 w-2 rounded-full", statusColorMap[status])} />
+                             <FormLabel className="font-normal">{status}</FormLabel>
+                          </div>
                         </FormItem>
                       ))}
                     </RadioGroup>
