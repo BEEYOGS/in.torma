@@ -19,8 +19,9 @@ import { cn } from '@/lib/utils';
 import { ConceptImageGenerator } from './concept-image-generator';
 import { TaskDescriptionSpeaker } from './task-description-speaker';
 import { useIsMobile } from '@/hooks/use-mobile';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
+import { Dialog, DialogTrigger } from './ui/dialog';
 
 interface TaskCardProps extends React.HTMLAttributes<HTMLDivElement> {
   task: Task;
@@ -89,9 +90,10 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const animatedStatus = useTypingAnimation(task.status);
-  const [isConceptDialogOpen, setIsConceptDialogOpen] = useState(false);
+  // State to manage whether the image generation has been initiated for the dialog
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  const handleDelete = async (e: React.MouseEvent | Event) => {
+  const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent triggering other click events
     try {
       await deleteTask(task.id);
@@ -108,18 +110,28 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
       });
     }
   };
+
+  // This callback will be triggered by the ConceptImageGenerator when it's ready to start fetching.
+  const handleDialogContentOpen = useCallback(() => {
+    setIsGenerating(true);
+  }, []);
   
   // Create a date object in a way that avoids timezone shifts from the YYYY-MM-DD string.
   const displayDate = task.dueDate ? new Date(`${task.dueDate}T00:00:00`) : null;
-  
+
   const DesktopActions = () => (
     <div className={cn(
         "absolute top-2 right-2 flex items-center gap-1 transition-opacity opacity-0 group-hover:opacity-100"
     )}>
         <TaskDescriptionSpeaker task={task} />
-        <Button variant="ghost" size="icon" className="h-8 w-8 text-primary/80 hover:text-primary" onClick={() => setIsConceptDialogOpen(true)}>
-            <Sparkles className="h-4 w-4" />
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-primary/80 hover:text-primary">
+                <Sparkles className="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+          <ConceptImageGenerator task={task} onOpen={handleDialogContentOpen}/>
+        </Dialog>
         <Button
           variant="ghost"
           size="icon"
@@ -144,31 +156,39 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 
   const MobileActions = () => (
       <div className="flex-shrink-0">
-          <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <MoreVertical className="h-4 w-4" />
-                  </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                  align="end"
-                  className="bg-popover/80 backdrop-blur-lg border-white/10"
-                  onClick={(e) => e.stopPropagation()}
-              >
-                  <DropdownMenuItem onSelect={() => onEdit?.(task)}>
-                      <Pencil className="mr-2 h-4 w-4" />
-                      <span>Edit</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={(e) => { e.preventDefault(); setIsConceptDialogOpen(true); }}>
-                    <Sparkles className="mr-2 h-4 w-4 text-primary" />
-                    <span>Konsep Visual AI</span>
-                  </DropdownMenuItem>
-                   <DropdownMenuItem onSelect={handleDelete} className="text-destructive">
-                       <Trash2 className="mr-2 h-4 w-4" />
-                       <span>Hapus</span>
-                   </DropdownMenuItem>
-              </DropdownMenuContent>
-          </DropdownMenu>
+          <Dialog onOpenChange={(open) => !open && setIsGenerating(false)}>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <MoreVertical className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                    align="end"
+                    className="bg-popover/80 backdrop-blur-lg border-white/10"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <DropdownMenuItem onSelect={() => onEdit?.(task)}>
+                        <Pencil className="mr-2 h-4 w-4" />
+                        <span>Edit</span>
+                    </DropdownMenuItem>
+                    
+                    <DialogTrigger asChild>
+                      <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                        <Sparkles className="mr-2 h-4 w-4 text-primary" />
+                        <span>Konsep Visual AI</span>
+                      </DropdownMenuItem>
+                    </DialogTrigger>
+
+                     <DropdownMenuItem onSelect={(e) => { e.preventDefault(); handleDelete(e as any) }} className="text-destructive">
+                         <Trash2 className="mr-2 h-4 w-4" />
+                         <span>Hapus</span>
+                     </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+            {/* The DialogContent is now a sibling to the DropdownMenu, controlled by the DialogTrigger inside it */}
+            <ConceptImageGenerator task={task} onOpen={handleDialogContentOpen} />
+          </Dialog>
       </div>
   )
 
@@ -181,15 +201,15 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
       )}>
           <CardHeader className="relative p-4 pb-2">
               <div className="flex justify-between items-start gap-2">
-                  <div className="flex-grow" onClick={() => onEdit?.(task)}>
-                      <CardTitle className="text-base font-headline mb-1 text-foreground">
+                  <div className="flex-grow min-w-0" onClick={() => onEdit?.(task)}>
+                      <CardTitle className="text-base font-headline mb-1 text-foreground truncate">
                           {task.customerName}
                       </CardTitle>
-                      <CardDescription className="text-sm">{task.description}</CardDescription>
+                      <CardDescription className="text-sm truncate">{task.description}</CardDescription>
                   </div>
                   {isMobile ? <MobileActions /> : <DesktopActions />}
               </div>
-              <div className="flex items-center gap-2 mt-2">
+              <div className="flex items-center gap-2 mt-2 flex-wrap">
                   {displayDate && (
                     <Badge variant="outline" className="border-white/20 bg-black/10">
                         {format(displayDate, 'dd MMM yyyy')}
@@ -217,11 +237,6 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
               </div>
           </CardContent>
       </Card>
-      <ConceptImageGenerator 
-        task={task} 
-        isOpen={isConceptDialogOpen} 
-        onOpenChange={setIsConceptDialogOpen}
-      />
     </>
   )
 

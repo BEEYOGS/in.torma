@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
+import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { generateConceptImage } from '@/ai/flows/generate-concept-image-flow';
 import { Loader2 } from 'lucide-react';
@@ -11,11 +11,10 @@ import type { Task } from '@/types/task';
 
 interface ConceptImageGeneratorProps {
   task: Task;
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
+  onOpen: () => void;
 }
 
-export function ConceptImageGenerator({ task, isOpen, onOpenChange }: ConceptImageGeneratorProps) {
+export function ConceptImageGenerator({ task, onOpen }: ConceptImageGeneratorProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { toast } = useToast();
@@ -38,25 +37,25 @@ export function ConceptImageGenerator({ task, isOpen, onOpenChange }: ConceptIma
         title: 'Gagal Membuat Gambar',
         description: 'Terjadi kesalahan saat berkomunikasi dengan AI. Coba lagi nanti.',
       });
-      onOpenChange(false);
     } finally {
       setIsLoading(false);
     }
   };
   
   useEffect(() => {
-    if (isOpen) {
-      handleGenerateImage();
-    } else {
-      setImageUrl(null);
-      setIsLoading(false);
-    }
+    // This effect now triggers when the dialog is opened via the onOpen callback
+    handleGenerateImage();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
+  }, [task.id]); // Rerun only if the task itself changes
+
+  // The onOpen prop is called by the parent to let us know to start loading.
+  // The actual dialog open state is now controlled by the parent Dialog component.
+  useEffect(() => {
+    onOpen();
+  }, [onOpen]);
 
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl bg-background/80 backdrop-blur-lg">
         <DialogHeader>
           <DialogTitle className="font-headline">Konsep Visual AI</DialogTitle>
@@ -83,6 +82,6 @@ export function ConceptImageGenerator({ task, isOpen, onOpenChange }: ConceptIma
           )}
         </div>
       </DialogContent>
-    </Dialog>
   );
 }
+
