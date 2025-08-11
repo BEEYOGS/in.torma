@@ -8,7 +8,7 @@ import { TaskAnalytics } from '@/components/task-analytics';
 import { AiTaskCreator } from '@/components/ai-task-creator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, Youtube, Music, Grid3x3, AreaChart, Users } from 'lucide-react';
+import { Plus, Search, Youtube, Music, Ellipsis, AreaChart, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
@@ -31,29 +31,27 @@ export function Header({
   
   const Logo = () => (
     <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
+      width="32"
+      height="32"
+      viewBox="0 0 32 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="h-6 w-6 text-primary"
+      className="h-8 w-8 text-primary"
     >
-      <rect
-        x="4"
-        y="4"
-        width="6"
-        height="16"
-        rx="2"
-        fill="currentColor"
-        opacity="0.6"
+      <defs>
+        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="hsl(var(--primary))" />
+          <stop offset="100%" stopColor="hsl(260 85% 65%)" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M16 4C9.37258 4 4 9.37258 4 16C4 22.6274 9.37258 28 16 28C22.6274 28 28 22.6274 28 16C28 9.37258 22.6274 4 16 4ZM16 25C11.0294 25 7 20.9706 7 16C7 11.0294 11.0294 7 16 7C20.9706 7 25 11.0294 25 16C25 20.9706 20.9706 25 16 25Z"
+        fill="url(#grad1)"
+        opacity="0.4"
       />
-      <rect
-        x="14"
-        y="4"
-        width="6"
-        height="10"
-        rx="2"
-        fill="currentColor"
+      <path
+        d="M16 9C12.134 9 9 12.134 9 16C9 19.866 12.134 23 16 23C19.866 23 23 19.866 23 16C23 12.134 19.866 9 16 9ZM16 20C13.7909 20 12 18.2091 12 16C12 13.7909 13.7909 12 16 12C18.2091 12 20 13.7909 20 16C20 18.2091 18.2091 20 16 20Z"
+        fill="url(#grad1)"
       />
     </svg>
   );
@@ -92,7 +90,7 @@ export function Header({
                             className="text-muted-foreground hover:text-foreground"
                             aria-label="App Menu"
                         >
-                            <Grid3x3 />
+                            <Ellipsis />
                         </Button>
                     </DropdownMenuTrigger>
                 </TooltipTrigger>
@@ -144,10 +142,10 @@ export function Header({
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="text-muted-foreground hover:text-foreground md:hidden"
+                            className="text-muted-foreground hover:text-foreground"
                             aria-label="App Menu"
                         >
-                            <Grid3x3 />
+                            <Ellipsis />
                         </Button>
                     </DropdownMenuTrigger>
                 </TooltipTrigger>
