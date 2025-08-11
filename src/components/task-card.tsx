@@ -91,7 +91,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const animatedStatus = useTypingAnimation(task.status);
   const [isConceptDialogOpen, setIsConceptDialogOpen] = useState(false);
 
-  const handleDelete = async (e: React.MouseEvent) => {
+  const handleDelete = async (e: React.MouseEvent | Event) => {
     e.stopPropagation(); // Prevent triggering other click events
     try {
       await deleteTask(task.id);
@@ -155,15 +155,15 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                   className="bg-popover/80 backdrop-blur-lg border-white/10"
                   onClick={(e) => e.stopPropagation()}
               >
-                  <DropdownMenuItem onClick={() => onEdit?.(task)}>
+                  <DropdownMenuItem onSelect={() => onEdit?.(task)}>
                       <Pencil className="mr-2 h-4 w-4" />
                       <span>Edit</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setIsConceptDialogOpen(true)}>
+                  <DropdownMenuItem onSelect={(e) => { e.preventDefault(); setIsConceptDialogOpen(true); }}>
                     <Sparkles className="mr-2 h-4 w-4 text-primary" />
                     <span>Konsep Visual AI</span>
                   </DropdownMenuItem>
-                   <DropdownMenuItem onClick={handleDelete} className="text-destructive">
+                   <DropdownMenuItem onSelect={handleDelete} className="text-destructive">
                        <Trash2 className="mr-2 h-4 w-4" />
                        <span>Hapus</span>
                    </DropdownMenuItem>
