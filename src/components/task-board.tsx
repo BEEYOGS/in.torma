@@ -244,14 +244,14 @@ interface ColumnProps {
   activeTask: Task | null;
 }
 
-const statusStyles: Record<TaskStatus, { indicator: string, glow: string }> = {
-    'Proses Desain': { indicator: 'bg-orange-500', glow: 'shadow-orange-500/30' },
-    'Proses ACC': { indicator: 'bg-sky-500', glow: 'shadow-sky-500/30' },
-    'Selesai': { indicator: 'bg-green-500', glow: 'shadow-green-500/30' },
+const statusStyles: Record<TaskStatus, { indicator: string }> = {
+    'Proses Desain': { indicator: 'bg-orange-500' },
+    'Proses ACC': { indicator: 'bg-sky-500' },
+    'Selesai': { indicator: 'bg-green-500' },
 };
 
 function Column({ id, status, tasks, onEditTask, activeTask }: ColumnProps) {
-    const { indicator, glow } = statusStyles[status];
+    const { indicator } = statusStyles[status];
     
     const { setNodeRef } = useSortable({
       id: id,
@@ -267,7 +267,7 @@ function Column({ id, status, tasks, onEditTask, activeTask }: ColumnProps) {
     return (
       <div
         ref={setNodeRef}
-        className={cn("flex flex-col gap-4 glass-card p-4 min-h-[200px] shadow-lg", glow)}
+        className={cn("flex flex-col gap-4 glass-card p-4 min-h-[200px]")}
       >
         <div className="flex items-center gap-3">
             <div className={cn("w-2.5 h-2.5 rounded-full animate-status-pulse", indicator)} />

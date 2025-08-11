@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils';
 import { ConceptImageGenerator } from './concept-image-generator';
 import { TaskDescriptionSpeaker } from './task-description-speaker';
 import { useIsMobile } from '@/hooks/use-mobile';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { Dialog, DialogTrigger } from './ui/dialog';
 import {
@@ -58,53 +58,10 @@ const statusStyles: Record<TaskStatus, { text: string; hoverOutline: string, col
   },
 };
 
-const useTypingAnimation = (text: string, isOverlay?: boolean) => {
-    const [displayedText, setDisplayedText] = useState('');
-    const intervalRef = useRef<NodeJS.Timeout | null>(null);
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-    useEffect(() => {
-        if (!text) return;
-        if (isOverlay) {
-            setDisplayedText(text);
-            return;
-        }
-
-        const animate = () => {
-            let i = 0;
-            setDisplayedText(''); 
-            
-            if (intervalRef.current) clearInterval(intervalRef.current);
-            if (timeoutRef.current) clearTimeout(timeoutRef.current);
-
-            intervalRef.current = setInterval(() => {
-                if (i < text.length) {
-                    setDisplayedText(prev => prev + text[i]);
-                    i++;
-                } else {
-                    if (intervalRef.current) clearInterval(intervalRef.current);
-                    timeoutRef.current = setTimeout(animate, 3000); 
-                }
-            }, 150);
-        };
-
-        animate();
-
-        return () => {
-            if (intervalRef.current) clearInterval(intervalRef.current);
-            if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        };
-    }, [text, isOverlay]);
-
-    return displayedText;
-};
-
-
 export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   ({ task, onEdit, isOverlay, ...props }, ref) => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const animatedStatus = useTypingAnimation(task.status, isOverlay);
   const [isConceptDialogOpen, setIsConceptDialogOpen] = useState(false);
 
   const handleDelete = async () => {
@@ -238,13 +195,11 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                 )}
                  <TaskDescriptionSpeaker task={task} isMobile={isMobile} />
                  <span
-                    style={{ '--caret-color': statusStyles[task.status].color } as React.CSSProperties}
                     className={cn(
-                    "text-xs font-medium min-w-[80px] text-left transition-opacity duration-300",
-                    statusStyles[task.status].text,
-                    !isOverlay && "typing-cursor"
+                    "text-xs font-medium min-w-[80px] text-left",
+                    statusStyles[task.status].text
                  )}>
-                    {animatedStatus}
+                    {task.status}
                 </span>
             </div>
         </CardContent>
@@ -266,8 +221,8 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                 Tindakan ini akan menghapus tugas secara permanen.
             </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel className="mt-2 sm:mt-0">Batal</AlertDialogCancel>
+            <AlertDialogFooter className="flex-row gap-2 justify-end">
+              <AlertDialogCancel>Batal</AlertDialogCancel>
               <AlertDialogAction className="bg-destructive" onClick={handleDelete}>Lanjutkan</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
