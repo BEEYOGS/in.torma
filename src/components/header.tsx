@@ -98,7 +98,7 @@ export function Header({
                     <p>Menu Lainnya</p>
                 </TooltipContent>
             </Tooltip>
-            <DropdownMenuContent align="end" className="bg-popover/80 backdrop-blur-lg border-white/10 w-56">
+            <DropdownMenuContent align="end" className="bg-popover/80 backdrop-blur-lg border-white/10 w-56 space-y-1">
                 <DropdownMenuLabel>Fitur</DropdownMenuLabel>
                 <DropdownMenuItem asChild>
                     <TaskAnalytics tasks={tasks}>
@@ -119,13 +119,13 @@ export function Header({
                 <DropdownMenuSeparator />
                  <DropdownMenuLabel>Tautan Eksternal</DropdownMenuLabel>
                 <DropdownMenuItem asChild>
-                    <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full">
+                    <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer">
                         <Youtube className="mr-2 h-4 w-4"/>
                         <span>Buka YouTube</span>
                     </a>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                     <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full">
+                     <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer">
                         <Music className="mr-2 h-4 w-4"/>
                         <span>Buka YouTube Music</span>
                     </a>
@@ -153,7 +153,7 @@ export function Header({
                     <p>Menu Lainnya</p>
                 </TooltipContent>
             </Tooltip>
-            <DropdownMenuContent align="end" className="bg-popover/80 backdrop-blur-lg border-white/10 w-56">
+            <DropdownMenuContent align="end" className="bg-popover/80 backdrop-blur-lg border-white/10 w-56 space-y-1">
                 <DropdownMenuLabel>Fitur</DropdownMenuLabel>
                 <DropdownMenuItem asChild>
                     <TaskAnalytics tasks={tasks}>
@@ -174,13 +174,13 @@ export function Header({
                 <DropdownMenuSeparator />
                  <DropdownMenuLabel>Tautan Eksternal</DropdownMenuLabel>
                 <DropdownMenuItem asChild>
-                    <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full">
+                    <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer">
                         <Youtube className="mr-2 h-4 w-4"/>
                         <span>Buka YouTube</span>
                     </a>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                     <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full">
+                     <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer">
                         <Music className="mr-2 h-4 w-4"/>
                         <span>Buka YouTube Music</span>
                     </a>
