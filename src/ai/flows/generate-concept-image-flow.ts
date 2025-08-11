@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -25,6 +26,17 @@ export async function generateConceptImage(input: GenerateConceptImageInput): Pr
   return generateConceptImageFlow(input);
 }
 
+const imageGenerationPrompt = ai.definePrompt(
+    {
+      name: 'imageGenerationPrompt',
+      input: {
+        schema: GenerateConceptImageInputSchema
+      },
+      prompt: `A digital painting of concept art for: {{{description}}}, high detail, cinematic lighting.`
+    }
+);
+
+
 const generateConceptImageFlow = ai.defineFlow(
   {
     name: 'generateConceptImageFlow',
@@ -32,13 +44,13 @@ const generateConceptImageFlow = ai.defineFlow(
     outputSchema: GenerateConceptImageOutputSchema,
   },
   async ({ description }) => {
-    const fullPrompt = `Concept art for: ${description}. Digital painting, high detail, cinematic lighting.`;
     
     const {media} = await ai.generate({
       model: 'googleai/gemini-2.0-flash-preview-image-generation',
-      prompt: fullPrompt,
+      prompt: imageGenerationPrompt,
+      input: { description },
       config: {
-        responseModalities: ['TEXT', 'IMAGE'],
+        responseModalities: ['IMAGE'],
       },
     });
 
