@@ -233,12 +233,12 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
             <AlertDialogHeader>
             <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
             <AlertDialogDescription>
-                Tindakan ini tidak dapat dibatalkan. Ini akan menghapus tugas secara permanen dari penyimpanan.
+                Tindakan ini akan menghapus tugas secara permanen.
             </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
             <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">Lanjutkan</AlertDialogAction>
+            <AlertDialogAction onClick={handleDelete}>Lanjutkan</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>
