@@ -258,7 +258,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
             </div>
             {isConceptDialogOpen && <ConceptImageGenerator task={task} />}
         </Dialog>
-        <AlertDialogContent className="glass-card">
+        <AlertDialogContent className="glass-card max-w-[calc(100vw-2rem)] sm:max-w-md">
             <AlertDialogHeader>
             <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
             <AlertDialogDescription>
