@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils';
 import { ConceptImageGenerator } from './concept-image-generator';
 import { TaskDescriptionSpeaker } from './task-description-speaker';
 import { useIsMobile } from '@/hooks/use-mobile';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { Dialog, DialogTrigger } from './ui/dialog';
 import {
@@ -58,11 +58,60 @@ const statusStyles: Record<TaskStatus, { text: string; hoverOutline: string, col
   },
 };
 
+const useTypingAnimation = (text: string, isEnabled: boolean = true) => {
+    const [displayedText, setDisplayedText] = useState('');
+    const typingSpeed = 150; // ms
+    const pauseBeforeRestart = 1500; // ms
+
+    useEffect(() => {
+        if (!isEnabled) {
+            setDisplayedText(text);
+            return;
+        }
+
+        let isMounted = true;
+        let intervalId: NodeJS.Timeout;
+        let timeoutId: NodeJS.Timeout;
+
+        const startAnimation = () => {
+            setDisplayedText('');
+            let i = 0;
+            intervalId = setInterval(() => {
+                if (!isMounted) return;
+                const currentChar = text[i];
+                if (currentChar) {
+                    setDisplayedText(prev => prev + currentChar);
+                    i++;
+                }
+                if (i >= text.length) {
+                    clearInterval(intervalId);
+                    timeoutId = setTimeout(() => {
+                        if (isMounted) startAnimation();
+                    }, pauseBeforeRestart);
+                }
+            }, typingSpeed);
+        };
+
+        startAnimation();
+
+        return () => {
+            isMounted = false;
+            clearInterval(intervalId);
+            clearTimeout(timeoutId);
+        };
+    }, [text, isEnabled, pauseBeforeRestart]);
+
+    return displayedText;
+};
+
+
 export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   ({ task, onEdit, isOverlay, ...props }, ref) => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const [isConceptDialogOpen, setIsConceptDialogOpen] = useState(false);
+  const animatedStatus = useTypingAnimation(task.status, !isOverlay);
+
 
   const handleDelete = async () => {
     try {
@@ -199,7 +248,8 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                     "text-xs font-medium min-w-[80px] text-left",
                     statusStyles[task.status].text
                  )}>
-                    {task.status}
+                    {animatedStatus}
+                    <span className="typing-cursor"></span>
                 </span>
             </div>
         </CardContent>
@@ -221,9 +271,9 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                 Tindakan ini akan menghapus tugas secara permanen.
             </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter className="flex-row gap-2 justify-end">
-              <AlertDialogCancel>Batal</AlertDialogCancel>
-              <AlertDialogAction className="bg-destructive" onClick={handleDelete}>Lanjutkan</AlertDialogAction>
+            <AlertDialogFooter className="sm:justify-end">
+                <AlertDialogCancel className="mt-2 sm:mt-0">Batal</AlertDialogCancel>
+                <AlertDialogAction className="bg-destructive" onClick={handleDelete}>Lanjutkan</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>
