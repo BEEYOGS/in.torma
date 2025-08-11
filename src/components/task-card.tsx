@@ -21,7 +21,7 @@ import { TaskDescriptionSpeaker } from './task-description-speaker';
 import { useIsMobile } from '@/hooks/use-mobile';
 import React, { useState, useEffect, useCallback } from 'react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
-import { Dialog } from './ui/dialog';
+import { Dialog, DialogTrigger } from './ui/dialog';
 
 interface TaskCardProps extends React.HTMLAttributes<HTMLDivElement> {
   task: Task;
@@ -117,7 +117,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
         "absolute top-2 right-2 flex items-center gap-1 transition-opacity opacity-0 group-hover:opacity-100 pointer-events-none"
     )}>
         <TaskDescriptionSpeaker task={task} />
-        <Dialog open={isConceptDialogOpen} onOpenChange={setIsConceptDialogOpen}>
+        <Dialog>
           <DialogTrigger asChild>
             <Button variant="ghost" size="icon" className="h-8 w-8 text-primary/80 hover:text-primary pointer-events-auto">
                 <Sparkles className="h-4 w-4" />
