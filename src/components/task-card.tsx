@@ -73,6 +73,10 @@ const useTypingAnimation = (text: string, isOverlay?: boolean) => {
             let i = 0;
             setDisplayedText('');
             
+            // Clear any existing timeouts to prevent multiple loops
+            if (intervalRef.current) clearInterval(intervalRef.current);
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
             intervalRef.current = setInterval(() => {
                 if (i < text.length) {
                     setDisplayedText(prev => prev + text[i]);
@@ -263,7 +267,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                 Tindakan ini akan menghapus tugas secara permanen.
             </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter className="sm:justify-start">
+            <AlertDialogFooter>
               <AlertDialogAction className="w-full sm:w-auto" onClick={handleDelete}>Lanjutkan</AlertDialogAction>
               <AlertDialogCancel className="w-full sm:w-auto mt-2 sm:mt-0">Batal</AlertDialogCancel>
             </AlertDialogFooter>
