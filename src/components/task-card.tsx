@@ -216,15 +216,18 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 
   const cardContent = (
     <Card 
-        onClick={() => !isMobile && onEdit?.(task)}
         className={cn(
-        "relative group overflow-hidden bg-card/20 border border-white/10 transition-all duration-300 outline outline-1 outline-transparent cursor-pointer",
+        "relative group overflow-hidden bg-card/20 border border-white/10 transition-all duration-300 outline outline-1 outline-transparent",
+        !isMobile && "cursor-pointer",
         statusStyles[task.status].hoverOutline,
         isOverlay && "ring-2 ring-primary"
     )}>
         <CardHeader className="relative p-4 pb-2">
-            <div className="flex justify-between items-start gap-2">
-                <div className="flex-grow min-w-0" onClick={(e) => { if(isMobile) { e.stopPropagation(); onEdit?.(task);} }}>
+            <div 
+                className="flex justify-between items-start gap-2"
+                onClick={() => { if(isMobile) onEdit?.(task) }}
+            >
+                <div className="flex-grow min-w-0">
                     <CardTitle className="text-base font-headline mb-1 text-foreground truncate">
                         {task.customerName}
                     </CardTitle>
@@ -268,7 +271,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   return (
     <AlertDialog>
         <Dialog open={isConceptDialogOpen} onOpenChange={setIsConceptDialogOpen}>
-            <div ref={ref} {...props}>
+            <div ref={ref} {...props} onClick={() => !isMobile && onEdit?.(task)}>
                 {cardContent}
             </div>
             {isConceptDialogOpen && <ConceptImageGenerator task={task} />}
