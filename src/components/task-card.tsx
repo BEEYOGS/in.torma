@@ -90,10 +90,8 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const animatedStatus = useTypingAnimation(task.status);
-  // State to manage whether the image generation has been initiated for the dialog
-  const [isGenerating, setIsGenerating] = useState(false);
   const [isConceptDialogOpen, setIsConceptDialogOpen] = useState(false);
-
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent triggering other click events
@@ -113,12 +111,10 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
     }
   };
 
-  // This callback will be triggered by the ConceptImageGenerator when it's ready to start fetching.
   const handleDialogContentOpen = useCallback(() => {
     setIsGenerating(true);
   }, []);
   
-  // Create a date object in a way that avoids timezone shifts from the YYYY-MM-DD string.
   const displayDate = task.dueDate ? new Date(`${task.dueDate}T00:00:00`) : null;
 
   const DesktopActions = () => (
@@ -174,7 +170,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                     <span>Edit</span>
                 </DropdownMenuItem>
                 
-                <DropdownMenuItem onSelect={() => setIsConceptDialogOpen(true)}>
+                <DropdownMenuItem onSelect={(e) => { e.preventDefault(); setIsConceptDialogOpen(true); }}>
                     <Sparkles className="mr-2 h-4 w-4 text-primary" />
                     <span>Konsep Visual AI</span>
                 </DropdownMenuItem>
@@ -191,7 +187,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const cardContent = (
     <>
       <Card className={cn(
-          "relative group overflow-hidden bg-card/20 border border-white/10 transition-all duration-300",
+          "relative group overflow-hidden bg-card/20 border border-white/10 transition-all duration-300 shadow-md shadow-transparent",
           statusStyles[task.status].hover,
           isOverlay && "ring-2 ring-primary"
       )}>
@@ -234,7 +230,6 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
           </CardContent>
       </Card>
       
-      {/* Dialog is now outside the card, controlled by local state */}
       <Dialog open={isConceptDialogOpen} onOpenChange={setIsConceptDialogOpen}>
         <ConceptImageGenerator task={task} onOpen={handleDialogContentOpen} />
       </Dialog>
