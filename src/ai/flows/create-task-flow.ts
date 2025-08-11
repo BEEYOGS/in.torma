@@ -39,6 +39,7 @@ export async function createTask(input: CreateTaskInput): Promise<CreateTaskOutp
 
 const prompt = ai.definePrompt({
   name: 'createTaskPrompt',
+  model: 'gemini-1.5-flash-latest',
   input: {schema: CreateTaskInputSchema.extend({
     currentDate: z.string(),
     tomorrow: z.string(),
