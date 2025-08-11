@@ -67,6 +67,13 @@ const statusColorMap: Record<TaskStatus, string> = {
     'Selesai': 'bg-green-500',
 };
 
+const sourceDisplayMap: Record<TaskSource, string> = {
+    'N': 'N',
+    'CS': 'CS',
+    'Admin': 'Admin',
+    'G': 'Group',
+};
+
 export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDialogProps) {
   const { toast } = useToast();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -221,8 +228,8 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="bg-popover/80 backdrop-blur-lg border-white/10">
-                      {(['N', 'CS', 'Admin', 'G'] as TaskSource[]).map(source => (
-                          <SelectItem key={source} value={source}>{source}</SelectItem>
+                      {(Object.keys(sourceDisplayMap) as TaskSource[]).map(source => (
+                          <SelectItem key={source} value={source}>{sourceDisplayMap[source]}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
