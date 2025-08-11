@@ -117,7 +117,7 @@ export function Header({
                      </DailyBriefing>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                 <DropdownMenuLabel>Tautan Eksternal</DropdownMenuLabel>
+                 <DropdownMenuLabel>Pintasan</DropdownMenuLabel>
                 <DropdownMenuItem asChild>
                     <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer flex items-center">
                         <Youtube className="mr-2 h-4 w-4"/>
@@ -170,7 +170,7 @@ export function Header({
                      </DailyBriefing>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                 <DropdownMenuLabel>Tautan Eksternal</DropdownMenuLabel>
+                 <DropdownMenuLabel>Pintasan</DropdownMenuLabel>
                 <DropdownMenuItem asChild>
                     <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer flex items-center">
                         <Youtube className="mr-2 h-4 w-4"/>
