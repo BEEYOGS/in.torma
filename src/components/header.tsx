@@ -8,7 +8,7 @@ import { TaskAnalytics } from '@/components/task-analytics';
 import { AiTaskCreator } from '@/components/ai-task-creator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, Youtube, Music, Ellipsis, AreaChart, Users } from 'lucide-react';
+import { Plus, Search, Ellipsis, AreaChart, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
@@ -56,6 +56,20 @@ export function Header({
     </svg>
   );
 
+  const YoutubeIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-6 w-6">
+        <path d="M24.2564 10.4284C24.2564 8.20335 23.3283 6.37963 21.6582 5.25304C19.9881 4.12645 17.854 3.5 14.0001 3.5C10.1462 3.5 8.01208 4.12645 6.342 5.25304C4.67191 6.37963 3.74385 8.20335 3.74385 10.4284V17.5716C3.74385 19.7966 4.67191 21.6204 6.342 22.747C8.01208 23.8735 10.1462 24.5 14.0001 24.5C17.854 24.5 19.9881 23.8735 21.6582 22.747C23.3283 21.6204 24.2564 19.7966 24.2564 17.5716V10.4284Z" fill="#FF0000"/>
+        <path d="M12.1523 18.2435L18.441 14L12.1523 9.7565V18.2435Z" fill="white"/>
+    </svg>
+  );
+
+  const YoutubeMusicIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-6 w-6">
+        <circle cx="14" cy="14" r="10.5" fill="#FF0000"/>
+        <path d="M12.1523 18.2435L18.441 14L12.1523 9.7565V18.2435Z" fill="white"/>
+    </svg>
+  );
+
 
   return (
     <header className={cn("sticky top-0 z-30 flex h-16 items-center gap-4 border-b px-4 backdrop-blur-lg sm:px-6", "glass-header border-white/10")}>
@@ -98,7 +112,7 @@ export function Header({
                     <p>Menu Lainnya</p>
                 </TooltipContent>
             </Tooltip>
-            <DropdownMenuContent align="end" className="bg-popover/80 backdrop-blur-lg border-white/10 w-56 space-y-1">
+            <DropdownMenuContent align="end" className="bg-popover/80 backdrop-blur-lg border-white/10 w-56">
                 <DropdownMenuLabel>Fitur</DropdownMenuLabel>
                 <DropdownMenuItem asChild>
                     <TaskAnalytics tasks={tasks}>
@@ -117,17 +131,15 @@ export function Header({
                      </DailyBriefing>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                 <DropdownMenuLabel>Pintasan</DropdownMenuLabel>
-                <DropdownMenuItem asChild>
-                    <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer flex items-center">
-                        <Youtube className="mr-2 h-4 w-4"/>
+                <DropdownMenuLabel>Pintasan</DropdownMenuLabel>
+                <div className="grid grid-cols-2 gap-1 px-1">
+                    <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer flex items-center justify-center p-2 rounded-md hover:bg-accent">
+                        <YoutubeIcon />
                     </a>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                     <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer flex items-center">
-                        <Music className="mr-2 h-4 w-4"/>
+                    <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer flex items-center justify-center p-2 rounded-md hover:bg-accent">
+                        <YoutubeMusicIcon/>
                     </a>
-                </DropdownMenuItem>
+                </div>
             </DropdownMenuContent>
         </DropdownMenu>
 
@@ -151,7 +163,7 @@ export function Header({
                     <p>Menu Lainnya</p>
                 </TooltipContent>
             </Tooltip>
-            <DropdownMenuContent align="end" className="bg-popover/80 backdrop-blur-lg border-white/10 w-56 space-y-1">
+            <DropdownMenuContent align="end" className="bg-popover/80 backdrop-blur-lg border-white/10 w-56">
                 <DropdownMenuLabel>Fitur</DropdownMenuLabel>
                 <DropdownMenuItem asChild>
                     <TaskAnalytics tasks={tasks}>
@@ -170,17 +182,15 @@ export function Header({
                      </DailyBriefing>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                 <DropdownMenuLabel>Pintasan</DropdownMenuLabel>
-                <DropdownMenuItem asChild>
-                    <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer flex items-center">
-                        <Youtube className="mr-2 h-4 w-4"/>
+                <DropdownMenuLabel>Pintasan</DropdownMenuLabel>
+                 <div className="grid grid-cols-2 gap-1 px-1">
+                    <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer flex items-center justify-center p-2 rounded-md hover:bg-accent">
+                        <YoutubeIcon />
                     </a>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                     <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer flex items-center">
-                        <Music className="mr-2 h-4 w-4"/>
+                    <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer flex items-center justify-center p-2 rounded-md hover:bg-accent">
+                        <YoutubeMusicIcon />
                     </a>
-                </DropdownMenuItem>
+                </div>
             </DropdownMenuContent>
         </DropdownMenu>
        </div>
