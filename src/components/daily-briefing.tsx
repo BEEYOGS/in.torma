@@ -37,12 +37,12 @@ export function DailyBriefing({ tasks, children }: DailyBriefingProps) {
       } else {
         throw new Error("No audio media returned.");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Daily Briefing Error:', error);
       toast({
         variant: 'destructive',
         title: 'Gagal Membuat Rangkuman',
-        description: 'Terjadi kesalahan saat membuat rangkuman harian.',
+        description: `Terjadi kesalahan saat membuat rangkuman harian: ${error.message}`,
       });
     } finally {
       setIsLoading(false);

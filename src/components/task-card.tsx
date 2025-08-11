@@ -180,7 +180,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
             <div className="flex items-center gap-2 mt-2 flex-wrap">
                 {displayDate && (
                   <Badge variant="outline" className="border-white/20 bg-black/10">
-                      {format(displayDate, 'dd MMM yyyy')}
+                      {format(displayDate, 'dd/MM/yyyy')}
                   </Badge>
                 )}
                 <Badge variant="secondary" className="bg-black/20 text-muted-foreground">{task.source}</Badge>
