@@ -46,9 +46,8 @@ export function MobileFooter({
                             <Search className="h-6 w-6" />
                         </IconButton>
                         <AiTaskCreator onTaskCreated={onAiTaskCreate}>
-                            <IconButton label="AI">
-                                <Wand2 className="h-6 w-6" />
-                            </IconButton>
+                            <Wand2 className="h-6 w-6" />
+                            <span className="text-xs font-normal">AI</span>
                         </AiTaskCreator>
                     </div>
 
