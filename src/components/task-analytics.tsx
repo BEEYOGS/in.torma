@@ -16,10 +16,11 @@ import { ScrollArea } from './ui/scroll-area';
 interface TaskAnalyticsProps {
     tasks: Task[];
     children?: React.ReactNode;
+    isOpen: boolean;
+    onOpenChange: (open: boolean) => void;
 }
 
-export function TaskAnalytics({ tasks, children }: TaskAnalyticsProps) {
-    const [isOpen, setIsOpen] = useState(false);
+export function TaskAnalytics({ tasks, children, isOpen, onOpenChange }: TaskAnalyticsProps) {
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
@@ -176,64 +177,36 @@ export function TaskAnalytics({ tasks, children }: TaskAnalyticsProps) {
         )
     }
     
-    const DialogLayout = (
-        <DialogContent className="max-w-5xl h-[90vh] glass-card border-white/10 flex flex-col">
-            <DialogHeader>
-                <DialogTitle className="font-headline text-2xl">Dasbor Analitik Tugas</DialogTitle>
-                <DialogDescription>
-                    Visualisasi data dan metrik penting dari tugas Anda.
-                </DialogDescription>
-            </DialogHeader>
-            <ScrollArea className="flex-grow">
-                <div className="space-y-6 py-4 pr-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {kpiCards.map(card => (
-                            <Card key={card.title} className="bg-card/20 border-white/10">
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium text-muted-foreground">{card.title}</CardTitle>
-                                    {card.icon}
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-4xl font-bold">{card.value}</div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
-                    {renderCharts()}
-                </div>
-            </ScrollArea>
-        </DialogContent>
-    )
-    
-    if (children) {
-        return (
-            <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogTrigger asChild onClick={(e) => { e.preventDefault() }}>
-                     <div onClick={() => setIsOpen(true)} className="w-full">
-                        {children}
-                    </div>
-                </DialogTrigger>
-                {DialogLayout}
-            </Dialog>
-        )
-    }
-
     return (
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <DialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-                            <AreaChart/>
-                            <span className="sr-only">Dasbor Analitik</span>
-                        </Button>
-                    </DialogTrigger>
-                </TooltipTrigger>
-                <TooltipContent>
-                    <p>Dasbor Analitik</p>
-                </TooltipContent>
-            </Tooltip>
-            {DialogLayout}
+        <Dialog open={isOpen} onOpenChange={onOpenChange}>
+            {children && <DialogTrigger asChild>{children}</DialogTrigger>}
+            <DialogContent className="max-w-5xl h-[90vh] glass-card border-white/10 flex flex-col">
+                <DialogHeader>
+                    <DialogTitle className="font-headline text-2xl">Dasbor Analitik Tugas</DialogTitle>
+                    <DialogDescription>
+                        Visualisasi data dan metrik penting dari tugas Anda.
+                    </DialogDescription>
+                </DialogHeader>
+                <ScrollArea className="flex-grow">
+                    <div className="space-y-6 py-4 pr-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {kpiCards.map(card => (
+                                <Card key={card.title} className="bg-card/20 border-white/10">
+                                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                        <CardTitle className="text-sm font-medium text-muted-foreground">{card.title}</CardTitle>
+                                        {card.icon}
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="text-4xl font-bold">{card.value}</div>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                        {renderCharts()}
+                    </div>
+                </ScrollArea>
+            </DialogContent>
         </Dialog>
     );
 }
+

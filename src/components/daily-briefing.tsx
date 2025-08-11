@@ -11,7 +11,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 interface DailyBriefingProps {
   tasks: Task[];
-  children?: React.ReactNode;
+  children: React.ReactElement;
 }
 
 export function DailyBriefing({ tasks, children }: DailyBriefingProps) {
@@ -20,6 +20,7 @@ export function DailyBriefing({ tasks, children }: DailyBriefingProps) {
   const { toast } = useToast();
 
   const handleGetBriefing = async () => {
+    if (isLoading) return;
     setIsLoading(true);
     if (audio) {
       audio.pause();
@@ -48,14 +49,21 @@ export function DailyBriefing({ tasks, children }: DailyBriefingProps) {
     }
   };
 
-  if (children) {
-    return (
-      <div onClick={handleGetBriefing} className="w-full">
-        {children}
-      </div>
-    )
+  const childProps = {
+    onClick: (e: React.MouseEvent) => {
+        e.preventDefault();
+        handleGetBriefing();
+    },
+    disabled: isLoading,
   }
 
+  const trigger = React.cloneElement(children, childProps);
+
+  if (React.isValidElement(children)) {
+    return trigger;
+  }
+
+  // Fallback for non-element children or legacy usage
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -76,3 +84,4 @@ export function DailyBriefing({ tasks, children }: DailyBriefingProps) {
     </Tooltip>
   );
 }
+

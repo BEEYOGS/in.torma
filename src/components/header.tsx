@@ -1,7 +1,7 @@
 
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import type { Task } from '@/types/task';
 import { DailyBriefing } from '@/components/daily-briefing';
 import { TaskAnalytics } from '@/components/task-analytics';
@@ -28,7 +28,8 @@ export function Header({
   searchTerm,
   onSearchTermChange
 }: HeaderProps) {
-  
+  const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
+
   const Logo = () => (
     <svg
       width="32"
@@ -70,8 +71,59 @@ export function Header({
     </svg>
   );
 
+  const MainMenu = ({ isMobile = false }) => (
+    <DropdownMenu>
+        <Tooltip>
+            <TooltipTrigger asChild>
+                <DropdownMenuTrigger asChild>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-muted-foreground hover:text-foreground"
+                        aria-label="App Menu"
+                    >
+                        <Ellipsis />
+                    </Button>
+                </DropdownMenuTrigger>
+            </TooltipTrigger>
+            <TooltipContent>
+                <p>Menu Lainnya</p>
+            </TooltipContent>
+        </Tooltip>
+        <DropdownMenuContent align="end" className="bg-popover/80 backdrop-blur-lg border-white/10 w-56">
+            <DropdownMenuLabel>Fitur</DropdownMenuLabel>
+            <DropdownMenuItem onSelect={() => setIsAnalyticsOpen(true)}>
+                <AreaChart className="mr-2 h-4 w-4"/>
+                <span>Dasbor Analitik</span>
+            </DropdownMenuItem>
+            <DailyBriefing tasks={tasks}>
+                <DropdownMenuItem>
+                    <Users className="mr-2 h-4 w-4"/>
+                    <span>Rangkuman Harian</span>
+                </DropdownMenuItem>
+            </DailyBriefing>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel>Pintasan</DropdownMenuLabel>
+            <div className="grid grid-cols-2 gap-1 px-1">
+                <DropdownMenuItem asChild className="p-0 justify-center">
+                    <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center p-2 rounded-md hover:bg-accent w-full h-full">
+                        <YoutubeIcon />
+                    </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="p-0 justify-center">
+                    <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center p-2 rounded-md hover:bg-accent w-full h-full">
+                        <YoutubeMusicIcon/>
+                    </a>
+                </DropdownMenuItem>
+            </div>
+        </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
 
   return (
+    <>
+    <TaskAnalytics tasks={tasks} isOpen={isAnalyticsOpen} onOpenChange={setIsAnalyticsOpen} />
     <header className={cn("sticky top-0 z-30 flex h-16 items-center gap-4 border-b px-4 backdrop-blur-lg sm:px-6", "glass-header border-white/10")}>
       <div className="flex items-center gap-3">
         <Logo />
@@ -93,106 +145,10 @@ export function Header({
 
       <nav className="hidden items-center gap-1 md:flex">
         <AiTaskCreator onTaskCreated={onAiTaskCreate} />
-
-        <DropdownMenu>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <DropdownMenuTrigger asChild>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-muted-foreground hover:text-foreground"
-                            aria-label="App Menu"
-                        >
-                            <Ellipsis />
-                        </Button>
-                    </DropdownMenuTrigger>
-                </TooltipTrigger>
-                <TooltipContent>
-                    <p>Menu Lainnya</p>
-                </TooltipContent>
-            </Tooltip>
-            <DropdownMenuContent align="end" className="bg-popover/80 backdrop-blur-lg border-white/10 w-56">
-                <DropdownMenuLabel>Fitur</DropdownMenuLabel>
-                <DropdownMenuItem asChild>
-                    <TaskAnalytics tasks={tasks}>
-                        <button className="w-full flex items-center">
-                            <AreaChart className="mr-2 h-4 w-4"/>
-                            <span>Dasbor Analitik</span>
-                        </button>
-                    </TaskAnalytics>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                     <DailyBriefing tasks={tasks}>
-                         <button className="w-full flex items-center">
-                            <Users className="mr-2 h-4 w-4"/>
-                            <span>Rangkuman Harian</span>
-                         </button>
-                     </DailyBriefing>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuLabel>Pintasan</DropdownMenuLabel>
-                <div className="grid grid-cols-2 gap-1 px-1">
-                    <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer flex items-center justify-center p-2 rounded-md hover:bg-accent">
-                        <YoutubeIcon />
-                    </a>
-                    <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer flex items-center justify-center p-2 rounded-md hover:bg-accent">
-                        <YoutubeMusicIcon/>
-                    </a>
-                </div>
-            </DropdownMenuContent>
-        </DropdownMenu>
-
+        <MainMenu />
       </nav>
        <div className="flex items-center gap-1 md:hidden ml-auto">
-         <DropdownMenu>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <DropdownMenuTrigger asChild>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-muted-foreground hover:text-foreground"
-                            aria-label="App Menu"
-                        >
-                            <Ellipsis />
-                        </Button>
-                    </DropdownMenuTrigger>
-                </TooltipTrigger>
-                <TooltipContent>
-                    <p>Menu Lainnya</p>
-                </TooltipContent>
-            </Tooltip>
-            <DropdownMenuContent align="end" className="bg-popover/80 backdrop-blur-lg border-white/10 w-56">
-                <DropdownMenuLabel>Fitur</DropdownMenuLabel>
-                <DropdownMenuItem asChild>
-                    <TaskAnalytics tasks={tasks}>
-                        <button className="w-full flex items-center">
-                            <AreaChart className="mr-2 h-4 w-4"/>
-                            <span>Dasbor Analitik</span>
-                        </button>
-                    </TaskAnalytics>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                     <DailyBriefing tasks={tasks}>
-                         <button className="w-full flex items-center">
-                            <Users className="mr-2 h-4 w-4"/>
-                            <span>Rangkuman Harian</span>
-                         </button>
-                     </DailyBriefing>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuLabel>Pintasan</DropdownMenuLabel>
-                 <div className="grid grid-cols-2 gap-1 px-1">
-                    <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer flex items-center justify-center p-2 rounded-md hover:bg-accent">
-                        <YoutubeIcon />
-                    </a>
-                    <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full cursor-pointer flex items-center justify-center p-2 rounded-md hover:bg-accent">
-                        <YoutubeMusicIcon />
-                    </a>
-                </div>
-            </DropdownMenuContent>
-        </DropdownMenu>
+         <MainMenu isMobile />
        </div>
       
       <Button onClick={onNewTask} className="hidden md:inline-flex">
@@ -200,5 +156,7 @@ export function Header({
         Tambah Tugas
       </Button>
     </header>
+    </>
   );
 }
+
