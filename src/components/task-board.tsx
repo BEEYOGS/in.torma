@@ -14,6 +14,7 @@ import {
   DragEndEvent,
   DragStartEvent,
   DragOverlay,
+  Active,
 } from '@dnd-kit/core';
 import {
   SortableContext,
@@ -220,6 +221,7 @@ export function TaskBoard({
                 status={status}
                 tasks={tasksByStatus[status]}
                 onEditTask={onEditTask}
+                activeTask={activeTask}
             />
         ))}
       </div>
@@ -239,6 +241,7 @@ interface ColumnProps {
   status: TaskStatus;
   tasks: Task[];
   onEditTask: (task: Task) => void;
+  activeTask: Task | null;
 }
 
 const statusStyles: Record<TaskStatus, { indicator: string, glow: string }> = {
@@ -247,7 +250,7 @@ const statusStyles: Record<TaskStatus, { indicator: string, glow: string }> = {
     'Selesai': { indicator: 'bg-green-500', glow: 'shadow-green-500/30' },
 };
 
-function Column({ id, status, tasks, onEditTask }: ColumnProps) {
+function Column({ id, status, tasks, onEditTask, activeTask }: ColumnProps) {
     const { indicator, glow } = statusStyles[status];
     
     const { setNodeRef } = useSortable({
@@ -257,6 +260,10 @@ function Column({ id, status, tasks, onEditTask }: ColumnProps) {
         children: tasks,
       },
     });
+
+    const isColumnEmpty = tasks.length === 0;
+    const isDraggingOverEmptyColumn = activeTask && activeTask.status !== status && isColumnEmpty;
+
 
     return (
       <div
@@ -277,7 +284,7 @@ function Column({ id, status, tasks, onEditTask }: ColumnProps) {
                         onEdit={() => onEditTask(task)}
                     />
                 ))}
-                {tasks.length === 0 && <DesktopEmptyColumn />}
+                {isColumnEmpty && !isDraggingOverEmptyColumn && <DesktopEmptyColumn />}
             </div>
         </SortableContext>
       </div>
@@ -317,3 +324,5 @@ function SortableTaskCard({ task, onEdit }: { task: Task, onEdit: (task: Task) =
         />
     )
 }
+
+    
