@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Pencil, GripVertical, Sparkles, Trash2, MoreVertical } from 'lucide-react';
+import { Pencil, GripVertical, Sparkles, Trash2, MoreVertical, AlertCircle } from 'lucide-react';
 import type { Task, TaskStatus } from '@/types/task';
 import { deleteTask } from '@/services/task-service';
 import { useToast } from '@/hooks/use-toast';
@@ -33,6 +33,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { buttonVariants } from './ui/button';
 
 interface TaskCardProps extends React.HTMLAttributes<HTMLDivElement> {
   task: Task;
@@ -70,51 +71,34 @@ const useTypingAnimation = (text: string, isEnabled: boolean = true) => {
         }
 
         let isMounted = true;
-        let animationFrameId: number;
-        let lastUpdateTime = 0;
         let charIndex = 0;
-        let isPaused = false;
-        let pauseUntil = 0;
         let timeoutId: NodeJS.Timeout;
 
-        const animate = (timestamp: number) => {
+        const type = () => {
             if (!isMounted) return;
-
-            if (isPaused) {
-                if (timestamp >= pauseUntil) {
-                   timeoutId = setTimeout(() => {
-                     isPaused = false;
-                     charIndex = 0;
-                     setDisplayedText('');
-                   }, pauseBeforeRestart);
-                }
+            
+            if (charIndex < text.length) {
+                setDisplayedText(prev => prev + text.charAt(charIndex));
+                charIndex++;
+                timeoutId = setTimeout(type, typingSpeed);
             } else {
-                if (timestamp - lastUpdateTime >= typingSpeed) {
-                    lastUpdateTime = timestamp;
-                    if (charIndex < text.length) {
-                        const nextChar = text[charIndex];
-                        if (nextChar) {
-                            setDisplayedText(prev => prev + nextChar);
-                        }
-                        charIndex++;
-                    } else {
-                        isPaused = true;
-                        pauseUntil = timestamp;
-                    }
-                }
+                // Pause at the end, then restart
+                timeoutId = setTimeout(() => {
+                    setDisplayedText('');
+                    charIndex = 0;
+                    type();
+                }, pauseBeforeRestart);
             }
-
-            animationFrameId = requestAnimationFrame(animate);
         };
 
-        animationFrameId = requestAnimationFrame(animate);
+        type();
 
         return () => {
             isMounted = false;
-            cancelAnimationFrame(animationFrameId);
             clearTimeout(timeoutId);
         };
-    }, [text, isEnabled, pauseBeforeRestart]);
+    }, [text, isEnabled, typingSpeed, pauseBeforeRestart]);
+
 
     return displayedText;
 };
@@ -149,7 +133,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 
   const DesktopActions = () => (
     <div className={cn(
-        "absolute top-2 right-2 flex items-center gap-1 transition-opacity opacity-0 group-hover:opacity-100 pointer-events-none"
+        "absolute top-2 right-2 flex items-center gap-1 transition-opacity opacity-0 group-hover:opacity-100"
     )}>
         <DialogTrigger asChild>
             <Button 
@@ -189,7 +173,13 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
     <div className="flex-shrink-0">
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => e.stopPropagation()}>
+                 <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8" 
+                    onClick={(e) => e.stopPropagation()}
+                    onPointerDown={(e) => e.stopPropagation()}
+                >
                     <MoreVertical className="h-4 w-4" />
                 </Button>
             </DropdownMenuTrigger>
@@ -213,7 +203,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                     <span>Konsep Visual AI</span>
                 </DropdownMenuItem>
                 <AlertDialogTrigger asChild>
-                    <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive">
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:text-destructive focus:bg-destructive/10">
                         <Trash2 className="mr-2 h-4 w-4" />
                         <span>Hapus</span>
                     </DropdownMenuItem>
@@ -233,7 +223,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
     )}>
         <CardHeader className="relative p-4 pb-2">
             <div className="flex justify-between items-start gap-2">
-                <div className="flex-grow min-w-0" onClick={(e) => { isMobile && e.stopPropagation(); onEdit?.(task); }}>
+                <div className="flex-grow min-w-0" onClick={(e) => { if(isMobile) { e.stopPropagation(); onEdit?.(task);} }}>
                     <CardTitle className="text-base font-headline mb-1 text-foreground truncate">
                         {task.customerName}
                     </CardTitle>
@@ -284,14 +274,17 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
         </Dialog>
         <AlertDialogContent className="glass-card max-w-[calc(100vw-2rem)] sm:max-w-md">
             <AlertDialogHeader>
-            <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
-            <AlertDialogDescription>
-                Tindakan ini akan menghapus tugas secara permanen.
-            </AlertDialogDescription>
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-4">
+                    <AlertCircle className="h-6 w-6 text-primary" />
+                </div>
+                <AlertDialogTitle className="text-center">Apakah Anda yakin?</AlertDialogTitle>
+                <AlertDialogDescription className="text-center">
+                    Tindakan ini akan menghapus tugas untuk <br/> <span className="font-medium text-foreground">{task.customerName}</span> secara permanen.
+                </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter className="flex-row justify-end gap-2">
+            <AlertDialogFooter className="flex-row justify-end gap-2 pt-4">
                 <AlertDialogCancel>Batal</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete}>Lanjutkan</AlertDialogAction>
+                <AlertDialogAction onClick={handleDelete} className={cn(buttonVariants({variant: 'default'}))}>Lanjutkan</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>
