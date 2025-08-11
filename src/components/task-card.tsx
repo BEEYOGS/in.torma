@@ -265,9 +265,9 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                 Tindakan ini akan menghapus tugas secara permanen.
             </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Batal</AlertDialogCancel>
-              <AlertDialogAction className="bg-primary" onClick={handleDelete}>Lanjutkan</AlertDialogAction>
+            <AlertDialogFooter className="sm:justify-center">
+              <AlertDialogCancel className="w-full sm:w-auto">Batal</AlertDialogCancel>
+              <AlertDialogAction className="bg-primary w-full sm:w-auto" onClick={handleDelete}>Lanjutkan</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>
@@ -275,5 +275,3 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 });
 
 TaskCard.displayName = "TaskCard";
-
-    
