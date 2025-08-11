@@ -60,44 +60,55 @@ const statusStyles: Record<TaskStatus, { text: string; hoverOutline: string, col
 
 const useTypingAnimation = (text: string, isEnabled: boolean = true) => {
     const [displayedText, setDisplayedText] = useState('');
-    const typingSpeed = 150; // ms
-    const pauseBeforeRestart = 1500; // ms
+    const typingSpeed = 150;
+    const pauseBeforeRestart = 1500;
 
     useEffect(() => {
-        if (!isEnabled) {
-            setDisplayedText(text);
+        if (!isEnabled || !text) {
+            setDisplayedText(text || '');
             return;
         }
 
         let isMounted = true;
-        let intervalId: NodeJS.Timeout;
-        let timeoutId: NodeJS.Timeout;
+        let animationFrameId: number;
+        let lastUpdateTime = 0;
+        let charIndex = 0;
+        let isPaused = false;
+        let pauseUntil = 0;
 
-        const startAnimation = () => {
-            setDisplayedText('');
-            let i = 0;
-            intervalId = setInterval(() => {
-                if (!isMounted) return;
-                const currentChar = text[i];
-                if (currentChar) {
-                    setDisplayedText(prev => prev + currentChar);
-                    i++;
+        const animate = (timestamp: number) => {
+            if (!isMounted) return;
+
+            if (isPaused) {
+                if (timestamp >= pauseUntil) {
+                    isPaused = false;
+                    charIndex = 0;
+                    setDisplayedText('');
                 }
-                if (i >= text.length) {
-                    clearInterval(intervalId);
-                    timeoutId = setTimeout(() => {
-                        if (isMounted) startAnimation();
-                    }, pauseBeforeRestart);
+            } else {
+                if (timestamp - lastUpdateTime >= typingSpeed) {
+                    lastUpdateTime = timestamp;
+                    if (charIndex < text.length) {
+                        const nextChar = text[charIndex];
+                        if (nextChar) {
+                            setDisplayedText(prev => prev + nextChar);
+                        }
+                        charIndex++;
+                    } else {
+                        isPaused = true;
+                        pauseUntil = timestamp + pauseBeforeRestart;
+                    }
                 }
-            }, typingSpeed);
+            }
+
+            animationFrameId = requestAnimationFrame(animate);
         };
 
-        startAnimation();
+        animationFrameId = requestAnimationFrame(animate);
 
         return () => {
             isMounted = false;
-            clearInterval(intervalId);
-            clearTimeout(timeoutId);
+            cancelAnimationFrame(animationFrameId);
         };
     }, [text, isEnabled, pauseBeforeRestart]);
 
@@ -249,7 +260,10 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                     statusStyles[task.status].text
                  )}>
                     {animatedStatus}
-                    <span className="typing-cursor"></span>
+                    <span 
+                        className="typing-cursor"
+                        style={{ '--caret-color': statusStyles[task.status].color } as React.CSSProperties}
+                    ></span>
                 </span>
             </div>
         </CardContent>
@@ -271,8 +285,8 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                 Tindakan ini akan menghapus tugas secara permanen.
             </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter className="sm:justify-end">
-                <AlertDialogCancel className="mt-2 sm:mt-0">Batal</AlertDialogCancel>
+            <AlertDialogFooter className="flex-row justify-end gap-2">
+                <AlertDialogCancel>Batal</AlertDialogCancel>
                 <AlertDialogAction className="bg-destructive" onClick={handleDelete}>Lanjutkan</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
