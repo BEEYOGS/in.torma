@@ -56,12 +56,12 @@ export function MobileFooter({
 
                     <div className="flex-1 grid grid-cols-2 gap-1 text-center">
                         <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="h-auto w-full flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-foreground p-2">
-                            <IconButton label="YouTube">
+                            <IconButton>
                                 <Youtube className="h-6 w-6" />
                             </IconButton>
                         </a>
                         <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer" className="h-auto w-full flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-foreground p-2">
-                             <IconButton label="Music">
+                             <IconButton>
                                 <Music className="h-6 w-6" />
                             </IconButton>
                         </a>
@@ -100,7 +100,7 @@ export function MobileFooter({
 // A small helper component for the navigation buttons to reduce repetition
 const IconButton = React.forwardRef<
     HTMLButtonElement,
-    { children: React.ReactNode; label: string } & React.ComponentProps<typeof Button>
+    { children: React.ReactNode; label?: string } & React.ComponentProps<typeof Button>
 >(({ children, label, ...props }, ref) => (
     <Button 
         ref={ref}
@@ -110,7 +110,7 @@ const IconButton = React.forwardRef<
         {...props}
     >
         {children}
-        <span className="text-xs font-normal">{label}</span>
+        {label && <span className="text-xs font-normal">{label}</span>}
     </Button>
 ));
 IconButton.displayName = 'IconButton';
