@@ -40,8 +40,8 @@ const generateConceptImageFlow = ai.defineFlow(
       model: 'googleai/gemini-2.0-flash-preview-image-generation',
       prompt: textPrompt,
       config: {
-        // According to documentation, only IMAGE is needed here.
-        responseModalities: ['IMAGE'],
+        // According to documentation, both 'TEXT' and 'IMAGE' are required.
+        responseModalities: ['TEXT', 'IMAGE'],
       },
     });
 
