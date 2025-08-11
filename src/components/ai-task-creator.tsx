@@ -111,7 +111,10 @@ export function AiTaskCreator({ onTaskCreated, children }: AiTaskCreatorProps) {
   if (children) {
     return (
         <>
-            <div onClick={() => setIsDialogOpen(true)} className="cursor-pointer h-full w-full">
+            <div 
+              onClick={() => setIsDialogOpen(true)} 
+              className="cursor-pointer h-full w-full flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-foreground"
+            >
                 {children}
             </div>
             {DialogLayout}
