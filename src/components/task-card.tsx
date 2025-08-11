@@ -175,7 +175,6 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
       </div>
   )
 
-
   const cardContent = (
     <Card className={cn(
         "relative group overflow-hidden bg-card/20 border border-white/10 transition-all duration-300",
@@ -191,6 +190,14 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                     <CardDescription className="text-sm">{task.description}</CardDescription>
                 </div>
                 {isMobile ? <MobileActions /> : <DesktopActions />}
+            </div>
+            <div className="flex items-center gap-2 mt-2">
+                {displayDate ? (
+                <Badge variant="outline" className="border-white/20 bg-black/10">
+                    {format(displayDate, 'dd MMM yyyy')}
+                </Badge>
+                ) : <div />}
+                <Badge variant="secondary" className="bg-black/20 text-muted-foreground">{task.source}</Badge>
             </div>
         </CardHeader>
         <CardContent className="relative p-4 pt-2 flex justify-between items-center">
@@ -209,14 +216,6 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                  )}>
                     {animatedStatus || ''}
                 </span>
-            </div>
-            <div className="flex items-center gap-2">
-                {displayDate ? (
-                <Badge variant="outline" className="border-white/20 bg-black/10">
-                    {format(displayDate, 'dd MMM yyyy')}
-                </Badge>
-                ) : <div />}
-                <Badge variant="secondary" className="bg-black/20 text-muted-foreground">{task.source}</Badge>
             </div>
         </CardContent>
     </Card>
