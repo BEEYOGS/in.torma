@@ -89,6 +89,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const animatedStatus = useTypingAnimation(task.status);
+  const [isConceptDialogOpen, setIsConceptDialogOpen] = useState(false);
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent triggering other click events
@@ -116,13 +117,9 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
         "absolute top-2 right-2 flex items-center gap-1 transition-opacity opacity-0 group-hover:opacity-100"
     )}>
         <TaskDescriptionSpeaker task={task} />
-        <ConceptImageGenerator task={task}>
-            {(openDialog) => (
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-primary/80 hover:text-primary" onClick={openDialog}>
-                    <Sparkles className="h-4 w-4" />
-                </Button>
-            )}
-        </ConceptImageGenerator>
+        <Button variant="ghost" size="icon" className="h-8 w-8 text-primary/80 hover:text-primary" onClick={() => setIsConceptDialogOpen(true)}>
+            <Sparkles className="h-4 w-4" />
+        </Button>
         <Button
           variant="ghost"
           size="icon"
@@ -162,14 +159,10 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                       <Pencil className="mr-2 h-4 w-4" />
                       <span>Edit</span>
                   </DropdownMenuItem>
-                  <ConceptImageGenerator task={task}>
-                    {(openDialog) => (
-                      <DropdownMenuItem onSelect={openDialog}>
-                        <Sparkles className="mr-2 h-4 w-4 text-primary" />
-                        <span>Konsep Visual AI</span>
-                      </DropdownMenuItem>
-                    )}
-                  </ConceptImageGenerator>
+                  <DropdownMenuItem onClick={() => setIsConceptDialogOpen(true)}>
+                    <Sparkles className="mr-2 h-4 w-4 text-primary" />
+                    <span>Konsep Visual AI</span>
+                  </DropdownMenuItem>
                    <DropdownMenuItem onClick={handleDelete} className="text-destructive">
                        <Trash2 className="mr-2 h-4 w-4" />
                        <span>Hapus</span>
@@ -180,49 +173,56 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   )
 
   const cardContent = (
-    <Card className={cn(
-        "relative group overflow-hidden bg-card/20 border border-white/10 transition-all duration-300",
-        statusStyles[task.status].hover,
-        isOverlay && "ring-2 ring-primary"
-    )}>
-        <CardHeader className="relative p-4 pb-2">
-            <div className="flex justify-between items-start gap-2">
-                <div className="flex-grow" onClick={() => onEdit?.(task)}>
-                    <CardTitle className="text-base font-headline mb-1 text-foreground">
-                        {task.customerName}
-                    </CardTitle>
-                    <CardDescription className="text-sm">{task.description}</CardDescription>
-                </div>
-                {isMobile ? <MobileActions /> : <DesktopActions />}
-            </div>
-            <div className="flex items-center gap-2 mt-2">
-                {displayDate && (
-                  <Badge variant="outline" className="border-white/20 bg-black/10">
-                      {format(displayDate, 'dd MMM yyyy')}
-                  </Badge>
-                )}
-                <Badge variant="secondary" className="bg-black/20 text-muted-foreground">{task.source}</Badge>
-            </div>
-        </CardHeader>
-        <CardContent className="relative p-4 pt-2 flex justify-between items-center">
-            <div className="flex items-center gap-2">
-                {!isMobile && (
-                    <div {...props} className="cursor-grab touch-none p-1 text-muted-foreground hover:text-foreground">
-                        <GripVertical className="h-5 w-5" />
-                    </div>
-                )}
-                 <TaskDescriptionSpeaker task={task} isMobile={isMobile} />
-                 <span
-                    style={{ '--caret-color': statusStyles[task.status].color } as React.CSSProperties}
-                    className={cn(
-                    "text-xs font-medium min-w-[80px] text-left transition-opacity duration-300 typing-cursor",
-                    statusStyles[task.status].text
-                 )}>
-                    {animatedStatus || ''}
-                </span>
-            </div>
-        </CardContent>
-    </Card>
+    <>
+      <Card className={cn(
+          "relative group overflow-hidden bg-card/20 border border-white/10 transition-all duration-300",
+          statusStyles[task.status].hover,
+          isOverlay && "ring-2 ring-primary"
+      )}>
+          <CardHeader className="relative p-4 pb-2">
+              <div className="flex justify-between items-start gap-2">
+                  <div className="flex-grow" onClick={() => onEdit?.(task)}>
+                      <CardTitle className="text-base font-headline mb-1 text-foreground">
+                          {task.customerName}
+                      </CardTitle>
+                      <CardDescription className="text-sm">{task.description}</CardDescription>
+                  </div>
+                  {isMobile ? <MobileActions /> : <DesktopActions />}
+              </div>
+              <div className="flex items-center gap-2 mt-2">
+                  {displayDate && (
+                    <Badge variant="outline" className="border-white/20 bg-black/10">
+                        {format(displayDate, 'dd MMM yyyy')}
+                    </Badge>
+                  )}
+                  <Badge variant="secondary" className="bg-black/20 text-muted-foreground">{task.source}</Badge>
+              </div>
+          </CardHeader>
+          <CardContent className="relative p-4 pt-2 flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                  {!isMobile && (
+                      <div {...props} className="cursor-grab touch-none p-1 text-muted-foreground hover:text-foreground">
+                          <GripVertical className="h-5 w-5" />
+                      </div>
+                  )}
+                   <TaskDescriptionSpeaker task={task} isMobile={isMobile} />
+                   <span
+                      style={{ '--caret-color': statusStyles[task.status].color } as React.CSSProperties}
+                      className={cn(
+                      "text-xs font-medium min-w-[80px] text-left transition-opacity duration-300 typing-cursor",
+                      statusStyles[task.status].text
+                   )}>
+                      {animatedStatus || ''}
+                  </span>
+              </div>
+          </CardContent>
+      </Card>
+      <ConceptImageGenerator 
+        task={task} 
+        isOpen={isConceptDialogOpen} 
+        onOpenChange={setIsConceptDialogOpen}
+      />
+    </>
   )
 
   return (

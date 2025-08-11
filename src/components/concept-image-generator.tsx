@@ -1,22 +1,21 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Button } from './ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { generateConceptImage } from '@/ai/flows/generate-concept-image-flow';
-import { Loader2, Sparkles } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import type { Task } from '@/types/task';
 
 interface ConceptImageGeneratorProps {
   task: Task;
-  children: (openDialog: () => void) => React.ReactNode;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-export function ConceptImageGenerator({ task, children }: ConceptImageGeneratorProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export function ConceptImageGenerator({ task, isOpen, onOpenChange }: ConceptImageGeneratorProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { toast } = useToast();
@@ -39,29 +38,25 @@ export function ConceptImageGenerator({ task, children }: ConceptImageGeneratorP
         title: 'Gagal Membuat Gambar',
         description: 'Terjadi kesalahan saat berkomunikasi dengan AI. Coba lagi nanti.',
       });
-      setIsOpen(false);
+      onOpenChange(false);
     } finally {
       setIsLoading(false);
     }
   };
   
-  const handleOpenChange = (open: boolean) => {
-    setIsOpen(open);
-    if(open) {
-        handleGenerateImage();
+  useEffect(() => {
+    if (isOpen) {
+      handleGenerateImage();
     } else {
-        setImageUrl(null);
-        setIsLoading(false);
+      setImageUrl(null);
+      setIsLoading(false);
     }
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
-  const openDialog = () => {
-    handleOpenChange(true);
-  }
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      {children(openDialog)}
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl bg-background/80 backdrop-blur-lg">
         <DialogHeader>
           <DialogTitle className="font-headline">Konsep Visual AI</DialogTitle>
