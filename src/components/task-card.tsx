@@ -144,7 +144,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   )
 
   const MobileActions = () => (
-      <div className="absolute top-2 right-1">
+      <div className="flex-shrink-0">
           <DropdownMenu>
               <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -182,8 +182,8 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
         isOverlay && "ring-2 ring-primary"
     )}>
         <CardHeader className="relative p-4 pb-2">
-            <div className="flex justify-between items-start gap-4">
-                <div className="flex-grow pr-8" onClick={() => onEdit?.(task)}>
+            <div className="flex justify-between items-start gap-2">
+                <div className="flex-grow" onClick={() => onEdit?.(task)}>
                     <CardTitle className="text-base font-headline mb-1 text-foreground">
                         {task.customerName}
                     </CardTitle>
@@ -192,11 +192,11 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                 {isMobile ? <MobileActions /> : <DesktopActions />}
             </div>
             <div className="flex items-center gap-2 mt-2">
-                {displayDate ? (
-                <Badge variant="outline" className="border-white/20 bg-black/10">
-                    {format(displayDate, 'dd MMM yyyy')}
-                </Badge>
-                ) : <div />}
+                {displayDate && (
+                  <Badge variant="outline" className="border-white/20 bg-black/10">
+                      {format(displayDate, 'dd MMM yyyy')}
+                  </Badge>
+                )}
                 <Badge variant="secondary" className="bg-black/20 text-muted-foreground">{task.source}</Badge>
             </div>
         </CardHeader>
