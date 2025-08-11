@@ -40,12 +40,24 @@ const generateConceptImageFlow = ai.defineFlow(
       model: 'googleai/gemini-2.0-flash-preview-image-generation',
       prompt: textPrompt,
       config: {
-        // According to documentation, both 'TEXT' and 'IMAGE' are required.
+        // According to documentation, both 'TEXT' and 'IMAGE' are required for this model.
         responseModalities: ['TEXT', 'IMAGE'],
         // Relax safety settings to reduce chances of blocking harmless prompts.
         safetySettings: [
           {
             category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+            threshold: 'BLOCK_NONE',
+          },
+           {
+            category: 'HARM_CATEGORY_HATE_SPEECH',
+            threshold: 'BLOCK_NONE',
+          },
+          {
+            category: 'HARM_CATEGORY_HARASSMENT',
+            threshold: 'BLOCK_NONE',
+          },
+          {
+            category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
             threshold: 'BLOCK_NONE',
           },
         ]
