@@ -34,12 +34,12 @@ const generateConceptImageFlow = ai.defineFlow(
   async ({ description }) => {
     const fullPrompt = `Concept art for: ${description}. Digital painting, high detail, cinematic lighting.`;
     
-    const { media } = await ai.generate({
-      model: 'googleai/gemini-2.0-flash-preview-image-generation',
+    const {media} = await ai.generate({
+      model: 'googleai/gemini-1.5-pro-latest',
       prompt: fullPrompt,
-      config: {
-        responseModalities: ['TEXT', 'IMAGE'],
-      },
+      output: {
+        format: 'image',
+      }
     });
 
     if (!media || !media.url) {
