@@ -22,10 +22,13 @@ const GenerateConceptImageOutputSchema = z.object({
 });
 export type GenerateConceptImageOutput = z.infer<typeof GenerateConceptImageOutputSchema>;
 
+// This is the exported function that the UI calls.
+// It simply calls the Genkit flow.
 export async function generateConceptImage(input: GenerateConceptImageInput): Promise<GenerateConceptImageOutput> {
   return generateConceptImageFlow(input);
 }
 
+// This is the Genkit flow definition.
 const generateConceptImageFlow = ai.defineFlow(
   {
     name: 'generateConceptImageFlow',
