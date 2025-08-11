@@ -33,13 +33,15 @@ const generateConceptImageFlow = ai.defineFlow(
     outputSchema: GenerateConceptImageOutputSchema,
   },
   async ({ description }) => {
-    const textPrompt = `A digital painting of concept art for: ${description}, high detail, cinematic lighting.`;
+    // A more descriptive prompt for better results.
+    const textPrompt = `Generate a high-quality, photorealistic concept art image based on the following description: "${description}". The image should have cinematic lighting, high detail, and a professional digital painting style.`;
 
     const {media} = await ai.generate({
       model: 'googleai/gemini-2.0-flash-preview-image-generation',
       prompt: textPrompt,
       config: {
-        responseModalities: ['IMAGE', 'TEXT'],
+        // According to documentation, only IMAGE is needed here.
+        responseModalities: ['IMAGE'],
       },
     });
 
