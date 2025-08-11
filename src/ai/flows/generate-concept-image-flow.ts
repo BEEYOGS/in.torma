@@ -26,17 +26,6 @@ export async function generateConceptImage(input: GenerateConceptImageInput): Pr
   return generateConceptImageFlow(input);
 }
 
-const imageGenerationPrompt = ai.definePrompt(
-    {
-      name: 'imageGenerationPrompt',
-      input: {
-        schema: GenerateConceptImageInputSchema
-      },
-      prompt: `A digital painting of concept art for: {{{description}}}, high detail, cinematic lighting.`
-    }
-);
-
-
 const generateConceptImageFlow = ai.defineFlow(
   {
     name: 'generateConceptImageFlow',
@@ -44,15 +33,17 @@ const generateConceptImageFlow = ai.defineFlow(
     outputSchema: GenerateConceptImageOutputSchema,
   },
   async ({ description }) => {
-    
-    // First, invoke the prompt with the input data to get a structured prompt object.
-    const promptWithInput = await imageGenerationPrompt({ description });
+    // Create a simple, direct text prompt for the image generation model.
+    const textPrompt = `A digital painting of concept art for: ${description}, high detail, cinematic lighting.`;
 
     const {media} = await ai.generate({
+      // IMPORTANT: Use the correct model for image generation.
       model: 'googleai/gemini-2.0-flash-preview-image-generation',
-      prompt: promptWithInput, // Pass the fully resolved prompt
+      // The prompt should be a simple string.
+      prompt: textPrompt,
       config: {
-        // IMPORTANT: This model requires both TEXT and IMAGE modalities.
+        // According to the latest documentation, this model requires both TEXT and IMAGE.
+        // Even if we only expect an image, this configuration is necessary.
         responseModalities: ['IMAGE', 'TEXT'],
       },
     });
