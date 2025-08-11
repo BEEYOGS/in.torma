@@ -267,8 +267,8 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
             </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="w-full sm:w-auto">Batal</AlertDialogCancel>
-              <AlertDialogAction className="bg-primary w-full sm:w-auto" onClick={handleDelete}>Lanjutkan</AlertDialogAction>
+              <AlertDialogCancel className="mt-2 sm:mt-0">Batal</AlertDialogCancel>
+              <AlertDialogAction className="bg-destructive" onClick={handleDelete}>Lanjutkan</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>
@@ -276,5 +276,3 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 });
 
 TaskCard.displayName = "TaskCard";
-
-    

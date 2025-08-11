@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Header } from '@/components/header';
 import { TaskBoard } from '@/components/task-board';
 import { listenToTasks } from '@/services/task-service';
@@ -10,7 +10,6 @@ import { TaskDialog } from '@/components/task-dialog';
 import { EmptyState } from '@/components/empty-state';
 import { MobileFooter } from '@/components/mobile-footer';
 import { TaskAnalytics } from '@/components/task-analytics';
-import { subDays } from 'date-fns';
 
 export default function Home() {
   const [allTasks, setAllTasks] = useState<Task[]>([]);
@@ -54,18 +53,18 @@ export default function Home() {
         setPrefillData(undefined);
     }
   }
+  
+  // Memoize the filtered tasks to avoid re-calculating on every render
+  const filteredTasks = useMemo(() => {
+    if (searchTerm === '') {
+      return allTasks;
+    }
+    return allTasks.filter(task => 
+      task.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      task.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [allTasks, searchTerm]);
 
-  const sevenDaysAgo = subDays(new Date(), 7);
-
-  const visibleTasks = allTasks.filter(task => {
-    const taskDate = new Date(parseInt(task.id, 10));
-    return taskDate >= sevenDaysAgo;
-  });
-
-  const filteredTasks = visibleTasks.filter(task => 
-    task.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    task.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div className="min-h-screen flex flex-col bg-transparent">
@@ -90,7 +89,7 @@ export default function Home() {
                 <h3 className="text-lg font-semibold">Tidak ada hasil</h3>
                 <p>Coba kata kunci pencarian yang lain.</p>
             </div>
-        ) : visibleTasks.length === 0 ? (
+        ) : allTasks.length === 0 ? (
           <EmptyState />
         ) : (
           <TaskBoard 
