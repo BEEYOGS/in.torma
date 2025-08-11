@@ -48,7 +48,6 @@ export function TaskAnalytics({ tasks, children, isOpen, onOpenChange }: TaskAna
             const count = completedTasks.filter(task => {
                 if (!task.dueDate) return false;
                 const taskDate = parseISO(task.dueDate);
-                taskDate.setMinutes(taskDate.getMinutes() + taskDate.getTimezoneOffset());
                 return format(taskDate, 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd')
             }).length;
             return {
@@ -98,29 +97,29 @@ export function TaskAnalytics({ tasks, children, isOpen, onOpenChange }: TaskAna
       }, [analyticsData.sourceDistribution]);
 
     const kpiCards = [
-        { title: "Total Tugas", value: analyticsData.totalTasks, icon: <ListTodo className="h-8 w-8 text-muted-foreground" /> },
-        { title: "Tugas Aktif", value: analyticsData.activeTasks, icon: <Sun className="h-8 w-8 text-primary" /> },
-        { title: "Tugas Selesai", value: analyticsData.completedTasks, icon: <Check className="h-8 w-8 text-green-500" /> }
+        { title: "Total Tugas", value: analyticsData.totalTasks, icon: <ListTodo className="h-6 w-6 text-muted-foreground" /> },
+        { title: "Tugas Aktif", value: analyticsData.activeTasks, icon: <Sun className="h-6 w-6 text-primary" /> },
+        { title: "Tugas Selesai", value: analyticsData.completedTasks, icon: <Check className="h-6 w-6 text-green-500" /> }
     ];
     
     const renderCharts = () => {
         if (!isClient) {
             return (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[350px]">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 min-h-[350px]">
                   <div className="w-full h-full animate-pulse rounded-md bg-muted/50" />
                   <div className="w-full h-full animate-pulse rounded-md bg-muted/50" />
                 </div>
             )
         }
         return (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <Card className="bg-card/20 border-white/10">
                     <CardHeader>
                         <CardTitle>Tugas Selesai (7 Hari Terakhir)</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <ChartContainer config={barChartConfig} className="min-h-[250px] w-full">
-                            <BarChart accessibilityLayer data={analyticsData.completedLast7Days} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                            <BarChart accessibilityLayer data={analyticsData.completedLast7Days} margin={{ top: 20, right: 20, bottom: 20, left: -10 }}>
                                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
                                 <XAxis
                                     dataKey="name"
@@ -180,16 +179,16 @@ export function TaskAnalytics({ tasks, children, isOpen, onOpenChange }: TaskAna
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
             {children && <DialogTrigger asChild>{children}</DialogTrigger>}
-            <DialogContent className="max-w-5xl h-[90vh] glass-card border-white/10 flex flex-col">
-                <DialogHeader>
+            <DialogContent className="max-w-4xl w-[90vw] h-[90vh] glass-card border-white/10 flex flex-col">
+                <DialogHeader className="px-6 pt-6">
                     <DialogTitle className="font-headline text-2xl">Dasbor Analitik Tugas</DialogTitle>
                     <DialogDescription>
                         Visualisasi data dan metrik penting dari tugas Anda.
                     </DialogDescription>
                 </DialogHeader>
-                <ScrollArea className="flex-grow">
-                    <div className="space-y-6 py-4 pr-6">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <ScrollArea className="flex-grow px-6 pb-6">
+                    <div className="space-y-4 py-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             {kpiCards.map(card => (
                                 <Card key={card.title} className="bg-card/20 border-white/10">
                                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -197,7 +196,7 @@ export function TaskAnalytics({ tasks, children, isOpen, onOpenChange }: TaskAna
                                         {card.icon}
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="text-4xl font-bold">{card.value}</div>
+                                        <div className="text-2xl font-bold">{card.value}</div>
                                     </CardContent>
                                 </Card>
                             ))}
