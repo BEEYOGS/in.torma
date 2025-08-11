@@ -19,9 +19,9 @@ import { cn } from '@/lib/utils';
 import { ConceptImageGenerator } from './concept-image-generator';
 import { TaskDescriptionSpeaker } from './task-description-speaker';
 import { useIsMobile } from '@/hooks/use-mobile';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
-import { Dialog, DialogTrigger } from './ui/dialog';
+import { Dialog } from './ui/dialog';
 
 interface TaskCardProps extends React.HTMLAttributes<HTMLDivElement> {
   task: Task;
@@ -117,14 +117,17 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
         "absolute top-2 right-2 flex items-center gap-1 transition-opacity opacity-0 group-hover:opacity-100 pointer-events-none"
     )}>
         <TaskDescriptionSpeaker task={task} />
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-primary/80 hover:text-primary pointer-events-auto">
-                <Sparkles className="h-4 w-4" />
-            </Button>
-          </DialogTrigger>
-          <ConceptImageGenerator task={task} />
-        </Dialog>
+        <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8 text-primary/80 hover:text-primary pointer-events-auto"
+            onClick={(e) => {
+                e.stopPropagation();
+                setIsConceptDialogOpen(true);
+            }}
+        >
+            <Sparkles className="h-4 w-4" />
+        </Button>
         <Button
           variant="ghost"
           size="icon"
@@ -180,62 +183,61 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   )
 
   const cardContent = (
-    <>
-      <Card className={cn(
-          "relative group overflow-hidden bg-card/20 border border-white/10 transition-all duration-300 shadow-md shadow-transparent",
-          statusStyles[task.status].hover,
-          isOverlay && "ring-2 ring-primary"
-      )}>
-          <CardHeader className="relative p-4 pb-2">
-              <div className="flex justify-between items-start gap-2">
-                  <div className="flex-grow min-w-0" onClick={() => onEdit?.(task)}>
-                      <CardTitle className="text-base font-headline mb-1 text-foreground truncate">
-                          {task.customerName}
-                      </CardTitle>
-                      <CardDescription className="text-sm truncate">{task.description}</CardDescription>
-                  </div>
-                  {isMobile ? <MobileActions /> : <DesktopActions />}
-              </div>
-              <div className="flex items-center gap-2 mt-2 flex-wrap">
-                  {displayDate && (
-                    <Badge variant="outline" className="border-white/20 bg-black/10">
-                        {format(displayDate, 'dd MMM yyyy')}
-                    </Badge>
-                  )}
-                  <Badge variant="secondary" className="bg-black/20 text-muted-foreground">{task.source}</Badge>
-              </div>
-          </CardHeader>
-          <CardContent className="relative p-4 pt-2 flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                  {!isMobile && (
-                      <div {...props} className="cursor-grab touch-none p-1 text-muted-foreground hover:text-foreground">
-                          <GripVertical className="h-5 w-5" />
-                      </div>
-                  )}
-                   <TaskDescriptionSpeaker task={task} isMobile={isMobile} />
-                   <span
-                      style={{ '--caret-color': statusStyles[task.status].color } as React.CSSProperties}
-                      className={cn(
-                      "text-xs font-medium min-w-[80px] text-left transition-opacity duration-300 typing-cursor",
-                      statusStyles[task.status].text
-                   )}>
-                      {animatedStatus || ''}
-                  </span>
-              </div>
-          </CardContent>
-      </Card>
-      
-      <Dialog open={isConceptDialogOpen} onOpenChange={setIsConceptDialogOpen}>
-        <ConceptImageGenerator task={task} />
-      </Dialog>
-    </>
+    <Card className={cn(
+        "relative group overflow-hidden bg-card/20 border border-white/10 transition-all duration-300 shadow-md shadow-transparent",
+        statusStyles[task.status].hover,
+        isOverlay && "ring-2 ring-primary"
+    )}>
+        <CardHeader className="relative p-4 pb-2">
+            <div className="flex justify-between items-start gap-2">
+                <div className="flex-grow min-w-0" onClick={() => onEdit?.(task)}>
+                    <CardTitle className="text-base font-headline mb-1 text-foreground truncate">
+                        {task.customerName}
+                    </CardTitle>
+                    <CardDescription className="text-sm truncate">{task.description}</CardDescription>
+                </div>
+                {isMobile ? <MobileActions /> : <DesktopActions />}
+            </div>
+            <div className="flex items-center gap-2 mt-2 flex-wrap">
+                {displayDate && (
+                  <Badge variant="outline" className="border-white/20 bg-black/10">
+                      {format(displayDate, 'dd MMM yyyy')}
+                  </Badge>
+                )}
+                <Badge variant="secondary" className="bg-black/20 text-muted-foreground">{task.source}</Badge>
+            </div>
+        </CardHeader>
+        <CardContent className="relative p-4 pt-2 flex justify-between items-center">
+            <div className="flex items-center gap-2">
+                {!isMobile && (
+                    <div {...props} className="cursor-grab touch-none p-1 text-muted-foreground hover:text-foreground">
+                        <GripVertical className="h-5 w-5" />
+                    </div>
+                )}
+                 <TaskDescriptionSpeaker task={task} isMobile={isMobile} />
+                 <span
+                    style={{ '--caret-color': statusStyles[task.status].color } as React.CSSProperties}
+                    className={cn(
+                    "text-xs font-medium min-w-[80px] text-left transition-opacity duration-300 typing-cursor",
+                    statusStyles[task.status].text
+                 )}>
+                    {animatedStatus || ''}
+                </span>
+            </div>
+        </CardContent>
+    </Card>
   )
 
   return (
     <div ref={ref} {...props}>
         {cardContent}
+        <Dialog open={isConceptDialogOpen} onOpenChange={setIsConceptDialogOpen}>
+            <ConceptImageGenerator task={task} />
+        </Dialog>
     </div>
   );
 });
 
 TaskCard.displayName = "TaskCard";
+
+    
