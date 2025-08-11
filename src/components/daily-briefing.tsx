@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { Loader2, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -84,4 +84,3 @@ export function DailyBriefing({ tasks, children }: DailyBriefingProps) {
     </Tooltip>
   );
 }
-
