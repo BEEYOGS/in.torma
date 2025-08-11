@@ -37,6 +37,7 @@ export async function dailySummary(input: DailySummaryInput): Promise<DailySumma
 
 const summaryPrompt = ai.definePrompt({
   name: 'summaryPrompt',
+  model: 'googleai/gemini-1.5-flash-latest',
   input: {
     schema: z.object({
       tasks: z.array(z.any()).describe('Array of active tasks'),

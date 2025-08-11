@@ -39,7 +39,6 @@ export async function createTask(input: CreateTaskInput): Promise<CreateTaskOutp
 
 const prompt = ai.definePrompt({
   name: 'createTaskPrompt',
-  model: 'gemini-1.5-flash-latest',
   input: {schema: CreateTaskInputSchema.extend({
     currentDate: z.string(),
     tomorrow: z.string(),
@@ -136,13 +135,18 @@ const createTaskFlow = ai.defineFlow(
     
     const formatDate = (d: Date) => d.toISOString().split('T')[0];
 
-    const {output} = await prompt({
-      ...input,
-      currentDate: formatDate(now),
-      tomorrow: formatDate(tomorrow),
-      dayAfterTomorrow: formatDate(dayAfterTomorrow),
-      nextWeek: formatDate(nextWeek),
+    const {output} = await ai.generate({
+      model: 'googleai/gemini-1.5-flash-latest',
+      prompt: prompt,
+      input: {
+        ...input,
+        currentDate: formatDate(now),
+        tomorrow: formatDate(tomorrow),
+        dayAfterTomorrow: formatDate(dayAfterTomorrow),
+        nextWeek: formatDate(nextWeek),
+      }
     });
+
     return output!;
   }
 );
