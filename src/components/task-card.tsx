@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { Pencil, GripVertical, Sparkles, Trash2, MoreVertical, AlertCircle } from 'lucide-react';
+import { Pencil, Sparkles, Trash2, MoreVertical, AlertCircle } from 'lucide-react';
 import type { Task, TaskStatus } from '@/types/task';
 import { deleteTask } from '@/services/task-service';
 import { useToast } from '@/hooks/use-toast';
@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils';
 import { ConceptImageGenerator } from './concept-image-generator';
 import { TaskDescriptionSpeaker } from './task-description-speaker';
 import { useIsMobile } from '@/hooks/use-mobile';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { Dialog, DialogTrigger } from './ui/dialog';
 import {
@@ -58,60 +58,11 @@ const statusStyles: Record<TaskStatus, { text: string; hoverOutline: string, col
   },
 };
 
-const useTypingAnimation = (text: string, isEnabled: boolean = true) => {
-    const [displayedText, setDisplayedText] = useState('');
-    const typingSpeed = 150;
-    const pauseBeforeRestart = 1500;
-
-    useEffect(() => {
-        if (!isEnabled || !text) {
-            setDisplayedText(text || '');
-            return;
-        }
-
-        let isMounted = true;
-        let charIndex = 0;
-        let timeoutId: NodeJS.Timeout;
-
-        const type = () => {
-            if (!isMounted) return;
-            
-            if (charIndex < text.length) {
-                setDisplayedText(prev => prev + text.charAt(charIndex));
-                charIndex++;
-                timeoutId = setTimeout(type, typingSpeed);
-            } else {
-                // Pause at the end, then restart
-                timeoutId = setTimeout(() => {
-                    if (isMounted) {
-                        setDisplayedText('');
-                        charIndex = 0;
-                        type();
-                    }
-                }, pauseBeforeRestart);
-            }
-        };
-
-        type();
-
-        return () => {
-            isMounted = false;
-            clearTimeout(timeoutId);
-        };
-    }, [text, isEnabled, typingSpeed, pauseBeforeRestart]);
-
-
-    return displayedText;
-};
-
-
 export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   ({ task, onEdit, isOverlay, ...props }, ref) => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const [isConceptDialogOpen, setIsConceptDialogOpen] = useState(false);
-  const animatedStatus = useTypingAnimation(task.status, !isOverlay);
-
 
   const handleDelete = async () => {
     try {
@@ -131,42 +82,24 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   };
   
   const displayDate = task.dueDate ? new Date(`${task.dueDate}T00:00:00`) : null;
-
-  const DesktopActions = () => (
-    <div className={cn(
-        "absolute top-2 right-2 flex items-center gap-1 transition-opacity opacity-0 group-hover:opacity-100"
-    )}>
-        <DialogTrigger asChild>
-            <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 text-primary/80 hover:text-primary pointer-events-auto"
-                onClick={(e) => e.stopPropagation()}
-            >
-                <Sparkles className="h-4 w-4" />
-            </Button>
-        </DialogTrigger>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 pointer-events-auto"
-          onClick={(e) => {
-              e.stopPropagation();
-              onEdit?.(task)
-          }}
-        >
-            <Pencil className="h-4 w-4" />
-        </Button>
-        <AlertDialogTrigger asChild>
-            <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-destructive/70 hover:text-destructive pointer-events-auto"
-                onClick={(e) => e.stopPropagation()}
-            >
-                <Trash2 className="h-4 w-4" />
-            </Button>
-        </AlertDialogTrigger>
+  const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isMobile) return;
+    const target = e.target as HTMLElement;
+    if (target.closest('button, [role="menu"], [role="menuitem"]')) {
+      return;
+    }
+    onEdit?.(task);
+  };
+  
+  const HeaderContent = () => (
+    <div 
+        className={cn("flex-grow min-w-0", isMobile && "cursor-pointer")}
+        onClick={() => { if(isMobile) onEdit?.(task) }}
+    >
+        <CardTitle className="text-base font-headline mb-1 text-foreground truncate">
+            {task.customerName}
+        </CardTitle>
+        <CardDescription className="text-sm truncate">{task.description}</CardDescription>
     </div>
   )
 
@@ -178,16 +111,13 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                     variant="ghost" 
                     size="icon" 
                     className="h-8 w-8" 
-                    onClick={(e) => e.stopPropagation()}
-                    onPointerDown={(e) => e.stopPropagation()}
-                >
+                 >
                     <MoreVertical className="h-4 w-4" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
                 align="end"
                 className="bg-popover/80 backdrop-blur-lg border-white/10"
-                onClick={(e) => e.stopPropagation()}
             >
                 <DropdownMenuItem onSelect={() => onEdit?.(task)}>
                     <Pencil className="mr-2 h-4 w-4" />
@@ -223,17 +153,9 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
         isOverlay && "ring-2 ring-primary"
     )}>
         <CardHeader className="relative p-4 pb-2">
-            <div 
-                className="flex justify-between items-start gap-2"
-                onClick={() => { if(isMobile) onEdit?.(task) }}
-            >
-                <div className="flex-grow min-w-0">
-                    <CardTitle className="text-base font-headline mb-1 text-foreground truncate">
-                        {task.customerName}
-                    </CardTitle>
-                    <CardDescription className="text-sm truncate">{task.description}</CardDescription>
-                </div>
-                {isMobile ? <MobileActions /> : <DesktopActions />}
+            <div className="flex justify-between items-start gap-2">
+                <HeaderContent />
+                {isMobile && <MobileActions />}
             </div>
             <div className="flex items-center gap-2 mt-2 flex-wrap">
                 {displayDate && (
@@ -246,22 +168,14 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
         </CardHeader>
         <CardContent className="relative p-4 pt-2 flex justify-between items-center">
             <div className="flex items-center gap-2">
-                {!isMobile && (
-                    <div {...props} className="cursor-grab touch-none p-1 text-muted-foreground hover:text-foreground">
-                        <GripVertical className="h-5 w-5" />
-                    </div>
-                )}
                  <TaskDescriptionSpeaker task={task} />
                  <span
                     className={cn(
-                    "text-xs font-medium min-w-[80px] text-left",
-                    statusStyles[task.status].text
-                 )}>
-                    {animatedStatus}
-                    <span 
-                        className="typing-cursor"
-                        style={{ '--caret-color': statusStyles[task.status].color } as React.CSSProperties}
-                    ></span>
+                        "text-xs font-medium",
+                        statusStyles[task.status].text
+                    )}
+                 >
+                    {task.status}
                 </span>
             </div>
         </CardContent>
@@ -271,7 +185,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   return (
     <AlertDialog>
         <Dialog open={isConceptDialogOpen} onOpenChange={setIsConceptDialogOpen}>
-            <div ref={ref} {...props} onClick={() => !isMobile && onEdit?.(task)}>
+            <div ref={ref} {...props} onClick={handleCardClick}>
                 {cardContent}
             </div>
             {isConceptDialogOpen && <ConceptImageGenerator task={task} />}
