@@ -74,29 +74,34 @@ const sourceIcons: Record<TaskSource, React.ElementType> = {
     'G': Users
 }
 
-const useTypingAnimation = (text: string, speed = 150) => {
+const useTypingAnimation = (text: string, speed = 150, pauseDuration = 1500) => {
     const [displayText, setDisplayText] = useState('');
 
     useEffect(() => {
-        setDisplayText(''); // Reset on text change
-        let i = 0;
-        const typingInterval = setInterval(() => {
-            if (i < text.length) {
-                setDisplayText(prev => prev + text.charAt(i));
-                i++;
+        let timeout: NodeJS.Timeout;
+        let currentIndex = 0;
+
+        const type = () => {
+            if (currentIndex < text.length) {
+                setDisplayText(prev => text.substring(0, prev.length + 1));
+                currentIndex++;
+                timeout = setTimeout(type, speed);
             } else {
-                clearInterval(typingInterval);
-                // Pause at the end, then reset
-                setTimeout(() => {
+                // Finished typing, pause then restart
+                timeout = setTimeout(() => {
                     setDisplayText('');
-                }, 1500);
+                    currentIndex = 0;
+                    type(); // Restart typing
+                }, pauseDuration);
             }
-        }, speed);
+        };
+
+        type(); // Start the animation
 
         return () => {
-            clearInterval(typingInterval);
+            clearTimeout(timeout);
         };
-    }, [text, speed]);
+    }, [text, speed, pauseDuration]);
 
     return displayText;
 };
