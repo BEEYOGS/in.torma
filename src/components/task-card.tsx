@@ -291,7 +291,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
             </AlertDialogHeader>
             <AlertDialogFooter className="flex-row justify-end gap-2">
                 <AlertDialogCancel>Batal</AlertDialogCancel>
-                <AlertDialogAction className="bg-destructive hover:bg-destructive/90" onClick={handleDelete}>Lanjutkan</AlertDialogAction>
+                <AlertDialogAction onClick={handleDelete}>Lanjutkan</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>
