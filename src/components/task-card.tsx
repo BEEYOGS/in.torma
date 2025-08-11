@@ -21,7 +21,7 @@ import { TaskDescriptionSpeaker } from './task-description-speaker';
 import { useIsMobile } from '@/hooks/use-mobile';
 import React, { useState, useEffect, useCallback } from 'react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
-import { Dialog, DialogTrigger } from './ui/dialog';
+import { Dialog } from './ui/dialog';
 
 interface TaskCardProps extends React.HTMLAttributes<HTMLDivElement> {
   task: Task;
@@ -91,7 +91,6 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const isMobile = useIsMobile();
   const animatedStatus = useTypingAnimation(task.status);
   const [isConceptDialogOpen, setIsConceptDialogOpen] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent triggering other click events
@@ -110,30 +109,26 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
       });
     }
   };
-
-  const handleDialogContentOpen = useCallback(() => {
-    setIsGenerating(true);
-  }, []);
   
   const displayDate = task.dueDate ? new Date(`${task.dueDate}T00:00:00`) : null;
 
   const DesktopActions = () => (
     <div className={cn(
-        "absolute top-2 right-2 flex items-center gap-1 transition-opacity opacity-0 group-hover:opacity-100"
+        "absolute top-2 right-2 flex items-center gap-1 transition-opacity opacity-0 group-hover:opacity-100 pointer-events-none"
     )}>
         <TaskDescriptionSpeaker task={task} />
-        <Dialog>
+        <Dialog open={isConceptDialogOpen} onOpenChange={setIsConceptDialogOpen}>
           <DialogTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-primary/80 hover:text-primary">
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-primary/80 hover:text-primary pointer-events-auto">
                 <Sparkles className="h-4 w-4" />
             </Button>
           </DialogTrigger>
-          <ConceptImageGenerator task={task} onOpen={handleDialogContentOpen}/>
+          <ConceptImageGenerator task={task} />
         </Dialog>
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8"
+          className="h-8 w-8 pointer-events-auto"
           onClick={(e) => {
               e.stopPropagation();
               onEdit?.(task)
@@ -144,7 +139,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
         <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-destructive/70 hover:text-destructive"
+            className="h-8 w-8 text-destructive/70 hover:text-destructive pointer-events-auto"
             onClick={handleDelete}
         >
             <Trash2 className="h-4 w-4" />
@@ -231,7 +226,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
       </Card>
       
       <Dialog open={isConceptDialogOpen} onOpenChange={setIsConceptDialogOpen}>
-        <ConceptImageGenerator task={task} onOpen={handleDialogContentOpen} />
+        <ConceptImageGenerator task={task} />
       </Dialog>
     </>
   )

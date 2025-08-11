@@ -8,13 +8,13 @@ import { useToast } from '@/hooks/use-toast';
 import { generateConceptImage } from '@/ai/flows/generate-concept-image-flow';
 import { Loader2 } from 'lucide-react';
 import type { Task } from '@/types/task';
+import { Dialog } from '@radix-ui/react-dialog';
 
 interface ConceptImageGeneratorProps {
   task: Task;
-  onOpen: () => void;
 }
 
-export function ConceptImageGenerator({ task, onOpen }: ConceptImageGeneratorProps) {
+export function ConceptImageGenerator({ task }: ConceptImageGeneratorProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { toast } = useToast();
@@ -43,16 +43,10 @@ export function ConceptImageGenerator({ task, onOpen }: ConceptImageGeneratorPro
   };
   
   useEffect(() => {
-    // This effect now triggers when the dialog is opened via the onOpen callback
+    // This effect now triggers when the dialog is opened by the parent.
     handleGenerateImage();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [task.id]); // Rerun only if the task itself changes
-
-  // The onOpen prop is called by the parent to let us know to start loading.
-  // The actual dialog open state is now controlled by the parent Dialog component.
-  useEffect(() => {
-    onOpen();
-  }, [onOpen]);
 
 
   return (
@@ -84,4 +78,3 @@ export function ConceptImageGenerator({ task, onOpen }: ConceptImageGeneratorPro
       </DialogContent>
   );
 }
-
