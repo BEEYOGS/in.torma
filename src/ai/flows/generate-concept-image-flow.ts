@@ -50,7 +50,8 @@ const generateConceptImageFlow = ai.defineFlow(
       prompt: imageGenerationPrompt,
       input: { description },
       config: {
-        responseModalities: ['IMAGE'],
+        // IMPORTANT: This model requires both TEXT and IMAGE modalities.
+        responseModalities: ['IMAGE', 'TEXT'],
       },
     });
 
