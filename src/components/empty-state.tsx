@@ -21,8 +21,8 @@ export function EmptyState() {
     const deltaY = clientY - centerY;
     
     // Constrain the movement for a subtle effect
-    const moveX = Math.max(-5, Math.min(5, deltaX * 0.03));
-    const moveY = Math.max(-3, Math.min(3, deltaY * 0.03));
+    const moveX = Math.max(-4, Math.min(4, deltaX * 0.02));
+    const moveY = Math.max(-2, Math.min(2, deltaY * 0.02));
     
     setEyePosition({ x: moveX, y: moveY });
   };
@@ -63,34 +63,31 @@ export function EmptyState() {
            <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                     <linearGradient id="alien-skin" x1="0.5" y1="0" x2="0.5" y2="1">
-                        <stop offset="0%" stopColor="#84cc16" /> 
-                        <stop offset="100%" stopColor="#4d7c0f" /> 
+                        <stop offset="0%" stopColor="#a3e635" /> 
+                        <stop offset="100%" stopColor="#65a30d" /> 
                     </linearGradient>
-                    <filter id="subtle-glow" x="-50%" y="-50%" width="200%" height="200%">
-                        <feDropShadow dx="0" dy="4" stdDeviation="8" floodColor="hsl(var(--primary))" floodOpacity="0.2"/>
+                    <radialGradient id="eye-gloss" cx="0.4" cy="0.4" r="0.6">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0.4)" />
+                        <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+                    </radialGradient>
+                     <filter id="subtle-glow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feDropShadow dx="0" dy="5" stdDeviation="10" floodColor="hsl(var(--primary))" floodOpacity="0.2"/>
                     </filter>
                 </defs>
                 
                 <g style={{filter: 'url(#subtle-glow)'}}>
-                    {/* Alien Body */}
-                    <path d="M 100,20 C 60,20 40,70 40,110 C 40,160 70,180 100,180 C 130,180 160,160 160,110 C 160,70 140,20 100,20 Z" fill="url(#alien-skin)"/>
-                    
-                    {/* Antenna */}
-                    <path d="M 100,20 Q 100,0 110,10" stroke="#4d7c0f" strokeWidth="4" fill="none" strokeLinecap="round"/>
-                    <circle cx="112" cy="8" r="6" fill="#facc15" />
-
+                    {/* Body */}
+                    <path d="M100 130 C 80 130, 75 150, 75 170 L 125 170 C 125 150, 120 130, 100 130 Z" fill="url(#alien-skin)"/>
+                    {/* Head */}
+                    <path d="M 50,110 C 50,50 150,50 150,110 C 150,170 120,150 100,150 C 80,150 50,170 50,110 Z" fill="url(#alien-skin)" />
+                   
                     {/* Eyes */}
                     <g transform={`translate(${eyePosition.x}, ${eyePosition.y})`}>
-                        <ellipse cx="80" cy="90" rx="20" ry="25" fill="white" />
-                        <ellipse cx="120" cy="90" rx="20" ry="25" fill="white" />
-                        <circle cx="80" cy="90" r="10" fill="black"/>
-                        <circle cx="120" cy="90" r="10" fill="black"/>
-                        <circle cx="76" cy="86" r="3" fill="white"/>
-                        <circle cx="116" cy="86" r="3" fill="white"/>
+                       <ellipse cx="75" cy="100" rx="20" ry="30" fill="#1C1C1C" />
+                       <ellipse cx="125" cy="100" rx="20" ry="30" fill="#1C1C1C" />
+                       <ellipse cx="75" cy="100" rx="20" ry="30" fill="url(#eye-gloss)" />
+                       <ellipse cx="125" cy="100" rx="20" ry="30" fill="url(#eye-gloss)" />
                     </g>
-
-                    {/* Mouth */}
-                    <path d="M 90,135 Q 100,145 110,135" stroke="black" strokeWidth="3" fill="none" strokeLinecap="round"/>
                 </g>
             </svg>
         </div>
