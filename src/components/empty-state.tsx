@@ -21,8 +21,8 @@ export function EmptyState() {
     const deltaY = clientY - centerY;
     
     // Constrain the movement for a subtle effect
-    const moveX = Math.max(-4, Math.min(4, deltaX * 0.02));
-    const moveY = Math.max(-2, Math.min(2, deltaY * 0.02));
+    const moveX = Math.max(-5, Math.min(5, deltaX * 0.02));
+    const moveY = Math.max(-3, Math.min(3, deltaY * 0.02));
     
     setEyePosition({ x: moveX, y: moveY });
   };
@@ -62,32 +62,35 @@ export function EmptyState() {
         <div className="animate-float">
            <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                 <defs>
-                    <linearGradient id="alien-skin" x1="0.5" y1="0" x2="0.5" y2="1">
-                        <stop offset="0%" stopColor="#a3e635" /> 
-                        <stop offset="100%" stopColor="#65a30d" /> 
+                    <linearGradient id="robot-body" x1="0.5" y1="0" x2="0.5" y2="1">
+                        <stop offset="0%" stopColor="#9ca3af" />
+                        <stop offset="100%" stopColor="#4b5563" />
                     </linearGradient>
-                    <radialGradient id="eye-gloss" cx="0.4" cy="0.4" r="0.6">
-                        <stop offset="0%" stopColor="rgba(255,255,255,0.4)" />
-                        <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+                    <radialGradient id="robot-eye-glow" cx="0.5" cy="0.5" r="0.5">
+                        <stop offset="70%" stopColor="hsl(var(--primary))" stopOpacity="0.8" />
+                        <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
                     </radialGradient>
-                     <filter id="subtle-glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <filter id="subtle-glow" x="-50%" y="-50%" width="200%" height="200%">
                         <feDropShadow dx="0" dy="5" stdDeviation="10" floodColor="hsl(var(--primary))" floodOpacity="0.2"/>
                     </filter>
                 </defs>
                 
                 <g style={{filter: 'url(#subtle-glow)'}}>
-                    {/* Body */}
-                    <path d="M100 130 C 80 130, 75 150, 75 170 L 125 170 C 125 150, 120 130, 100 130 Z" fill="url(#alien-skin)"/>
-                    {/* Head */}
-                    <path d="M 50,110 C 50,50 150,50 150,110 C 150,170 120,150 100,150 C 80,150 50,170 50,110 Z" fill="url(#alien-skin)" />
-                   
-                    {/* Eyes */}
+                    {/* Main Body */}
+                    <circle cx="100" cy="100" r="60" fill="url(#robot-body)"/>
+                    <path d="M 60 150 L 140 150 A 20 20 0 0 1 140 150 L 60 150 Z" fill="#374151" />
+
+                    {/* Eye */}
+                    <circle cx="100" cy="100" r="35" fill="#111827"/>
                     <g transform={`translate(${eyePosition.x}, ${eyePosition.y})`}>
-                       <ellipse cx="75" cy="100" rx="20" ry="30" fill="#1C1C1C" />
-                       <ellipse cx="125" cy="100" rx="20" ry="30" fill="#1C1C1C" />
-                       <ellipse cx="75" cy="100" rx="20" ry="30" fill="url(#eye-gloss)" />
-                       <ellipse cx="125" cy="100" rx="20" ry="30" fill="url(#eye-gloss)" />
+                       <circle cx="100" cy="100" r="38" fill="url(#robot-eye-glow)" opacity="0.5"/>
+                       <circle cx="100" cy="100" r="15" fill="hsl(var(--primary))"/>
+                       <circle cx="100" cy="100" r="5" fill="white" opacity="0.8"/>
                     </g>
+
+                     {/* Antenna */}
+                    <line x1="100" y1="40" x2="100" y2="20" stroke="#9ca3af" strokeWidth="3"/>
+                    <circle cx="100" cy="20" r="5" fill="hsl(var(--primary))"/>
                 </g>
             </svg>
         </div>
@@ -95,9 +98,9 @@ export function EmptyState() {
           className="absolute bottom-[-10px] left-1/2 -translate-x-1/2 w-1/2 h-4 bg-black rounded-full filter blur-lg animate-shadow-pulse"
         />
       </div>
-      <h3 className="mt-8 text-lg font-semibold text-foreground">Kosmos ini kosong...</h3>
+      <h3 className="mt-8 text-lg font-semibold text-foreground">Sistem siap...</h3>
       <p className="mt-2 text-sm">
-        Tidak ada tugas yang terdeteksi. Waktunya memulai misi baru!
+        Belum ada tugas terdeteksi. Menunggu perintah baru.
       </p>
     </div>
   );
