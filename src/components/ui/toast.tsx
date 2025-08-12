@@ -17,7 +17,7 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-0 z-[200] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-md",
+      "fixed top-0 z-[200] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-auto sm:right-0 sm:top-4 sm:flex-col md:max-w-md",
       className
     )}
     {...props}
@@ -32,13 +32,13 @@ const toastVariants = cva(
       variant: {
         default: "border bg-background/80 backdrop-blur-lg text-foreground",
         destructive:
-          "destructive group border-destructive/50 bg-destructive/80 backdrop-blur-lg text-destructive-foreground",
+          "destructive group border-red-600/50 bg-gradient-to-r from-rose-500 to-red-600 text-white backdrop-blur-lg",
         success:
-          "success group border-green-500/50 bg-green-500/80 backdrop-blur-lg text-white",
+          "success group border-green-600/50 bg-gradient-to-r from-lime-500 to-emerald-600 text-white backdrop-blur-lg",
         warning:
-          "warning group border-orange-500/50 bg-orange-500/80 backdrop-blur-lg text-white",
+          "warning group border-orange-600/50 bg-gradient-to-r from-amber-500 to-orange-600 text-white backdrop-blur-lg",
         info:
-          "info group border-sky-500/50 bg-sky-500/80 backdrop-blur-lg text-white",
+          "info group border-sky-600/50 bg-gradient-to-r from-sky-500 to-indigo-600 text-white backdrop-blur-lg",
       },
     },
     defaultVariants: {
@@ -69,11 +69,11 @@ const ToastAction = React.forwardRef<
   <ToastPrimitives.Action
     ref={ref}
     className={cn(
-      "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-      "group-[.destructive]:border-muted/40 group-[.destructive]:hover:border-destructive/30 group-[.destructive]:hover:bg-destructive group-[.destructive]:hover:text-destructive-foreground group-[.destructive]:focus:ring-destructive",
-      "group-[.success]:border-muted/40 group-[.success]:hover:border-green-600/30 group-[.success]:hover:bg-green-600 group-[.success]:hover:text-white group-[.success]:focus:ring-green-600",
-      "group-[.warning]:border-muted/40 group-[.warning]:hover:border-orange-600/30 group-[.warning]:hover:bg-orange-600 group-[.warning]:hover:text-white group-[.warning]:focus:ring-orange-600",
-      "group-[.info]:border-muted/40 group-[.info]:hover:border-sky-600/30 group-[.info]:hover:bg-sky-600 group-[.info]:hover:text-white group-[.info]:focus:ring-sky-600",
+      "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-secondary/20 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+      "group-[.destructive]:border-white/30 group-[.destructive]:hover:bg-white/20",
+      "group-[.success]:border-white/30 group-[.success]:hover:bg-white/20",
+      "group-[.warning]:border-white/30 group-[.warning]:hover:bg-white/20",
+      "group-[.info]:border-white/30 group-[.info]:hover:bg-white/20",
       className
     )}
     {...props}
@@ -89,10 +89,10 @@ const ToastClose = React.forwardRef<
     ref={ref}
     className={cn(
       "absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100",
-      "group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600",
-      "group-[.success]:text-green-300 group-[.success]:hover:text-green-50 group-[.success]:focus:ring-green-400 group-[.success]:focus:ring-offset-green-600",
-      "group-[.warning]:text-orange-300 group-[.warning]:hover:text-orange-50 group-[.warning]:focus:ring-orange-400 group-[.warning]:focus:ring-offset-orange-600",
-      "group-[.info]:text-sky-300 group-[.info]:hover:text-sky-50 group-[.info]:focus:ring-sky-400 group-[.info]:focus:ring-offset-sky-600",
+      "group-[.destructive]:text-white/80 group-[.destructive]:hover:text-white",
+      "group-[.success]:text-white/80 group-[.success]:hover:text-white",
+      "group-[.warning]:text-white/80 group-[.warning]:hover:text-white",
+      "group-[.info]:text-white/80 group-[.info]:hover:text-white",
       className
     )}
     toast-close=""
