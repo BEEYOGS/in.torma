@@ -79,10 +79,6 @@ const config = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
-        'shine': {
-            'from': { transform: 'translateX(-100%) skewX(-30deg)' },
-            'to': { transform: 'translateX(200%) skewX(-30deg)' },
-        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -92,7 +88,6 @@ const config = {
         'blinking-caret': 'blinking-caret 1s infinite',
         'spin-slow': 'spin-slow 3s linear infinite',
         'draw-circle': 'draw-circle 2.5s cubic-bezier(0.65, 0, 0.35, 1) infinite',
-        'shine': 'shine 4s ease-in-out infinite'
       },
     },
   },
