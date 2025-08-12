@@ -90,11 +90,6 @@ const config = {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'background-pan': 'background-pan 15s ease-in-out infinite',
-        'status-pulse': 'status-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'blinking-caret': 'blinking-caret 1s infinite',
-        'spin-slow': 'spin-slow 3s linear infinite',
-        'draw-circle': 'draw-circle 2.5s cubic-bezier(0.65, 0, 0.35, 1) infinite',
         'toast-progress-charge': 'toast-progress-charge 5s linear forwards',
       },
     },
@@ -103,5 +98,3 @@ const config = {
 } satisfies Config;
 
 export default config;
-
-    
