@@ -17,7 +17,7 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-0 z-[200] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-auto sm:right-0 sm:top-4 sm:flex-col md:max-w-md",
+      "fixed top-0 z-[200] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-auto sm:top-4 sm:flex-col md:max-w-md sm:right-4",
       className
     )}
     {...props}
@@ -32,13 +32,13 @@ const toastVariants = cva(
       variant: {
         default: "border bg-background/80 backdrop-blur-lg text-foreground",
         destructive:
-          "destructive group border-red-600/50 bg-gradient-to-r from-rose-500 to-red-600 text-white backdrop-blur-lg",
+          "destructive group border-red-500/50 bg-background/80 backdrop-blur-lg text-foreground",
         success:
-          "success group border-green-600/50 bg-gradient-to-r from-lime-500 to-emerald-600 text-white backdrop-blur-lg",
+          "success group border-green-500/50 bg-background/80 backdrop-blur-lg text-foreground",
         warning:
-          "warning group border-orange-600/50 bg-gradient-to-r from-amber-500 to-orange-600 text-white backdrop-blur-lg",
+          "warning group border-orange-500/50 bg-background/80 backdrop-blur-lg text-foreground",
         info:
-          "info group border-sky-600/50 bg-gradient-to-r from-sky-500 to-indigo-600 text-white backdrop-blur-lg",
+          "info group border-sky-500/50 bg-background/80 backdrop-blur-lg text-foreground",
       },
     },
     defaultVariants: {
@@ -70,10 +70,8 @@ const ToastAction = React.forwardRef<
     ref={ref}
     className={cn(
       "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-secondary/20 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-      "group-[.destructive]:border-white/30 group-[.destructive]:hover:bg-white/20",
-      "group-[.success]:border-white/30 group-[.success]:hover:bg-white/20",
-      "group-[.warning]:border-white/30 group-[.warning]:hover:bg-white/20",
-      "group-[.info]:border-white/30 group-[.info]:hover:bg-white/20",
+      "group-[.destructive]:border-muted/40 group-[.destructive]:hover:border-destructive/30 group-[.destructive]:hover:bg-destructive group-[.destructive]:hover:text-destructive-foreground group-[.destructive]:focus:ring-destructive",
+      "group-[.success]:border-muted/40 group-[.success]:hover:border-green-500/30 group-[.success]:hover:bg-green-500 group-[.success]:hover:text-white",
       className
     )}
     {...props}
@@ -89,10 +87,6 @@ const ToastClose = React.forwardRef<
     ref={ref}
     className={cn(
       "absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100",
-      "group-[.destructive]:text-white/80 group-[.destructive]:hover:text-white",
-      "group-[.success]:text-white/80 group-[.success]:hover:text-white",
-      "group-[.warning]:text-white/80 group-[.warning]:hover:text-white",
-      "group-[.info]:text-white/80 group-[.info]:hover:text-white",
       className
     )}
     toast-close=""
@@ -132,12 +126,13 @@ type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>
 type ToastActionElement = React.ReactElement<typeof ToastAction>
 
 const ToastIcon = ({ variant }: { variant: ToastProps["variant"] }) => {
-  const iconMap = {
-    destructive: <AlertCircle className="h-5 w-5" />,
-    success: <CheckCircle2 className="h-5 w-5" />,
-    warning: <AlertTriangle className="h-5 w-5" />,
-    info: <Info className="h-5 w-5" />,
-  };
+    const iconClass = "h-5 w-5";
+    const iconMap = {
+        destructive: <AlertCircle className={cn(iconClass, "text-red-500")} />,
+        success: <CheckCircle2 className={cn(iconClass, "text-green-500")} />,
+        warning: <AlertTriangle className={cn(iconClass, "text-orange-500")} />,
+        info: <Info className={cn(iconClass, "text-sky-500")} />,
+    };
   
   const icon = variant ? iconMap[variant] : null;
   if (!icon) return null;
