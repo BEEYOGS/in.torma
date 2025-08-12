@@ -40,10 +40,9 @@ interface TaskCardProps extends React.HTMLAttributes<HTMLDivElement> {
   isOverlay?: boolean;
 }
 
-const statusStyles: Record<TaskStatus, { text: string; hoverOutline: string; color: string, gradFrom: string, gradTo: string, glow: string }> = {
+const statusStyles: Record<TaskStatus, { text: string; color: string, gradFrom: string, gradTo: string, glow: string }> = {
   'Proses Desain': {
     text: 'text-orange-400',
-    hoverOutline: 'hover:outline-orange-500/50',
     color: 'hsl(24, 95%, 53%)',
     gradFrom: 'from-orange-500/80',
     gradTo: 'to-orange-500/0',
@@ -51,7 +50,6 @@ const statusStyles: Record<TaskStatus, { text: string; hoverOutline: string; col
   },
   'Proses ACC': {
     text: 'text-sky-400',
-    hoverOutline: 'hover:outline-sky-500/50',
     color: 'hsl(204, 90%, 53%)',
     gradFrom: 'from-sky-500/80',
     gradTo: 'to-sky-500/0',
@@ -59,7 +57,6 @@ const statusStyles: Record<TaskStatus, { text: string; hoverOutline: string; col
   },
   'Selesai': {
     text: 'text-green-400',
-    hoverOutline: 'hover:outline-green-500/50',
     color: 'hsl(142, 71%, 45%)',
     gradFrom: 'from-green-500/80',
     gradTo: 'to-green-500/0',
@@ -81,19 +78,22 @@ const useTypingAnimation = (text: string, speed = 150, pauseDuration = 1500) => 
     useEffect(() => {
         let timeout: NodeJS.Timeout;
 
-        if (currentIndex < text.length) {
-            // Typing logic
-            timeout = setTimeout(() => {
-                setDisplayText(prev => prev + text[currentIndex]);
-                setCurrentIndex(prev => prev + 1);
-            }, speed);
-        } else {
-            // Pause and restart logic
-            timeout = setTimeout(() => {
-                setDisplayText('');
-                setCurrentIndex(0);
-            }, pauseDuration);
-        }
+        const type = () => {
+            if (currentIndex < text.length) {
+                timeout = setTimeout(() => {
+                    setDisplayText(prev => prev + text[currentIndex]);
+                    setCurrentIndex(prev => prev + 1);
+                }, speed);
+            } else {
+                // Pause and then restart
+                timeout = setTimeout(() => {
+                    setDisplayText('');
+                    setCurrentIndex(0);
+                }, pauseDuration);
+            }
+        };
+
+        type();
 
         return () => clearTimeout(timeout);
     }, [currentIndex, text, speed, pauseDuration]);
@@ -128,14 +128,8 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const displayDate = task.dueDate ? new Date(`${task.dueDate}T00:00:00`) : null;
 
   const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    // On mobile, only the header is clickable to edit, to avoid conflicts with buttons
-    if (isMobile) {
-        return;
-    }
-    // On desktop, the whole card is clickable, but not the buttons inside it
-    if (targetIsAction(e.target as HTMLElement)) {
-      return;
-    }
+    if (isMobile) return; // On mobile, click is handled by header
+    if (targetIsAction(e.target as HTMLElement)) return;
     onEdit?.(task);
   };
 
@@ -146,7 +140,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   }
 
   const targetIsAction = (target: HTMLElement) => {
-    return target.closest('button, [role="menu"], [role="menuitem"], [role="dialog"]');
+    return target.closest('button, [role="menuitem"], [role="dialog"], [data-dnd-handle]');
   }
 
   const SourceIcon = sourceIcons[task.source] || FileText;
@@ -158,6 +152,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                 variant="ghost" 
                 size="icon" 
                 className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                data-dnd-handle
              >
                 <MoreVertical className="h-4 w-4" />
             </Button>
@@ -196,11 +191,11 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const cardContent = (
     <Card 
         className={cn(
-        "relative group overflow-hidden bg-card/40 border border-white/10 transition-all duration-300",
+        "relative group overflow-hidden glass-card transition-all duration-300",
         "hover:-translate-y-1",
         statusStyles[task.status].glow,
         !isMobile && "cursor-pointer",
-        isOverlay && "ring-2 ring-primary"
+        isOverlay && "ring-2 ring-primary shadow-2xl shadow-primary/50",
     )}>
         <div className={cn("absolute left-0 top-0 h-full w-1 bg-gradient-to-b", statusStyles[task.status].gradFrom, statusStyles[task.status].gradTo)} />
         <CardHeader className="relative p-4 pb-2" onClick={handleHeaderClick}>
@@ -211,7 +206,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                     </CardTitle>
                     <CardDescription className="text-sm truncate">{task.description}</CardDescription>
                 </div>
-                <div className='flex-shrink-0'>
+                <div className='flex-shrink-0' {...(isMobile ? {'data-dnd-handle': true} : {})}>
                     {ActionsMenu}
                 </div>
             </div>
@@ -247,7 +242,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   return (
     <AlertDialog>
         <Dialog open={isConceptDialogOpen} onOpenChange={setIsConceptDialogOpen}>
-            <div ref={ref} {...props} onClick={handleCardClick}>
+            <div ref={ref} {...props} onClick={handleCardClick} {...(!isMobile ? { "data-dnd-handle": true } : {})}>
                 {cardContent}
             </div>
             {isConceptDialogOpen && <ConceptImageGenerator task={task} />}
@@ -272,5 +267,3 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 });
 
 TaskCard.displayName = "TaskCard";
-
-    
