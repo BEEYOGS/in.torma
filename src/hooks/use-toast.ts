@@ -165,15 +165,10 @@ function toast({ ...props }: Toast) {
     },
   })
 
-  // Automatically dismiss the toast after the delay
-  const dismissTimeout = setTimeout(() => {
-    dismiss();
-  }, TOAST_REMOVE_DELAY);
-
-  // Clear timeout when component unmounts
-  React.useEffect(() => {
-    return () => clearTimeout(dismissTimeout);
-  }, []);
+  // Automatically dismiss the toast after a delay
+  setTimeout(() => {
+    dismiss()
+  }, TOAST_REMOVE_DELAY)
 
 
   return {
