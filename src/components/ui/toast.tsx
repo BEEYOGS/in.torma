@@ -17,7 +17,7 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-0 z-[200] flex max-h-screen w-full flex-col-reverse p-4 sm:top-auto sm:bottom-0 sm:right-4 sm:flex-col md:max-w-md",
+      "fixed top-0 z-[200] flex max-h-screen w-full flex-col-reverse p-4 sm:top-auto sm:top-4 sm:right-4 sm:flex-col md:max-w-md",
       className
     )}
     {...props}
@@ -30,7 +30,7 @@ const toastVariants = cva(
   {
     variants: {
       variant: {
-        default: "border bg-background/80 backdrop-blur-lg text-foreground",
+        default: "border bg-background/80 backdrop-blur-lg text-foreground border-primary/30",
         destructive:
           "destructive group border-red-500/50 bg-background/80 backdrop-blur-lg text-foreground",
         success:
@@ -47,14 +47,6 @@ const toastVariants = cva(
   }
 )
 
-const progressVariantClasses: Record<NonNullable<VariantProps<typeof toastVariants>['variant']>, string> = {
-    default: "bg-primary",
-    destructive: "bg-red-500",
-    success: "bg-green-500",
-    warning: "bg-orange-500",
-    info: "bg-sky-500",
-}
-
 const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
@@ -66,15 +58,8 @@ const Toast = React.forwardRef<
       className={cn(toastVariants({ variant }), className)}
       {...props}
     >
+      <div className="absolute inset-0 w-full h-full animate-toast-progress-charge opacity-10" />
       {props.children}
-       <div className="absolute bottom-0 left-0 h-1 w-full bg-foreground/10">
-        <div
-          className={cn(
-            "h-full animate-toast-progress",
-            progressVariantClasses[variant]
-          )}
-        />
-      </div>
     </ToastPrimitives.Root>
   )
 })
@@ -150,10 +135,10 @@ const ToastIcon = ({ variant }: { variant: ToastProps["variant"] }) => {
         success: <CheckCircle2 className={cn(iconClass, "text-green-500")} />,
         warning: <AlertTriangle className={cn(iconClass, "text-orange-500")} />,
         info: <Info className={cn(iconClass, "text-sky-500")} />,
-        default: <Info className={cn(iconClass, "text-foreground")} />,
+        default: <Info className={cn(iconClass, "text-primary")} />,
     };
   
-  const icon = variant ? iconMap[variant] : null;
+  const icon = variant ? iconMap[variant] : iconMap.default;
   if (!icon) return null;
 
   return <div className="z-10 flex-shrink-0">{icon}</div>;
@@ -172,3 +157,5 @@ export {
   ToastAction,
   ToastIcon,
 }
+
+    
