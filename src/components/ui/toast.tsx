@@ -47,17 +47,29 @@ const toastVariants = cva(
   }
 )
 
+const progressBaseClass = "absolute bottom-0 left-0 h-1 animate-toast-progress"
+const variantProgressClasses: Record<NonNullable<VariantProps<typeof toastVariants>['variant']>, string> = {
+    default: "bg-primary",
+    destructive: "bg-red-500",
+    success: "bg-green-500",
+    warning: "bg-orange-500",
+    info: "bg-sky-500",
+};
+
 const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
     VariantProps<typeof toastVariants>
->(({ className, variant, ...props }, ref) => {
+>(({ className, variant = "default", ...props }, ref) => {
   return (
     <ToastPrimitives.Root
       ref={ref}
       className={cn(toastVariants({ variant }), className)}
       {...props}
-    />
+    >
+        {props.children}
+        <div className={cn(progressBaseClass, variantProgressClasses[variant])} />
+    </ToastPrimitives.Root>
   )
 })
 Toast.displayName = ToastPrimitives.Root.displayName

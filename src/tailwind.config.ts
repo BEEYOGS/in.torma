@@ -82,6 +82,10 @@ const config = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
+        'toast-progress': {
+            from: { width: '100%' },
+            to: { width: '0%' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -91,6 +95,7 @@ const config = {
         'blinking-caret': 'blinking-caret 1s infinite',
         'spin-slow': 'spin-slow 3s linear infinite',
         'draw-circle': 'draw-circle 2.5s cubic-bezier(0.65, 0, 0.35, 1) infinite',
+        'toast-progress': 'toast-progress 5s linear forwards',
       },
     },
   },
