@@ -47,14 +47,23 @@ const toastVariants = cva(
   }
 )
 
-const progressBaseClass = "absolute bottom-0 left-0 h-1 animate-toast-progress"
+const progressBaseClass = "absolute bottom-0 left-0 h-1 w-full overflow-hidden"
+
 const variantProgressClasses: Record<NonNullable<VariantProps<typeof toastVariants>['variant']>, string> = {
-    default: "bg-primary",
-    destructive: "bg-red-500",
-    success: "bg-green-500",
-    warning: "bg-orange-500",
-    info: "bg-sky-500",
+    default: "bg-primary/50",
+    destructive: "bg-red-500/50",
+    success: "bg-green-500/50",
+    warning: "bg-orange-500/50",
+    info: "bg-sky-500/50",
 };
+
+const shineVariantClasses: Record<NonNullable<VariantProps<typeof toastVariants>['variant']>, string> = {
+    default: "bg-gradient-to-r from-transparent via-primary/80 to-transparent",
+    destructive: "bg-gradient-to-r from-transparent via-red-300 to-transparent",
+    success: "bg-gradient-to-r from-transparent via-green-300 to-transparent",
+    warning: "bg-gradient-to-r from-transparent via-orange-300 to-transparent",
+    info: "bg-gradient-to-r from-transparent via-sky-300 to-transparent",
+}
 
 const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
@@ -68,7 +77,9 @@ const Toast = React.forwardRef<
       {...props}
     >
         {props.children}
-        <div className={cn(progressBaseClass, variantProgressClasses[variant])} />
+        <div className={cn(progressBaseClass, variantProgressClasses[variant])}>
+            <div className={cn("animate-shine h-full w-full", shineVariantClasses[variant])} />
+        </div>
     </ToastPrimitives.Root>
   )
 })
@@ -98,7 +109,7 @@ const ToastClose = React.forwardRef<
   <ToastPrimitives.Close
     ref={ref}
     className={cn(
-      "absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100",
+      "absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:ring-2 group-hover:opacity-100",
       className
     )}
     toast-close=""
@@ -144,6 +155,7 @@ const ToastIcon = ({ variant }: { variant: ToastProps["variant"] }) => {
         success: <CheckCircle2 className={cn(iconClass, "text-green-500")} />,
         warning: <AlertTriangle className={cn(iconClass, "text-orange-500")} />,
         info: <Info className={cn(iconClass, "text-sky-500")} />,
+        default: <Info className={cn(iconClass, "text-foreground")} />,
     };
   
   const icon = variant ? iconMap[variant] : null;
