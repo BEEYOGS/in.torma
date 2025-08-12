@@ -43,18 +43,18 @@ export function ConceptImageGenerator({ task }: ConceptImageGeneratorProps) {
   };
 
   return (
-      <DialogContent className="sm:max-w-xl max-w-[90vw] bg-background/80 backdrop-blur-lg">
+      <DialogContent className="sm:max-w-md max-w-[90vw] bg-background/80 backdrop-blur-lg rounded-xl">
         <DialogHeader>
           <DialogTitle className="font-headline">Konsep Visual AI</DialogTitle>
           <DialogDescription>
             Buat konsep visual berdasarkan deskripsi tugas: "{task.description}"
           </DialogDescription>
         </DialogHeader>
-        <div className="relative flex items-center justify-center min-h-[300px] bg-secondary/30 rounded-md overflow-hidden">
+        <div className="relative flex items-center justify-center min-h-[250px] bg-secondary/30 rounded-md overflow-hidden">
           {isLoading && (
-            <div className="flex flex-col items-center gap-4 text-muted-foreground">
-                <Loader2 className="h-10 w-10 animate-spin text-primary"/>
-                <p className="text-sm">AI sedang menggambar...</p>
+            <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                <Loader2 className="h-8 w-8 animate-spin text-primary"/>
+                <p className="text-xs">AI sedang menggambar...</p>
             </div>
           )}
           {!isLoading && imageUrl && (
@@ -69,8 +69,8 @@ export function ConceptImageGenerator({ task }: ConceptImageGeneratorProps) {
           )}
           {!isLoading && !imageUrl && (
             <div className="flex flex-col items-center gap-2 text-muted-foreground">
-              <Wand2 className="h-10 w-10"/>
-              <p className="text-sm">Klik tombol di bawah untuk memulai.</p>
+              <Wand2 className="h-8 w-8"/>
+              <p className="text-xs">Klik tombol di bawah untuk memulai.</p>
             </div>
           )}
         </div>
