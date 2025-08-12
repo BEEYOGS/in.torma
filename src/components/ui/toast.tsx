@@ -17,7 +17,7 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-0 z-[200] flex max-h-screen w-full flex-col-reverse p-4 sm:top-4 sm:flex-col md:max-w-md sm:right-4",
+      "fixed top-0 z-[200] flex max-h-screen w-full flex-col-reverse p-4 sm:top-auto sm:bottom-0 sm:right-4 sm:flex-col md:max-w-md",
       className
     )}
     {...props}
@@ -26,7 +26,7 @@ const ToastViewport = React.forwardRef<
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName
 
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center space-x-4 overflow-hidden rounded-md border p-4 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=open]:slide-in-from-top-full data-[state=closed]:slide-out-to-right-full data-[state=open]:sm:slide-in-from-top-full",
+  "group pointer-events-auto relative flex w-full items-center space-x-4 overflow-hidden rounded-md border p-4 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=open]:slide-in-from-top-full data-[state=closed]:slide-out-to-right-full data-[state=open]:sm:slide-in-from-bottom-full",
   {
     variants: {
       variant: {
@@ -47,12 +47,12 @@ const toastVariants = cva(
   }
 )
 
-const shineVariantClasses: Record<NonNullable<VariantProps<typeof toastVariants>['variant']>, string> = {
-    default: "bg-gradient-to-r from-transparent via-primary/50 to-transparent",
-    destructive: "bg-gradient-to-r from-transparent via-red-500/50 to-transparent",
-    success: "bg-gradient-to-r from-transparent via-green-500/50 to-transparent",
-    warning: "bg-gradient-to-r from-transparent via-orange-500/50 to-transparent",
-    info: "bg-gradient-to-r from-transparent via-sky-500/50 to-transparent",
+const progressVariantClasses: Record<NonNullable<VariantProps<typeof toastVariants>['variant']>, string> = {
+    default: "bg-primary",
+    destructive: "bg-red-500",
+    success: "bg-green-500",
+    warning: "bg-orange-500",
+    info: "bg-sky-500",
 }
 
 const Toast = React.forwardRef<
@@ -66,13 +66,15 @@ const Toast = React.forwardRef<
       className={cn(toastVariants({ variant }), className)}
       {...props}
     >
-       <div
-        className={cn(
-          "absolute inset-0 w-full h-full opacity-10 animate-[shine_2s_ease-in-out_infinite]",
-          shineVariantClasses[variant]
-        )}
-      />
       {props.children}
+       <div className="absolute bottom-0 left-0 h-1 w-full bg-foreground/10">
+        <div
+          className={cn(
+            "h-full animate-toast-progress",
+            progressVariantClasses[variant]
+          )}
+        />
+      </div>
     </ToastPrimitives.Root>
   )
 })
