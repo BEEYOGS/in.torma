@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils';
 import { ConceptImageGenerator } from './concept-image-generator';
 import { TaskDescriptionSpeaker } from './task-description-speaker';
 import { useIsMobile } from '@/hooks/use-mobile';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { Dialog, DialogTrigger } from './ui/dialog';
 import {
@@ -71,42 +71,43 @@ const sourceIcons: Record<TaskSource, React.ElementType> = {
     'G': Users
 }
 
-const useTypingAnimation = (text: string, speed = 150, pauseDuration = 1500) => {
-    const [displayText, setDisplayText] = useState('');
-    const [currentIndex, setCurrentIndex] = useState(0);
-
-    useEffect(() => {
-        let timeout: NodeJS.Timeout;
-
-        const type = () => {
-            if (currentIndex < text.length) {
-                timeout = setTimeout(() => {
-                    setDisplayText(prev => prev + text[currentIndex]);
-                    setCurrentIndex(prev => prev + 1);
-                }, speed);
-            } else {
-                // Pause and then restart
-                timeout = setTimeout(() => {
-                    setDisplayText('');
-                    setCurrentIndex(0);
-                }, pauseDuration);
-            }
-        };
-
-        type();
-
-        return () => clearTimeout(timeout);
-    }, [currentIndex, text, speed, pauseDuration]);
-
-    return displayText;
-};
 
 export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   ({ task, onEdit, isOverlay, ...props }, ref) => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const [isConceptDialogOpen, setIsConceptDialogOpen] = useState(false);
-  const animatedStatus = useTypingAnimation(task.status);
+  const cardRef = useRef<HTMLDivElement>(null);
+  
+  const [rotate, setRotate] = useState({ x: 0, y: 0 });
+  const [glow, setGlow] = useState({ x: '50%', y: '50%', opacity: 0 });
+
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current || isMobile) return;
+
+    const rect = cardRef.current.getBoundingClientRect();
+    const { clientX, clientY } = e;
+    
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+
+    const width = rect.width;
+    const height = rect.height;
+
+    const rotateX = (y / height - 0.5) * -15; // Invert for natural feel
+    const rotateY = (x / width - 0.5) * 15;
+
+    setRotate({ x: rotateX, y: rotateY });
+    setGlow({ x: `${(x / width) * 100}%`, y: `${(y / height) * 100}%`, opacity: 1 });
+  };
+
+  const handleMouseLeave = () => {
+    if (isMobile) return;
+    setRotate({ x: 0, y: 0 });
+    setGlow({ x: '50%', y: '50%', opacity: 0 });
+  };
+
 
   const handleDelete = async () => {
     try {
@@ -147,7 +148,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 
   const ActionsMenu = (
     <DropdownMenu>
-        <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
+        <DropdownMenuTrigger asChild onClick={(e) => {e.stopPropagation()}} onPointerDown={(e) => e.stopPropagation()}>
              <Button 
                 variant="ghost" 
                 size="icon" 
@@ -187,16 +188,40 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
         </DropdownMenuContent>
     </DropdownMenu>
   );
+  
+  const cardStyle: React.CSSProperties = isOverlay || isMobile ? {} : {
+    '--glow-x': glow.x,
+    '--glow-y': glow.y,
+    '--glow-opacity': glow.opacity,
+    '--rotate-x': `${rotate.x}deg`,
+    '--rotate-y': `${rotate.y}deg`,
+    transform: `perspective(1000px) rotateX(var(--rotate-x)) rotateY(var(--rotate-y))`,
+    transition: 'transform 0.1s ease-out',
+  } as React.CSSProperties;
 
   const cardContent = (
     <Card 
+        ref={cardRef}
+        style={cardStyle}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
         className={cn(
         "relative group overflow-hidden glass-card transition-all duration-300",
-        "hover:-translate-y-1",
-        statusStyles[task.status].glow,
         !isMobile && "cursor-pointer",
         isOverlay && "ring-2 ring-primary shadow-2xl shadow-primary/50",
     )}>
+       {!isOverlay && !isMobile && (
+          <>
+            <div 
+              className="absolute inset-0 z-0 opacity-[var(--glow-opacity)] transition-opacity duration-300"
+              style={{
+                background: `radial-gradient(circle at var(--glow-x) var(--glow-y), ${statusStyles[task.status].color}, transparent 40%)`,
+              }}
+            />
+            <div className="absolute inset-0 z-0 bg-card/60" />
+          </>
+        )}
+      <div className="relative z-10 flex flex-col h-full">
         <div className={cn("absolute left-0 top-0 h-full w-1 bg-gradient-to-b", statusStyles[task.status].gradFrom, statusStyles[task.status].gradTo)} />
         <CardHeader className="relative p-4 pb-2" onClick={handleHeaderClick}>
             <div className="flex justify-between items-start gap-4">
@@ -211,17 +236,16 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                 </div>
             </div>
         </CardHeader>
-        <CardContent className="relative p-4 pt-2 flex justify-between items-center">
+        <CardContent className="relative p-4 pt-2 mt-auto flex justify-between items-center">
              <div className="flex items-center gap-2">
                  <TaskDescriptionSpeaker task={task} />
                  <span
                     className={cn(
-                        "text-xs font-medium min-h-[1.2em]", // min-h to prevent layout shift
+                        "text-xs font-medium",
                         statusStyles[task.status].text
                     )}
-                     style={{ '--caret-color': statusStyles[task.status].color } as React.CSSProperties}
                  >
-                    <span className='typing-cursor'>{animatedStatus}</span>
+                    {task.status}
                 </span>
             </div>
 
@@ -236,6 +260,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                 </Badge>
             </div>
         </CardContent>
+      </div>
     </Card>
   )
 
