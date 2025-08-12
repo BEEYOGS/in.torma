@@ -348,7 +348,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                     Tindakan ini akan menghapus tugas untuk <br/> <span className="font-medium text-foreground">{task.customerName}</span> secara permanen.
                 </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter className="flex-row justify-end gap-2 pt-4">
+            <AlertDialogFooter className="flex-row justify-center gap-2 pt-4">
                 <AlertDialogCancel>Batal</AlertDialogCancel>
                 <AlertDialogAction onClick={handleDelete}>Lanjutkan</AlertDialogAction>
             </AlertDialogFooter>
