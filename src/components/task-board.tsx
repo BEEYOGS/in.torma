@@ -243,14 +243,14 @@ interface ColumnProps {
   activeTask: Task | null;
 }
 
-const statusStyles: Record<TaskStatus, { indicator: string, shadow: string, glow: string }> = {
-    'Proses Desain': { indicator: 'bg-orange-500', shadow: 'shadow-orange-500/20', glow: 'hover:shadow-orange-500/40'},
-    'Proses ACC': { indicator: 'bg-sky-500', shadow: 'shadow-sky-500/20', glow: 'hover:shadow-sky-500/40' },
-    'Selesai': { indicator: 'bg-green-500', shadow: 'shadow-green-500/20', glow: 'hover:shadow-green-500/40' },
+const statusStyles: Record<TaskStatus, { indicator: string }> = {
+    'Proses Desain': { indicator: 'bg-orange-500' },
+    'Proses ACC': { indicator: 'bg-sky-500' },
+    'Selesai': { indicator: 'bg-green-500' },
 };
 
 function Column({ id, status, tasks, onEditTask, activeTask }: ColumnProps) {
-    const { indicator, shadow, glow } = statusStyles[status];
+    const { indicator } = statusStyles[status];
     
     const { setNodeRef } = useSortable({
       id: id,
@@ -267,13 +267,11 @@ function Column({ id, status, tasks, onEditTask, activeTask }: ColumnProps) {
       <div
         ref={setNodeRef}
         className={cn(
-            "flex flex-col gap-4 glass-card p-4 min-h-[200px] shadow-lg transition-shadow duration-300", 
-            shadow, 
-            glow
+            "flex flex-col gap-4 glass-card p-4 min-h-[200px] transition-shadow duration-300"
         )}
       >
         <div className="flex items-center gap-3">
-            <div className={cn("w-2.5 h-2.5 rounded-full animate-status-pulse", indicator)} />
+            <div className={cn("w-2.5 h-2.5 rounded-full", indicator)} />
             <h2 className="font-bold text-lg text-foreground">{status}</h2>
             <span className="ml-auto text-sm text-muted-foreground bg-black/20 px-2 py-0.5 rounded-full">{tasks.length}</span>
         </div>
