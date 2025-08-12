@@ -180,7 +180,7 @@ export function TaskBoard({
             setTasksInStorage(finalOrderedTasks);
         }
     }
-  }, [findContainer, playDropSound, tasks, tasksByStatus, tasksById]);
+  }, [findContainer, playDropSound, tasks, tasksByStatus]);
 
   if (isMobile) {
     return (
@@ -332,5 +332,3 @@ function SortableTaskCard({ task, onEdit }: { task: Task, onEdit: (task: Task) =
         />
     )
 }
-
-    
