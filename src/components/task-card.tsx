@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Pencil, Sparkles, Trash2, MoreVertical, AlertCircle } from 'lucide-react';
 import type { Task, TaskSource, TaskStatus } from '@/types/task';
 import { deleteTask } from '@/services/task-service';
@@ -33,6 +33,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { useDeviceOrientation } from '@/hooks/use-device-orientation';
+
 
 interface TaskCardProps extends React.HTMLAttributes<HTMLDivElement> {
   task: Task;
@@ -75,38 +77,34 @@ const sourceDisplayMap: Record<TaskSource, string> = {
 };
 
 const useTypingAnimation = (text: string) => {
-    const [displayText, setDisplayText] = useState('');
-    const [isDeleting, setIsDeleting] = useState(false);
-  
-    useEffect(() => {
-      const typingSpeed = 100;
-      const deletingSpeed = 50;
-      const delay = 1500;
-  
-      let timeoutId: NodeJS.Timeout;
-  
-      const handleTyping = () => {
-        if (!isDeleting) {
-          if (displayText.length < text.length) {
-            setDisplayText((prev) => text.slice(0, prev.length + 1));
-          } else {
-            timeoutId = setTimeout(() => setIsDeleting(true), delay);
-          }
-        } else {
-          if (displayText.length > 0) {
-            setDisplayText((prev) => prev.slice(0, -1));
-          } else {
-            setIsDeleting(false);
-          }
-        }
-      };
-  
-      timeoutId = setTimeout(handleTyping, isDeleting ? deletingSpeed : typingSpeed);
-  
-      return () => clearTimeout(timeoutId);
-    }, [displayText, isDeleting, text]);
-  
-    return displayText;
+  const [displayText, setDisplayText] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+      setDisplayText('');
+      setCurrentIndex(0);
+  }, [text]);
+
+  useEffect(() => {
+    const typingSpeed = 100;
+    const delayBeforeReset = 1500;
+
+    if (currentIndex < text.length) {
+        const timeoutId = setTimeout(() => {
+            setDisplayText((prev) => prev + text[currentIndex]);
+            setCurrentIndex((prev) => prev + 1);
+        }, typingSpeed);
+        return () => clearTimeout(timeoutId);
+    } else {
+        const timeoutId = setTimeout(() => {
+            setDisplayText('');
+            setCurrentIndex(0);
+        }, delayBeforeReset);
+        return () => clearTimeout(timeoutId);
+    }
+  }, [currentIndex, text]);
+
+  return displayText;
 };
 
 
@@ -114,6 +112,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   ({ task, onEdit, isOverlay, ...props }, ref) => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const orientation = useDeviceOrientation();
   const [isConceptDialogOpen, setIsConceptDialogOpen] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   
@@ -122,9 +121,17 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   
   const animatedStatusText = useTypingAnimation(task.status);
 
+  useEffect(() => {
+    if (isMobile && orientation.gamma !== null && orientation.beta !== null) {
+      const rotateX = orientation.beta * -0.3;  // Tilt forward/backward
+      const rotateY = orientation.gamma * 0.3; // Tilt left/right
+      setRotate({ x: rotateX, y: rotateY });
+    }
+  }, [isMobile, orientation]);
+
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current || isMobile || isOverlay) return;
+    if (isMobile || !cardRef.current || isOverlay) return;
 
     const rect = cardRef.current.getBoundingClientRect();
     const { clientX, clientY } = e;
@@ -226,7 +233,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
     </DropdownMenu>
   );
   
-  const cardStyle: React.CSSProperties = isOverlay || isMobile ? {} : {
+  const cardStyle: React.CSSProperties = isOverlay ? {} : {
     '--glow-x': glow.x,
     '--glow-y': glow.y,
     '--glow-opacity': glow.opacity,
@@ -331,5 +338,3 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 });
 
 TaskCard.displayName = "TaskCard";
-
-    
