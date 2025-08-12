@@ -180,28 +180,21 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const displayDate = task.dueDate ? new Date(`${task.dueDate}T00:00:00`) : null;
 
   const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (isMobile) return; 
+    // On mobile, the whole card is tappable to edit. On desktop, only if not clicking an action.
     if (targetIsAction(e.target as HTMLElement)) return;
     if (onEdit) {
       playOpenDialogSound();
       onEdit(task);
     }
   };
-
-  const handleHeaderClick = (e: React.MouseEvent<HTMLDivElement>) => {
-      if (isMobile && !targetIsAction(e.target as HTMLElement)) {
-          if (onEdit) {
-            playOpenDialogSound();
-            onEdit(task);
-          }
-      }
-  }
-
+  
   const targetIsAction = (target: HTMLElement) => {
-    return target.closest('button, [role="menuitem"], [role="dialog"], [data-dnd-handle]');
+    // Checks if the click target or its parent is a button or interactive element
+    return target.closest('button, [role="menuitem"], [role="dialog"], a, input');
   }
   
-  const handleEditClick = () => {
+  const handleEditClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation(); // Prevent card click from firing
       if (onEdit) {
         playOpenDialogSound();
         onEdit(task);
@@ -209,7 +202,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   }
   
   const handleConceptClick = (e: React.MouseEvent<HTMLDivElement>) => {
-      e.preventDefault();
+      e.stopPropagation();
       playOpenDialogSound();
       setIsConceptDialogOpen(true);
   }
@@ -228,6 +221,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
         <DropdownMenuContent
             align="end"
             className="bg-popover/80 backdrop-blur-lg border-white/10"
+            onClick={(e) => e.stopPropagation()}
         >
             <DropdownMenuItem onSelect={handleEditClick}>
                 <Pencil className="mr-2 h-4 w-4" />
@@ -236,7 +230,11 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
             
             <DialogTrigger asChild>
                 <DropdownMenuItem 
-                    onSelect={handleConceptClick}
+                    onSelect={(e) => {
+                        e.stopPropagation();
+                        setIsConceptDialogOpen(true);
+                        playOpenDialogSound();
+                    }}
                 >
                     <Sparkles className="mr-2 h-4 w-4 text-primary" />
                     <span>Konsep Visual AI</span>
@@ -273,7 +271,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
         onMouseLeave={handleMouseLeave}
         className={cn(
         "relative group overflow-hidden glass-card transition-all duration-300",
-        !isMobile && "cursor-pointer",
+        "cursor-pointer", // Make it clear it's clickable
         isOverlay && "ring-2 ring-primary shadow-2xl shadow-primary/50",
     )}>
        {!isOverlay && !isMobile && (
@@ -289,7 +287,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
         )}
       <div className="relative z-10 flex flex-col h-full">
         <div className={cn("absolute left-0 top-0 h-full w-1 bg-gradient-to-b", statusStyles[task.status].gradFrom, statusStyles[task.status].gradTo)} />
-        <CardHeader className="relative p-4 pb-2" onClick={handleHeaderClick} data-dnd-handle={!isMobile}>
+        <CardHeader className="relative p-4 pb-2" data-dnd-handle={!isMobile}>
             <div className="flex justify-between items-start gap-2">
                 <div className="flex-grow min-w-0">
                     <CardTitle className="text-base font-headline mb-1 text-foreground truncate">
