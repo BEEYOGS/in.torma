@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import type { Task, TaskStatus } from '@/types/task';
 import { TaskCard } from './task-card';
 import {
@@ -28,6 +28,7 @@ import { updateTaskStatus, setTasksInStorage } from '@/services/task-service';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CSS } from '@dnd-kit/utilities';
+import { useSound } from '@/hooks/use-sound';
 
 const statuses: TaskStatus[] = ['Proses Desain', 'Proses ACC', 'Selesai'];
 
@@ -79,6 +80,7 @@ export function TaskBoard({
   const [tasks, setTasks] = useState(initialTasks);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const isMobile = useIsMobile();
+  const playDropSound = useSound('https://www.myinstants.com/media/sounds/merlin-whoosh-cast-spell.mp3', 0.2);
 
   useEffect(() => {
     setTasks(initialTasks);
@@ -134,7 +136,7 @@ export function TaskBoard({
     setActiveTask(tasksById[active.id as string]);
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
     setActiveTask(null);
 
@@ -148,31 +150,37 @@ export function TaskBoard({
     const activeContainer = findContainer(activeId);
     const overContainer = findContainer(overId);
 
-    if (!activeContainer || !overContainer || activeContainer === overContainer) {
-       const itemsInColumn = tasksByStatus[activeContainer!] || [];
-       const oldIndex = itemsInColumn.findIndex((item) => item.id === activeId);
-       const newIndex = itemsInColumn.findIndex((item) => item.id === overId);
-
-       if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
-           const reorderedInColumn = arrayMove(itemsInColumn, oldIndex, newIndex);
-           
-           const finalOrderedTasks = statuses.flatMap(status => {
-               if (status === activeContainer) {
-                   return reorderedInColumn;
-               }
-               return tasksByStatus[status];
-           });
-           
-           setTasks(finalOrderedTasks);
-           setTasksInStorage(finalOrderedTasks);
-       }
+    if (!activeContainer || !overContainer) {
        return;
     }
 
-    const updatedTasks = tasks.map(t => t.id === activeId ? { ...t, status: overContainer } : t);
-    setTasks(updatedTasks);
-    updateTaskStatus(activeId, overContainer);
-  };
+    if (activeContainer !== overContainer) {
+        // Task moved to a new column
+        playDropSound();
+        const updatedTasks = tasks.map(t => t.id === activeId ? { ...t, status: overContainer } : t);
+        setTasks(updatedTasks);
+        updateTaskStatus(activeId, overContainer);
+    } else {
+        // Task reordered within the same column
+        const itemsInColumn = tasksByStatus[activeContainer] || [];
+        const oldIndex = itemsInColumn.findIndex((item) => item.id === activeId);
+        const newIndex = itemsInColumn.findIndex((item) => item.id === overId);
+
+        if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
+            const reorderedInColumn = arrayMove(itemsInColumn, oldIndex, newIndex);
+            
+            const finalOrderedTasks = statuses.flatMap(status => {
+                if (status === activeContainer) {
+                    return reorderedInColumn;
+                }
+                return tasksByStatus[status];
+            });
+            
+            setTasks(finalOrderedTasks);
+            setTasksInStorage(finalOrderedTasks);
+        }
+    }
+  }, [findContainer, playDropSound, tasks, tasksByStatus, tasksById]);
 
   if (isMobile) {
     return (

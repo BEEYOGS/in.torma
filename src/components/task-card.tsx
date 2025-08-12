@@ -34,6 +34,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { useDeviceOrientation } from '@/hooks/use-device-orientation';
+import { useSound } from '@/hooks/use-sound';
 
 
 interface TaskCardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -115,7 +116,9 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const orientation = useDeviceOrientation();
   const [isConceptDialogOpen, setIsConceptDialogOpen] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-  
+  const playDeleteSound = useSound('https://www.myinstants.com/media/sounds/wind-whoosh-2.mp3', 0.3);
+  const playOpenDialogSound = useSound('https://www.myinstants.com/media/sounds/swoosh-1.mp3', 0.5);
+
   const [rotate, setRotate] = useState({ x: 0, y: 0 });
   const [glow, setGlow] = useState({ x: '50%', y: '50%', opacity: 0 });
   
@@ -158,6 +161,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 
   const handleDelete = async () => {
     try {
+      playDeleteSound();
       await deleteTask(task.id);
       toast({
         title: 'Tugas Dihapus',
@@ -178,17 +182,36 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isMobile) return; 
     if (targetIsAction(e.target as HTMLElement)) return;
-    onEdit?.(task);
+    if (onEdit) {
+      playOpenDialogSound();
+      onEdit(task);
+    }
   };
 
   const handleHeaderClick = (e: React.MouseEvent<HTMLDivElement>) => {
       if (isMobile && !targetIsAction(e.target as HTMLElement)) {
-          onEdit?.(task);
+          if (onEdit) {
+            playOpenDialogSound();
+            onEdit(task);
+          }
       }
   }
 
   const targetIsAction = (target: HTMLElement) => {
     return target.closest('button, [role="menuitem"], [role="dialog"], [data-dnd-handle]');
+  }
+  
+  const handleEditClick = () => {
+      if (onEdit) {
+        playOpenDialogSound();
+        onEdit(task);
+      }
+  }
+  
+  const handleConceptClick = (e: React.MouseEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      playOpenDialogSound();
+      setIsConceptDialogOpen(true);
   }
 
   const ActionsMenu = (
@@ -206,17 +229,14 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
             align="end"
             className="bg-popover/80 backdrop-blur-lg border-white/10"
         >
-            <DropdownMenuItem onSelect={() => onEdit?.(task)}>
+            <DropdownMenuItem onSelect={handleEditClick}>
                 <Pencil className="mr-2 h-4 w-4" />
                 <span>Edit/Lihat Detail</span>
             </DropdownMenuItem>
             
             <DialogTrigger asChild>
                 <DropdownMenuItem 
-                    onSelect={(e) => { 
-                        e.preventDefault(); 
-                        setIsConceptDialogOpen(true); 
-                    }}
+                    onSelect={handleConceptClick}
                 >
                     <Sparkles className="mr-2 h-4 w-4 text-primary" />
                     <span>Konsep Visual AI</span>

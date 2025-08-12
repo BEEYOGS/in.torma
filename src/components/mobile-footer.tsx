@@ -9,6 +9,7 @@ import { Input } from './ui/input';
 import { AiTaskCreator } from './ai-task-creator';
 import type { Task } from '@/types/task';
 import { DailyBriefing } from './daily-briefing';
+import { useSound } from '@/hooks/use-sound';
 
 interface MobileFooterProps {
     tasks: Task[];
@@ -28,6 +29,22 @@ export function MobileFooter({
     onSearchTermChange 
 }: MobileFooterProps) {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const playOpenDialogSound = useSound('https://www.myinstants.com/media/sounds/swoosh-1.mp3', 0.5);
+
+    const handleNewTaskClick = () => {
+        playOpenDialogSound();
+        onNewTask();
+    }
+    
+    const handleAnalyticsOpen = () => {
+        playOpenDialogSound();
+        onAnalyticsOpen();
+    }
+    
+    const handleSearchOpen = () => {
+        playOpenDialogSound();
+        setIsSearchOpen(true);
+    }
 
     return (
         <div className="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[90vw] max-w-sm">
@@ -38,7 +55,7 @@ export function MobileFooter({
                      <Button
                         size="icon"
                         className="h-16 w-16 rounded-full shadow-lg shadow-primary/40"
-                        onClick={onNewTask}
+                        onClick={handleNewTaskClick}
                     >
                         <Plus className="h-8 w-8" />
                     </Button>
@@ -46,7 +63,7 @@ export function MobileFooter({
                 
                 <div className="relative glass-card rounded-full p-2 flex items-center justify-between">
                     <div className="flex-1 grid grid-cols-2 gap-1 text-center">
-                        <IconButton label="Cari" onClick={() => setIsSearchOpen(true)}>
+                        <IconButton label="Cari" onClick={handleSearchOpen}>
                             <Search className="h-6 w-6" />
                         </IconButton>
                         <AiTaskCreator onTaskCreated={onAiTaskCreate}>
@@ -59,7 +76,7 @@ export function MobileFooter({
                     <div className="w-12" /> 
 
                     <div className="flex-1 grid grid-cols-2 gap-1 text-center">
-                       <IconButton label="Dasbor" onClick={onAnalyticsOpen}>
+                       <IconButton label="Dasbor" onClick={handleAnalyticsOpen}>
                           <AreaChart className="h-6 w-6" />
                        </IconButton>
                        <DailyBriefing tasks={tasks}>

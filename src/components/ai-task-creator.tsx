@@ -18,6 +18,7 @@ import { createTask } from '@/ai/flows/create-task-flow';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import type { Task } from '@/types/task';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { useSound } from '@/hooks/use-sound';
 
 interface AiTaskCreatorProps {
   onTaskCreated: (prefillData: Partial<Task>) => void;
@@ -30,6 +31,7 @@ export function AiTaskCreator({ onTaskCreated, children }: AiTaskCreatorProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [aiAnswer, setAiAnswer] = useState<string | null>(null);
   const { toast } = useToast();
+  const playOpenDialogSound = useSound('https://www.myinstants.com/media/sounds/swoosh-1.mp3', 0.5);
 
   const handleAiSubmit = async () => {
     if (!userInput.trim()) return;
@@ -70,6 +72,8 @@ export function AiTaskCreator({ onTaskCreated, children }: AiTaskCreatorProps) {
     if(!open) {
       setUserInput('');
       setAiAnswer(null);
+    } else {
+        playOpenDialogSound();
     }
     setIsDialogOpen(open);
   }
@@ -106,13 +110,17 @@ export function AiTaskCreator({ onTaskCreated, children }: AiTaskCreatorProps) {
         </DialogContent>
     </Dialog>
   )
+  
+  const handleTriggerClick = () => {
+    handleOpenChange(true);
+  }
 
   // If children are provided, use them as the trigger
   if (children) {
     return (
         <>
             <div 
-              onClick={() => setIsDialogOpen(true)} 
+              onClick={handleTriggerClick} 
               className="cursor-pointer h-auto w-full flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-foreground p-2"
             >
                 {children}
@@ -129,7 +137,7 @@ export function AiTaskCreator({ onTaskCreated, children }: AiTaskCreatorProps) {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setIsDialogOpen(true)}
+            onClick={handleTriggerClick}
             className="text-muted-foreground hover:text-foreground"
           >
             <Wand2 />

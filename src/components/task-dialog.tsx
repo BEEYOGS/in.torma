@@ -43,6 +43,7 @@ import { useEffect, useState } from 'react';
 import type { Task, TaskSource, TaskStatus } from '@/types/task';
 import { addTask, updateTask } from '@/services/task-service';
 import { useToast } from '@/hooks/use-toast';
+import { useSound } from '@/hooks/use-sound';
 
 const taskSchema = z.object({
   customerName: z.string().min(1, 'Nama konsumen wajib diisi.'),
@@ -77,6 +78,7 @@ const sourceDisplayMap: Record<TaskSource, string> = {
 export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDialogProps) {
   const { toast } = useToast();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const playSuccessSound = useSound('https://www.myinstants.com/media/sounds/success-fanfare-trumpets.mp3', 0.3);
 
   const getDefaultValues = () => {
     if (task) {
@@ -139,6 +141,7 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
         await addTask(taskData as Omit<Task, 'id'>);
         toast({ title: 'Tugas Ditambahkan', description: `Tugas baru untuk ${data.customerName} telah ditambahkan.` });
       }
+      playSuccessSound();
       onOpenChange(false);
     } catch (error) {
       toast({

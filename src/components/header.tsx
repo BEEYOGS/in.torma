@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { AiTaskCreator } from './ai-task-creator';
+import { useSound } from '@/hooks/use-sound';
 
 interface HeaderProps {
   tasks: Task[];
@@ -31,6 +32,17 @@ export function Header({
   isAnalyticsOpen,
   onAnalyticsOpenChange
 }: HeaderProps) {
+  const playOpenDialogSound = useSound('https://www.myinstants.com/media/sounds/swoosh-1.mp3', 0.5);
+
+  const handleNewTaskClick = () => {
+    playOpenDialogSound();
+    onNewTask();
+  }
+
+  const handleAnalyticsOpen = () => {
+    playOpenDialogSound();
+    onAnalyticsOpenChange(true);
+  }
 
   const Logo = () => (
     <svg
@@ -94,7 +106,7 @@ export function Header({
         </Tooltip>
         <DropdownMenuContent align="end" className="bg-popover/80 backdrop-blur-lg border-white/10 w-56">
             <DropdownMenuLabel>Fitur</DropdownMenuLabel>
-            <DropdownMenuItem onSelect={() => onAnalyticsOpenChange(true)}>
+            <DropdownMenuItem onSelect={handleAnalyticsOpen}>
                 <AreaChart className="mr-2 h-4 w-4"/>
                 <span>Dasbor Analitik</span>
             </DropdownMenuItem>
@@ -152,7 +164,7 @@ export function Header({
          <MainMenu />
        </div>
       
-      <Button onClick={onNewTask} className="hidden md:inline-flex">
+      <Button onClick={handleNewTaskClick} className="hidden md:inline-flex">
         <Plus className="mr-2 h-4 w-4" />
         Tambah Tugas
       </Button>
