@@ -21,14 +21,14 @@ export function Toaster() {
         return (
           <Toast key={id} {...props}>
             <ToastIcon variant={props.variant} />
-            <div className="grid gap-1">
+            <div className="z-10 grid gap-1">
               {title && <ToastTitle>{title}</ToastTitle>}
               {description && (
                 <ToastDescription>{description}</ToastDescription>
               )}
             </div>
             {action}
-            <ToastClose />
+            <ToastClose className="z-10"/>
           </Toast>
         )
       })}

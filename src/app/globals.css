@@ -100,23 +100,15 @@
   }
 }
 
-@keyframes spin-slow {
+@keyframes shine {
   from {
-    transform: rotate(0deg);
+    transform: translateX(-100%) skewX(-20deg);
   }
   to {
-    transform: rotate(360deg);
+    transform: translateX(200%) skewX(-20deg);
   }
 }
 
-@keyframes draw-circle {
-  0%, 100% {
-    stroke-dashoffset: 62.83;
-  }
-  50% {
-    stroke-dashoffset: 0;
-  }
-}
 
 @keyframes status-pulse {
   50% {
@@ -164,4 +156,3 @@ body {
     border-right: 2px solid var(--caret-color, hsl(var(--primary)));
     animation: blinking-caret 1s infinite;
 }
-    
