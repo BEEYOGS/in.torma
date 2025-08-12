@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Pencil, Sparkles, Trash2, MoreVertical, AlertCircle } from 'lucide-react';
 import type { Task, TaskSource, TaskStatus } from '@/types/task';
 import { deleteTask } from '@/services/task-service';
@@ -350,7 +350,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
             </AlertDialogHeader>
             <AlertDialogFooter className="flex-row justify-end gap-2 pt-4">
                 <AlertDialogCancel>Batal</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete} className={cn(buttonVariants({variant: 'destructive'}))}>Lanjutkan</AlertDialogAction>
+                <AlertDialogAction onClick={handleDelete}>Lanjutkan</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>
@@ -358,4 +358,3 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 });
 
 TaskCard.displayName = "TaskCard";
-
