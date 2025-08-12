@@ -118,11 +118,15 @@
   }
 }
 
-
 @keyframes status-pulse {
   50% {
     opacity: 0.5;
   }
+}
+
+@keyframes blinking-caret {
+    from, to { border-color: transparent }
+    50% { border-color: var(--caret-color, hsl(var(--primary))); }
 }
 
 body {
@@ -150,3 +154,15 @@ body {
     --tw-bg-opacity: 0.8;
     backdrop-filter: blur(16px);
 }
+
+.typing-cursor::after {
+    content: '';
+    display: inline-block;
+    width: 1px;
+    height: 1em;
+    margin-left: 2px;
+    border-right: 2px solid var(--caret-color, hsl(var(--primary)));
+    animation: blinking-caret 1s infinite;
+}
+
+    

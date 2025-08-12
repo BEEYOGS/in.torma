@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils';
 import { ConceptImageGenerator } from './concept-image-generator';
 import { TaskDescriptionSpeaker } from './task-description-speaker';
 import { useIsMobile } from '@/hooks/use-mobile';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { Dialog, DialogTrigger } from './ui/dialog';
 import {
@@ -40,27 +40,30 @@ interface TaskCardProps extends React.HTMLAttributes<HTMLDivElement> {
   isOverlay?: boolean;
 }
 
-const statusStyles: Record<TaskStatus, { text: string; color: string, gradFrom: string, gradTo: string, glow: string }> = {
+const statusStyles: Record<TaskStatus, { text: string; color: string, gradFrom: string, gradTo: string, glow: string, caretColor: string }> = {
   'Proses Desain': {
     text: 'text-orange-400',
     color: 'hsl(24, 95%, 53%)',
     gradFrom: 'from-orange-500/80',
     gradTo: 'to-orange-500/0',
-    glow: 'hover:shadow-[0_0_20px_0] hover:shadow-orange-500/30'
+    glow: 'hover:shadow-[0_0_20px_0] hover:shadow-orange-500/30',
+    caretColor: 'hsl(24, 95%, 53%)',
   },
   'Proses ACC': {
     text: 'text-sky-400',
     color: 'hsl(204, 90%, 53%)',
     gradFrom: 'from-sky-500/80',
     gradTo: 'to-sky-500/0',
-    glow: 'hover:shadow-[0_0_20px_0] hover:shadow-sky-500/30'
+    glow: 'hover:shadow-[0_0_20px_0] hover:shadow-sky-500/30',
+    caretColor: 'hsl(204, 90%, 53%)',
   },
   'Selesai': {
     text: 'text-green-400',
     color: 'hsl(142, 71%, 45%)',
     gradFrom: 'from-green-500/80',
     gradTo: 'to-green-500/0',
-    glow: 'hover:shadow-[0_0_20px_0] hover:shadow-green-500/30'
+    glow: 'hover:shadow-[0_0_20px_0] hover:shadow-green-500/30',
+    caretColor: 'hsl(142, 71%, 45%)',
   },
 };
 
@@ -70,6 +73,39 @@ const sourceIcons: Record<TaskSource, React.ElementType> = {
     'Admin': Shield,
     'G': Users
 }
+
+const useTypingAnimation = (text: string, speed = 100, delay = 1500) => {
+    const [displayText, setDisplayText] = useState('');
+    const [isDeleting, setIsDeleting] = useState(false);
+  
+    useEffect(() => {
+      let timeoutId: NodeJS.Timeout;
+  
+      if (isDeleting) {
+        if (displayText.length > 0) {
+          timeoutId = setTimeout(() => {
+            setDisplayText((prev) => prev.slice(0, -1));
+          }, speed / 2);
+        } else {
+          setIsDeleting(false);
+        }
+      } else {
+        if (displayText.length < text.length) {
+          timeoutId = setTimeout(() => {
+            setDisplayText((prev) => text.slice(0, prev.length + 1));
+          }, speed);
+        } else {
+          timeoutId = setTimeout(() => {
+            setIsDeleting(true);
+          }, delay);
+        }
+      }
+  
+      return () => clearTimeout(timeoutId);
+    }, [displayText, isDeleting, text, speed, delay]);
+  
+    return displayText;
+  };
 
 
 export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
@@ -81,10 +117,12 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   
   const [rotate, setRotate] = useState({ x: 0, y: 0 });
   const [glow, setGlow] = useState({ x: '50%', y: '50%', opacity: 0 });
+  
+  const animatedStatusText = useTypingAnimation(task.status);
 
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current || isMobile) return;
+    if (!cardRef.current || isMobile || isOverlay) return;
 
     const rect = cardRef.current.getBoundingClientRect();
     const { clientX, clientY } = e;
@@ -129,7 +167,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const displayDate = task.dueDate ? new Date(`${task.dueDate}T00:00:00`) : null;
 
   const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (isMobile) return; // On mobile, click is handled by header
+    if (isMobile) return; 
     if (targetIsAction(e.target as HTMLElement)) return;
     onEdit?.(task);
   };
@@ -152,8 +190,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
              <Button 
                 variant="ghost" 
                 size="icon" 
-                className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                data-dnd-handle
+                className="h-8 w-8 text-muted-foreground hover:text-foreground flex-shrink-0"
              >
                 <MoreVertical className="h-4 w-4" />
             </Button>
@@ -195,6 +232,8 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
     '--glow-opacity': glow.opacity,
     '--rotate-x': `${rotate.x}deg`,
     '--rotate-y': `${rotate.y}deg`,
+    '--status-color': statusStyles[task.status].color,
+    '--caret-color': statusStyles[task.status].caretColor,
     transform: `perspective(1000px) rotateX(var(--rotate-x)) rotateY(var(--rotate-y))`,
     transition: 'transform 0.1s ease-out',
   } as React.CSSProperties;
@@ -215,7 +254,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
             <div 
               className="absolute inset-0 z-0 opacity-[var(--glow-opacity)] transition-opacity duration-300"
               style={{
-                background: `radial-gradient(circle at var(--glow-x) var(--glow-y), ${statusStyles[task.status].color}, transparent 40%)`,
+                background: `radial-gradient(circle at var(--glow-x) var(--glow-y), var(--status-color), transparent 40%)`,
               }}
             />
             <div className="absolute inset-0 z-0 bg-card/60" />
@@ -223,15 +262,15 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
         )}
       <div className="relative z-10 flex flex-col h-full">
         <div className={cn("absolute left-0 top-0 h-full w-1 bg-gradient-to-b", statusStyles[task.status].gradFrom, statusStyles[task.status].gradTo)} />
-        <CardHeader className="relative p-4 pb-2" onClick={handleHeaderClick}>
-            <div className="flex justify-between items-start gap-4">
+        <CardHeader className="relative p-4 pb-2" onClick={handleHeaderClick} data-dnd-handle={!isMobile}>
+            <div className="flex justify-between items-start gap-2">
                 <div className="flex-grow min-w-0">
                     <CardTitle className="text-base font-headline mb-1 text-foreground truncate">
                         {task.customerName}
                     </CardTitle>
                     <CardDescription className="text-sm truncate">{task.description}</CardDescription>
                 </div>
-                <div className='flex-shrink-0' {...(isMobile ? {'data-dnd-handle': true} : {})}>
+                <div className='flex-shrink-0'>
                     {ActionsMenu}
                 </div>
             </div>
@@ -241,11 +280,11 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                  <TaskDescriptionSpeaker task={task} />
                  <span
                     className={cn(
-                        "text-xs font-medium",
+                        "text-xs font-medium h-4 typing-cursor",
                         statusStyles[task.status].text
                     )}
                  >
-                    {task.status}
+                    {animatedStatusText}
                 </span>
             </div>
 
@@ -267,7 +306,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   return (
     <AlertDialog>
         <Dialog open={isConceptDialogOpen} onOpenChange={setIsConceptDialogOpen}>
-            <div ref={ref} {...props} onClick={handleCardClick} {...(!isMobile ? { "data-dnd-handle": true } : {})}>
+            <div ref={ref} {...props} onClick={handleCardClick} data-dnd-handle={!isMobile}>
                 {cardContent}
             </div>
             {isConceptDialogOpen && <ConceptImageGenerator task={task} />}
@@ -292,3 +331,5 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 });
 
 TaskCard.displayName = "TaskCard";
+
+    
