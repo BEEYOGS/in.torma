@@ -164,6 +164,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
       playDeleteSound();
       await deleteTask(task.id);
       toast({
+        variant: 'success',
         title: 'Tugas Dihapus',
         description: `Tugas untuk ${task.customerName} telah berhasil dihapus.`,
       });

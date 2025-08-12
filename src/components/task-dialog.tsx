@@ -136,10 +136,10 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
     try {
       if (task) {
         await updateTask(task.id, taskData);
-        toast({ title: 'Tugas Diperbarui', description: `Tugas untuk ${data.customerName} telah diperbarui.` });
+        toast({ variant: 'success', title: 'Tugas Diperbarui', description: `Tugas untuk ${data.customerName} telah diperbarui.` });
       } else {
         await addTask(taskData as Omit<Task, 'id'>);
-        toast({ title: 'Tugas Ditambahkan', description: `Tugas baru untuk ${data.customerName} telah ditambahkan.` });
+        toast({ variant: 'success', title: 'Tugas Ditambahkan', description: `Tugas baru untuk ${data.customerName} telah ditambahkan.` });
       }
       playSuccessSound();
       onOpenChange(false);

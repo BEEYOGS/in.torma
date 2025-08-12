@@ -1,3 +1,4 @@
+
 "use client"
 
 // Inspired by react-hot-toast library
@@ -8,8 +9,8 @@ import type {
   ToastProps,
 } from "@/components/ui/toast"
 
-const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 3000
+const TOAST_LIMIT = 3
+const TOAST_REMOVE_DELAY = 5000
 
 type ToasterToast = ToastProps & {
   id: string
@@ -165,9 +166,14 @@ function toast({ ...props }: Toast) {
   })
 
   // Automatically dismiss the toast after the delay
-  setTimeout(() => {
+  const dismissTimeout = setTimeout(() => {
     dismiss();
   }, TOAST_REMOVE_DELAY);
+
+  // Clear timeout when component unmounts
+  React.useEffect(() => {
+    return () => clearTimeout(dismissTimeout);
+  }, []);
 
 
   return {
