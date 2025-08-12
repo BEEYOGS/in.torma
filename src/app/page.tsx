@@ -10,12 +10,14 @@ import { TaskDialog } from '@/components/task-dialog';
 import { EmptyState } from '@/components/empty-state';
 import { MobileFooter } from '@/components/mobile-footer';
 import { TaskAnalytics } from '@/components/task-analytics';
+import { DailyBriefingDialog } from '@/components/briefing-dialog';
 
 export default function Home() {
   const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
+  const [isBriefingOpen, setIsBriefingOpen] = useState(false);
   const [prefillData, setPrefillData] = useState<Partial<Task & {dueDate?: string | Date}> | undefined>(undefined);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -76,6 +78,7 @@ export default function Home() {
         onSearchTermChange={setSearchTerm}
         isAnalyticsOpen={isAnalyticsOpen}
         onAnalyticsOpenChange={setIsAnalyticsOpen}
+        onBriefingOpen={() => setIsBriefingOpen(true)}
       />
       <main className="flex-grow p-4 md:p-8 pb-24 md:pb-8">
         {loading ? (
@@ -106,11 +109,13 @@ export default function Home() {
           prefillData={prefillData}
       />
       <TaskAnalytics tasks={allTasks} isOpen={isAnalyticsOpen} onOpenChange={setIsAnalyticsOpen} />
+      <DailyBriefingDialog tasks={allTasks} isOpen={isBriefingOpen} onOpenChange={setIsBriefingOpen} />
       <MobileFooter
         tasks={allTasks}
         onNewTask={() => handleOpenDialogForNewTask()}
         onAiTaskCreate={handleAiTaskCreate}
         onAnalyticsOpen={() => setIsAnalyticsOpen(true)}
+        onBriefingOpen={() => setIsBriefingOpen(true)}
         searchTerm={searchTerm}
         onSearchTermChange={setSearchTerm}
       />

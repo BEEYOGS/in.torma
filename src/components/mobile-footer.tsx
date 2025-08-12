@@ -16,6 +16,7 @@ interface MobileFooterProps {
     onNewTask: () => void;
     onAiTaskCreate: (data: Partial<Task & { dueDate?: string | Date }>) => void;
     onAnalyticsOpen: () => void;
+    onBriefingOpen: () => void;
     searchTerm: string;
     onSearchTermChange: (term: string) => void;
 }
@@ -25,6 +26,7 @@ export function MobileFooter({
     onNewTask, 
     onAiTaskCreate, 
     onAnalyticsOpen,
+    onBriefingOpen,
     searchTerm, 
     onSearchTermChange 
 }: MobileFooterProps) {
@@ -79,7 +81,7 @@ export function MobileFooter({
                        <IconButton label="Dasbor" onClick={handleAnalyticsOpen}>
                           <AreaChart className="h-6 w-6" />
                        </IconButton>
-                       <DailyBriefing tasks={tasks}>
+                       <DailyBriefing onBriefingOpen={onBriefingOpen}>
                            <IconButton label="Briefing">
                                 <Users className="h-6 w-6" />
                            </IconButton>

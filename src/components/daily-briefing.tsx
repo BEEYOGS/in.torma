@@ -1,60 +1,28 @@
 
 'use client';
 
-import React, { useState } from 'react';
-import { Button } from './ui/button';
-import { Loader2, Users } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { dailySummary } from '@/ai/flows/daily-summary-flow';
-import type { Task } from '@/types/task';
+import React from 'react';
+import { Users } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { Button } from './ui/button';
+import { useSound } from '@/hooks/use-sound';
 
 interface DailyBriefingProps {
-  tasks: Task[];
   children: React.ReactElement;
+  onBriefingOpen: () => void;
 }
 
-export function DailyBriefing({ tasks, children }: DailyBriefingProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
-  const { toast } = useToast();
+export function DailyBriefing({ children, onBriefingOpen }: DailyBriefingProps) {
+  const playOpenSound = useSound('https://www.myinstants.com/media/sounds/swoosh-1.mp3', 0.5);
 
-  const handleGetBriefing = async () => {
-    if (isLoading) return;
-    setIsLoading(true);
-    if (audio) {
-      audio.pause();
-      setAudio(null);
-    }
-    try {
-      const activeTasks = tasks.filter(task => task.status !== 'Selesai');
-      const result = await dailySummary({ tasks: activeTasks });
-      if (result.media) {
-        const audioInstance = new Audio(result.media);
-        setAudio(audioInstance);
-        audioInstance.play();
-        audioInstance.onended = () => setAudio(null);
-      } else {
-        throw new Error("No audio media returned.");
-      }
-    } catch (error: any) {
-      console.error('Daily Briefing Error:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Gagal Membuat Rangkuman',
-        description: `Terjadi kesalahan saat membuat rangkuman harian: ${error.message}`,
-      });
-    } finally {
-      setIsLoading(false);
-    }
+  const handleOpenBriefing = (e: React.MouseEvent) => {
+    e.preventDefault();
+    playOpenSound();
+    onBriefingOpen();
   };
-
+  
   const childProps = {
-    onClick: (e: React.MouseEvent) => {
-        e.preventDefault();
-        handleGetBriefing();
-    },
-    disabled: isLoading,
+    onClick: handleOpenBriefing,
   }
 
   const trigger = React.cloneElement(children, childProps);
@@ -70,11 +38,10 @@ export function DailyBriefing({ tasks, children }: DailyBriefingProps) {
         <Button
           variant="ghost"
           size="icon"
-          onClick={handleGetBriefing}
-          disabled={isLoading}
+          onClick={handleOpenBriefing}
           className="text-muted-foreground hover:text-foreground"
         >
-          {isLoading ? <Loader2 className="animate-spin" /> : <Users />}
+          <Users />
           <span className="sr-only">Rangkuman Harian</span>
         </Button>
       </TooltipTrigger>

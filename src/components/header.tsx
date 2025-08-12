@@ -21,6 +21,7 @@ interface HeaderProps {
   onSearchTermChange: (term: string) => void;
   isAnalyticsOpen: boolean;
   onAnalyticsOpenChange: (open: boolean) => void;
+  onBriefingOpen: () => void;
 }
 
 export function Header({ 
@@ -30,7 +31,8 @@ export function Header({
   searchTerm,
   onSearchTermChange,
   isAnalyticsOpen,
-  onAnalyticsOpenChange
+  onAnalyticsOpenChange,
+  onBriefingOpen
 }: HeaderProps) {
   const playOpenDialogSound = useSound('https://www.myinstants.com/media/sounds/swoosh-1.mp3', 0.5);
 
@@ -110,7 +112,7 @@ export function Header({
                 <AreaChart className="mr-2 h-4 w-4"/>
                 <span>Dasbor Analitik</span>
             </DropdownMenuItem>
-            <DailyBriefing tasks={tasks}>
+            <DailyBriefing onBriefingOpen={onBriefingOpen}>
                 <DropdownMenuItem>
                     <Users className="mr-2 h-4 w-4"/>
                     <span>Rangkuman Harian</span>

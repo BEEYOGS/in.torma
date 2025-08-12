@@ -12,7 +12,6 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 import type {Task} from '@/types/task';
-import { googleAI } from '@genkit-ai/googleai';
 import wav from 'wav';
 
 const DailySummaryInputSchema = z.object({
@@ -28,7 +27,8 @@ const DailySummaryInputSchema = z.object({
 export type DailySummaryInput = z.infer<typeof DailySummaryInputSchema>;
 
 const DailySummaryOutputSchema = z.object({
-  media: z.string().describe('The audio data URI of the daily summary.'),
+  audioUri: z.string().describe('The audio data URI of the daily summary.'),
+  transcript: z.string().describe('The full text transcript of the summary.'),
 });
 export type DailySummaryOutput = z.infer<typeof DailySummaryOutputSchema>;
 
@@ -134,7 +134,8 @@ Asisten: Selamat pagi! Sepertinya semua tugas sudah selesai. Hari ini kita bisa 
       );
 
     return {
-      media: 'data:audio/wav;base64,' + (await toWav(audioBuffer)),
+      audioUri: 'data:audio/wav;base64,' + (await toWav(audioBuffer)),
+      transcript: summaryText,
     };
   }
 );
