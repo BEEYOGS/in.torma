@@ -6,7 +6,7 @@ import type { Task } from '@/types/task';
 import { DailyBriefing } from '@/components/daily-briefing';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, Ellipsis, AreaChart, Users } from 'lucide-react';
+import { Plus, Search, Ellipsis, LayoutDashboard, Presentation } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
@@ -109,12 +109,12 @@ export function Header({
         <DropdownMenuContent align="end" className="bg-popover/80 backdrop-blur-lg border-white/10 w-56">
             <DropdownMenuLabel>Fitur</DropdownMenuLabel>
             <DropdownMenuItem onSelect={handleAnalyticsOpen}>
-                <AreaChart className="mr-2 h-4 w-4"/>
+                <LayoutDashboard className="mr-2 h-4 w-4"/>
                 <span>Dasbor Analitik</span>
             </DropdownMenuItem>
             <DailyBriefing onBriefingOpen={onBriefingOpen}>
                 <DropdownMenuItem>
-                    <Users className="mr-2 h-4 w-4"/>
+                    <Presentation className="mr-2 h-4 w-4"/>
                     <span>Rangkuman Harian</span>
                 </DropdownMenuItem>
             </DailyBriefing>

@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import { Button } from './ui/button';
-import { Plus, Search, Wand2, AreaChart, Users } from 'lucide-react';
+import { Plus, Search, Wand2, LayoutDashboard, Presentation } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from './ui/dialog';
 import { Input } from './ui/input';
 import { AiTaskCreator } from './ai-task-creator';
@@ -79,11 +79,11 @@ export function MobileFooter({
 
                     <div className="flex-1 grid grid-cols-2 gap-1 text-center">
                        <IconButton label="Dasbor" onClick={handleAnalyticsOpen}>
-                          <AreaChart className="h-6 w-6" />
+                          <LayoutDashboard className="h-6 w-6" />
                        </IconButton>
                        <DailyBriefing onBriefingOpen={onBriefingOpen}>
                            <IconButton label="Briefing">
-                                <Users className="h-6 w-6" />
+                                <Presentation className="h-6 w-6" />
                            </IconButton>
                        </DailyBriefing>
                     </div>
