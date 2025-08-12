@@ -8,6 +8,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 export const metadata: Metadata = {
   title: 'in.torma: Collaborative Task Board',
   description: 'A collaborative task board for teams.',
+  manifest: '/manifest.webmanifest',
 };
 
 const inter = Inter({
