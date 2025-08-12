@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { Pencil, Sparkles, Trash2, MoreVertical, AlertCircle, User, Shield, Users, FileText } from 'lucide-react';
+import { Pencil, Sparkles, Trash2, MoreVertical, AlertCircle } from 'lucide-react';
 import type { Task, TaskSource, TaskStatus } from '@/types/task';
 import { deleteTask } from '@/services/task-service';
 import { useToast } from '@/hooks/use-toast';
@@ -67,45 +67,47 @@ const statusStyles: Record<TaskStatus, { text: string; color: string, gradFrom: 
   },
 };
 
-const sourceIcons: Record<TaskSource, React.ElementType> = {
-    'N': FileText,
-    'CS': User,
-    'Admin': Shield,
-    'G': Users
-}
+const sourceDisplayMap: Record<TaskSource, string> = {
+    'N': 'N',
+    'CS': 'CS',
+    'Admin': 'Admin',
+    'G': 'Group'
+};
 
-const useTypingAnimation = (text: string, speed = 100, delay = 1500) => {
+const useTypingAnimation = (text: string) => {
     const [displayText, setDisplayText] = useState('');
     const [isDeleting, setIsDeleting] = useState(false);
   
     useEffect(() => {
+      const typingSpeed = 100;
+      const deletingSpeed = 50;
+      const delay = 1500;
+  
       let timeoutId: NodeJS.Timeout;
   
-      if (isDeleting) {
-        if (displayText.length > 0) {
-          timeoutId = setTimeout(() => {
-            setDisplayText((prev) => prev.slice(0, -1));
-          }, speed / 2);
-        } else {
-          setIsDeleting(false);
-        }
-      } else {
-        if (displayText.length < text.length) {
-          timeoutId = setTimeout(() => {
+      const handleTyping = () => {
+        if (!isDeleting) {
+          if (displayText.length < text.length) {
             setDisplayText((prev) => text.slice(0, prev.length + 1));
-          }, speed);
+          } else {
+            timeoutId = setTimeout(() => setIsDeleting(true), delay);
+          }
         } else {
-          timeoutId = setTimeout(() => {
-            setIsDeleting(true);
-          }, delay);
+          if (displayText.length > 0) {
+            setDisplayText((prev) => prev.slice(0, -1));
+          } else {
+            setIsDeleting(false);
+          }
         }
-      }
+      };
+  
+      timeoutId = setTimeout(handleTyping, isDeleting ? deletingSpeed : typingSpeed);
   
       return () => clearTimeout(timeoutId);
-    }, [displayText, isDeleting, text, speed, delay]);
+    }, [displayText, isDeleting, text]);
   
     return displayText;
-  };
+};
 
 
 export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
@@ -181,8 +183,6 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const targetIsAction = (target: HTMLElement) => {
     return target.closest('button, [role="menuitem"], [role="dialog"], [data-dnd-handle]');
   }
-
-  const SourceIcon = sourceIcons[task.source] || FileText;
 
   const ActionsMenu = (
     <DropdownMenu>
@@ -294,8 +294,8 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                       {format(displayDate, 'dd/MM/yy')}
                   </Badge>
                 )}
-                <Badge variant="secondary" className="bg-black/20 text-muted-foreground p-1.5 h-auto">
-                    <SourceIcon className="w-3.5 h-3.5" />
+                <Badge variant="secondary" className="bg-black/20 text-muted-foreground px-2 py-1 h-auto font-mono text-xs">
+                    {sourceDisplayMap[task.source]}
                 </Badge>
             </div>
         </CardContent>
