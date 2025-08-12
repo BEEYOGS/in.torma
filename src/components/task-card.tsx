@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Pencil, Sparkles, Trash2, MoreVertical, AlertCircle } from 'lucide-react';
 import type { Task, TaskSource, TaskStatus } from '@/types/task';
 import { deleteTask } from '@/services/task-service';
