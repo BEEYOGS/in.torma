@@ -56,46 +56,69 @@ export function EmptyState() {
           .animate-shadow-pulse {
             animation: shadow-pulse 6s ease-in-out infinite;
           }
+          @keyframes eye-glow {
+            0% { box-shadow: 0 0 5px 2px hsl(var(--primary) / 0.7); }
+            50% { box-shadow: 0 0 15px 5px hsl(var(--primary) / 0.5); }
+            100% { box-shadow: 0 0 5px 2px hsl(var(--primary) / 0.7); }
+          }
+          .animate-eye-glow {
+              animation: eye-glow 3s ease-in-out infinite;
+          }
         `}
       </style>
       <div className="relative cursor-pointer">
         <div className="animate-float">
-           <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="robot-body" x1="0.5" y1="0" x2="0.5" y2="1">
-                        <stop offset="0%" stopColor="#9ca3af" />
-                        <stop offset="100%" stopColor="#4b5563" />
-                    </linearGradient>
-                    <radialGradient id="robot-eye-glow" cx="0.5" cy="0.5" r="0.5">
-                        <stop offset="70%" stopColor="hsl(var(--primary))" stopOpacity="0.8" />
-                        <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
-                    </radialGradient>
-                    <filter id="subtle-glow" x="-50%" y="-50%" width="200%" height="200%">
-                        <feDropShadow dx="0" dy="5" stdDeviation="10" floodColor="hsl(var(--primary))" floodOpacity="0.2"/>
-                    </filter>
-                </defs>
-                
-                <g style={{filter: 'url(#subtle-glow)'}}>
-                    {/* Main Body */}
-                    <circle cx="100" cy="100" r="60" fill="url(#robot-body)"/>
-                    <path d="M 60 150 L 140 150 A 20 20 0 0 1 140 150 L 60 150 Z" fill="#374151" />
+          <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="grad-blue" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#0A3479" />
+                <stop offset="100%" stopColor="#3B82F6" />
+              </linearGradient>
+              <linearGradient id="grad-red" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#8C0D26" />
+                <stop offset="100%" stopColor="#DC2626" />
+              </linearGradient>
+              <linearGradient id="grad-grey" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#4A5568" />
+                <stop offset="100%" stopColor="#A0AEC0" />
+              </linearGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
+                <feMerge>
+                  <feMergeNode in="coloredBlur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
 
-                    {/* Eye */}
-                    <circle cx="100" cy="100" r="35" fill="#111827"/>
-                    <g transform={`translate(${eyePosition.x}, ${eyePosition.y})`}>
-                       <circle cx="100" cy="100" r="38" fill="url(#robot-eye-glow)" opacity="0.5"/>
-                       <circle cx="100" cy="100" r="15" fill="hsl(var(--primary))"/>
-                       <circle cx="100" cy="100" r="5" fill="white" opacity="0.8"/>
-                    </g>
+            {/* Chest */}
+            <path d="M 70 120 L 130 120 L 140 160 L 60 160 Z" fill="url(#grad-red)" stroke="#1A202C" strokeWidth="2" />
+            <path d="M 80 125 L 120 125 L 125 140 L 75 140 Z" fill="url(#grad-grey)" />
+            <rect x="95" y="128" width="10" height="10" fill="#FBBF24" />
+            
+            {/* Head */}
+            <path d="M 75 40 L 125 40 L 135 70 L 120 115 L 80 115 L 65 70 Z" fill="url(#grad-blue)" stroke="#1A202C" strokeWidth="2" />
+            
+            {/* Faceplate */}
+            <path d="M 85 80 L 115 80 L 120 100 L 80 100 Z" fill="url(#grad-grey)" />
+            <path d="M 88 85 L 112 85 L 115 95 L 85 95 Z" fill="#2D3748" />
 
-                     {/* Antenna */}
-                    <line x1="100" y1="40" x2="100" y2="20" stroke="#9ca3af" strokeWidth="3"/>
-                    <circle cx="100" cy="20" r="5" fill="hsl(var(--primary))"/>
-                </g>
-            </svg>
+            {/* Eyes - glow effect will be applied via div */}
+            <g transform={`translate(${eyePosition.x}, ${eyePosition.y})`}>
+              <rect x="90" y="65" width="20" height="8" fill="hsl(var(--primary))" className="animate-eye-glow" style={{borderRadius: '2px'}}/>
+            </g>
+
+            {/* Antennas */}
+            <rect x="68" y="50" width="5" height="20" fill="url(#grad-blue)" transform="rotate(-15 70.5 60)" />
+            <rect x="127" y="50" width="5" height="20" fill="url(#grad-blue)" transform="rotate(15 129.5 60)" />
+
+            {/* Forehead Crest */}
+            <path d="M 95 42 L 105 42 L 102 55 L 98 55 Z" fill="url(#grad-red)" />
+
+          </svg>
         </div>
         <div 
-          className="absolute bottom-[-10px] left-1/2 -translate-x-1/2 w-1/2 h-4 bg-black rounded-full filter blur-lg animate-shadow-pulse"
+          className="absolute bottom-[-10px] left-1/2 -translate-x-1/2 w-3/4 h-4 bg-black rounded-full filter blur-lg animate-shadow-pulse"
         />
       </div>
       <h3 className="mt-8 text-lg font-semibold text-foreground">Sistem siap...</h3>
@@ -105,3 +128,4 @@ export function EmptyState() {
     </div>
   );
 }
+
