@@ -76,32 +76,27 @@ const sourceIcons: Record<TaskSource, React.ElementType> = {
 
 const useTypingAnimation = (text: string, speed = 150, pauseDuration = 1500) => {
     const [displayText, setDisplayText] = useState('');
+    const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
         let timeout: NodeJS.Timeout;
-        let currentIndex = 0;
 
-        const type = () => {
-            if (currentIndex < text.length) {
-                setDisplayText(prev => text.substring(0, prev.length + 1));
-                currentIndex++;
-                timeout = setTimeout(type, speed);
-            } else {
-                // Finished typing, pause then restart
-                timeout = setTimeout(() => {
-                    setDisplayText('');
-                    currentIndex = 0;
-                    type(); // Restart typing
-                }, pauseDuration);
-            }
-        };
+        if (currentIndex < text.length) {
+            // Typing logic
+            timeout = setTimeout(() => {
+                setDisplayText(prev => prev + text[currentIndex]);
+                setCurrentIndex(prev => prev + 1);
+            }, speed);
+        } else {
+            // Pause and restart logic
+            timeout = setTimeout(() => {
+                setDisplayText('');
+                setCurrentIndex(0);
+            }, pauseDuration);
+        }
 
-        type(); // Start the animation
-
-        return () => {
-            clearTimeout(timeout);
-        };
-    }, [text, speed, pauseDuration]);
+        return () => clearTimeout(timeout);
+    }, [currentIndex, text, speed, pauseDuration]);
 
     return displayText;
 };
