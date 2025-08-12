@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog';
 import { Button } from './ui/button';
-import { Loader2, UserCog, Bot, Equalizer } from 'lucide-react';
+import { Loader2, UserCog, Bot } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { dailySummary } from '@/ai/flows/daily-summary-flow';
 import type { Task } from '@/types/task';
@@ -98,7 +98,7 @@ export function DailyBriefingDialog({ tasks, isOpen, onOpenChange }: DailyBriefi
             speaker === 'Asisten' && 'text-sky-400'
         )}>
             {isPlaying ? (
-                <Equalizer className="w-5 h-5 animate-pulse" />
+                <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
                 speaker === 'Manager' ? <UserCog className="w-6 h-6"/> : <Bot className="w-6 h-6"/>
             )}
