@@ -340,8 +340,8 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
         </Dialog>
         <AlertDialogContent className="glass-card max-w-[calc(100vw-2rem)] sm:max-w-md">
             <AlertDialogHeader>
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-4">
-                    <AlertCircle className="h-6 w-6 text-primary" />
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 mb-4">
+                    <AlertCircle className="h-6 w-6 text-destructive" />
                 </div>
                 <AlertDialogTitle className="text-center">Apakah Anda yakin?</AlertDialogTitle>
                 <AlertDialogDescription className="text-center">
@@ -350,7 +350,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
             </AlertDialogHeader>
             <AlertDialogFooter className="flex-row justify-end gap-2 pt-4">
                 <AlertDialogCancel>Batal</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete} className={cn(buttonVariants({variant: 'default'}))}>Lanjutkan</AlertDialogAction>
+                <AlertDialogAction onClick={handleDelete} className={cn(buttonVariants({variant: 'destructive'}))}>Lanjutkan</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>
@@ -358,3 +358,4 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 });
 
 TaskCard.displayName = "TaskCard";
+
