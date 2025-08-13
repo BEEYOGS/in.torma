@@ -77,38 +77,6 @@ const sourceDisplayMap: Record<TaskSource, string> = {
     'G': 'Group'
 };
 
-const useTypingAnimation = (text: string) => {
-  const [displayText, setDisplayText] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-      setDisplayText('');
-      setCurrentIndex(0);
-  }, [text]);
-
-  useEffect(() => {
-    const typingSpeed = 100;
-    const delayBeforeReset = 1500;
-
-    if (currentIndex < text.length) {
-        const timeoutId = setTimeout(() => {
-            setDisplayText((prev) => prev + text[currentIndex]);
-            setCurrentIndex((prev) => prev + 1);
-        }, typingSpeed);
-        return () => clearTimeout(timeoutId);
-    } else {
-        const timeoutId = setTimeout(() => {
-            setDisplayText('');
-            setCurrentIndex(0);
-        }, delayBeforeReset);
-        return () => clearTimeout(timeoutId);
-    }
-  }, [currentIndex, text]);
-
-  return displayText;
-};
-
-
 export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   ({ task, onEdit, isOverlay, ...props }, ref) => {
   const { toast } = useToast();
@@ -122,8 +90,6 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const [rotate, setRotate] = useState({ x: 0, y: 0 });
   const [glow, setGlow] = useState({ x: '50%', y: '50%', opacity: 0 });
   
-  const animatedStatusText = useTypingAnimation(task.status);
-
   useEffect(() => {
     if (isMobile && orientation.gamma !== null && orientation.beta !== null) {
       const rotateX = orientation.beta * -0.3;  // Tilt forward/backward
@@ -306,11 +272,11 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                  <TaskDescriptionSpeaker task={task} />
                  <span
                     className={cn(
-                        "text-xs font-medium h-4 typing-cursor",
+                        "text-xs font-medium h-4",
                         statusStyles[task.status].text
                     )}
                  >
-                    {animatedStatusText}
+                    {task.status}
                 </span>
             </div>
 
