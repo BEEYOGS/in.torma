@@ -108,16 +108,26 @@ export function Header({
         </Tooltip>
         <DropdownMenuContent align="end" className="bg-popover/80 backdrop-blur-lg border-white/10 w-56">
             <DropdownMenuLabel>Fitur</DropdownMenuLabel>
-            <DropdownMenuItem onSelect={handleAnalyticsOpen}>
+            <DropdownMenuItem onSelect={handleAnalyticsOpen} className="hidden md:flex">
                 <LayoutDashboard className="mr-2 h-4 w-4"/>
                 <span>Dasbor Analitik</span>
             </DropdownMenuItem>
             <DailyBriefing onBriefingOpen={onBriefingOpen}>
-                <DropdownMenuItem>
+                <DropdownMenuItem className="hidden md:flex">
                     <Presentation className="mr-2 h-4 w-4"/>
                     <span>Rangkuman Harian</span>
                 </DropdownMenuItem>
             </DailyBriefing>
+            <div className="md:hidden">
+                <DropdownMenuItem onSelect={() => onAnalyticsOpenChange(true)}>
+                    <LayoutDashboard className="mr-2 h-4 w-4"/>
+                    <span>Dasbor Analitik</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={onBriefingOpen}>
+                    <Presentation className="mr-2 h-4 w-4"/>
+                    <span>Rangkuman Harian</span>
+                </DropdownMenuItem>
+            </div>
             <DropdownMenuSeparator />
             <DropdownMenuLabel>Pintasan</DropdownMenuLabel>
             <div className="grid grid-cols-2 gap-1 px-1">

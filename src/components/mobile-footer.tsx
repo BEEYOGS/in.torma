@@ -70,7 +70,7 @@ export function MobileFooter({
                     <div className="w-20" />
 
                     <div className="flex-1 grid grid-cols-2 gap-1 text-center">
-                         <IconButton label="Briefing" onClick={onBriefingOpen}>
+                         <IconButton label="Rangkuman" onClick={onBriefingOpen}>
                             <Presentation className="h-6 w-6" />
                         </IconButton>
                          <IconButton label="Dasbor" onClick={onAnalyticsOpen}>
