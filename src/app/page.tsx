@@ -192,7 +192,7 @@ export default function Home() {
       <DailyBriefingDialog tasks={allTasks} isOpen={isBriefingOpen} onOpenChange={setIsBriefingOpen} />
       <MobileFooter
         onNewTask={() => handleOpenDialogForNewTask()}
-        onAiTaskCreate={onAiTaskCreate}
+        onAiTaskCreate={handleAiTaskCreate}
         onAnalyticsOpen={() => setIsAnalyticsOpen(true)}
         onBriefingOpen={() => setIsBriefingOpen(true)}
         searchTerm={searchTerm}
