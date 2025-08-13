@@ -89,32 +89,23 @@ const useTypingAnimation = (text: string, enabled: boolean, speed = 75, delay = 
       return;
     }
 
-    let typingInterval: NodeJS.Timeout;
-    let delayTimeout: NodeJS.Timeout;
+    setIsTyping(true); // Always start in typing state if enabled
+    let currentIndex = 0;
     
-    const startTyping = () => {
-      setIsTyping(true);
-      let currentIndex = 0;
-      
-      typingInterval = setInterval(() => {
-        if (currentIndex <= text.length) {
-          setDisplayText(text.substring(0, currentIndex));
-          currentIndex++;
-        } else {
-          clearInterval(typingInterval);
-          setIsTyping(false);
-          delayTimeout = setTimeout(startTyping, delay);
-        }
-      }, speed);
-    };
-
-    startTyping();
+    const typingInterval = setInterval(() => {
+      if (currentIndex <= text.length) {
+        setDisplayText(text.substring(0, currentIndex));
+        currentIndex++;
+      } else {
+        clearInterval(typingInterval);
+        setIsTyping(false);
+      }
+    }, speed);
 
     return () => {
       clearInterval(typingInterval);
-      clearTimeout(delayTimeout);
     };
-  }, [text, speed, delay, enabled]);
+  }, [text, speed, enabled]);
 
   return { displayText, isTyping };
 };
@@ -305,7 +296,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
             "absolute left-0 top-0 h-full w-1 bg-gradient-to-b", 
             statusStyles[task.status].gradFrom, 
             statusStyles[task.status].gradTo,
-            isMobile && 'mobile-status-pulse'
+            'mobile-status-pulse'
         )} />
         <CardHeader className="relative p-4 pb-2" data-dnd-handle={!isMobile}>
             <div className="flex justify-between items-start gap-2">
@@ -341,7 +332,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                       {format(displayDate, 'PPP')}
                   </Badge>
                 )}
-                <Badge variant="secondary" className="bg-black/20 text-muted-foreground px-2 py-1 h-auto font-mono text-xs">
+                <Badge variant="secondary" className="bg-secondary/50 text-foreground px-2 py-1 h-auto font-mono text-xs">
                     {sourceDisplayMap[task.source]}
                 </Badge>
             </div>
@@ -408,5 +399,3 @@ export function MobileEmptyColumn() {
        </div>
     )
 }
-
-    
