@@ -163,7 +163,6 @@ export function Header({
       </nav>
       
        <div className="flex items-center gap-1 md:hidden ml-auto">
-         <AiTaskCreator onTaskCreated={onAiTaskCreate} />
          <MainMenu />
        </div>
       
