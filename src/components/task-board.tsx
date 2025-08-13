@@ -171,11 +171,13 @@ export function TaskBoard({
             'Selesai': 'selesai',
         };
 
-        toast({
-            variant: statusToVariant[overContainer] || 'default',
-            title: 'Status Tugas Diperbarui',
-            description: `Tugas "${movedTask?.description}" dipindahkan ke "${overContainer}".`,
-        });
+        if (!isMobile) {
+            toast({
+                variant: statusToVariant[overContainer] || 'default',
+                title: 'Status Tugas Diperbarui',
+                description: `Tugas "${movedTask?.description}" dipindahkan ke "${overContainer}".`,
+            });
+        }
     } else {
         // Task reordered within the same column
         const itemsInColumn = tasksByStatus[activeContainer] || [];
@@ -196,7 +198,7 @@ export function TaskBoard({
             setTasksInStorage(finalOrderedTasks);
         }
     }
-  }, [findContainer, playDropSound, tasks, tasksByStatus, toast]);
+  }, [findContainer, playDropSound, tasks, tasksByStatus, toast, isMobile]);
 
   if (isMobile) {
     return (

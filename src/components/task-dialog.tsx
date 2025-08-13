@@ -43,6 +43,7 @@ import { useEffect, useState } from 'react';
 import type { Task, TaskSource, TaskStatus } from '@/types/task';
 import { addTask, updateTask } from '@/services/task-service';
 import { useToast } from '@/hooks/use-toast';
+import { ToastProps } from '@/components/ui/toast';
 import { useSound } from '@/hooks/use-sound';
 
 const taskSchema = z.object({
@@ -136,10 +137,23 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
     try {
       if (task) {
         await updateTask(task.id, taskData);
-        toast({ variant: 'success', title: 'Tugas Diperbarui', description: `Tugas untuk ${data.customerName} telah diperbarui.` });
+        const statusToVariant: Record<TaskStatus, ToastProps['variant']> = {
+            'Proses Desain': 'prosesDesain',
+            'Proses ACC': 'prosesAcc',
+            'Selesai': 'selesai',
+        };
+        toast({ 
+            variant: statusToVariant[data.status],
+            title: 'Tugas Diperbarui', 
+            description: `Tugas untuk ${data.customerName} telah diperbarui.` 
+        });
       } else {
         await addTask(taskData as Omit<Task, 'id'>);
-        toast({ variant: 'success', title: 'Tugas Ditambahkan', description: `Tugas baru untuk ${data.customerName} telah ditambahkan.` });
+        toast({ 
+            variant: 'success', 
+            title: 'Tugas Ditambahkan', 
+            description: `Tugas baru untuk ${data.customerName} telah ditambahkan.` 
+        });
       }
       playSuccessSound();
       onOpenChange(false);
