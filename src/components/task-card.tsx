@@ -84,15 +84,17 @@ const useTypingAnimation = (text: string, speed = 75, delay = 2000) => {
   useEffect(() => {
     let typingInterval: NodeJS.Timeout;
     let delayTimeout: NodeJS.Timeout;
+    let currentIndex = 0;
 
     const startTyping = () => {
       setIsTyping(true);
+      currentIndex = 0;
       setDisplayText('');
-      let i = 0;
+
       typingInterval = setInterval(() => {
-        if (i < text.length) {
-          setDisplayText(prev => prev + text.charAt(i));
-          i++;
+        if (currentIndex < text.length) {
+          setDisplayText(text.substring(0, currentIndex + 1));
+          currentIndex++;
         } else {
           clearInterval(typingInterval);
           setIsTyping(false);
