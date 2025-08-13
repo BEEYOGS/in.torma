@@ -2,6 +2,7 @@
 'use client';
 
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 const Logo = () => (
     <svg
@@ -29,31 +30,80 @@ const Logo = () => (
       />
     </svg>
   );
+  
+const loadingMessages = [
+    "Menginisialisasi antarmuka...",
+    "Menghubungkan ke matriks data...",
+    "Menyiapkan tugas Anda...",
+    "Memoles piksel...",
+    "Hampir selesai...",
+]
 
 export function LoadingScreen() {
+    const [progress, setProgress] = useState(0);
+    const [messageIndex, setMessageIndex] = useState(0);
+
+    useEffect(() => {
+        const progressInterval = setInterval(() => {
+            setProgress(prev => {
+                if (prev >= 100) {
+                    clearInterval(progressInterval);
+                    return 100;
+                }
+                return prev + 1;
+            });
+        }, 30); // Controls the speed of the progress bar
+
+        const messageInterval = setInterval(() => {
+            setMessageIndex(prev => (prev + 1) % loadingMessages.length);
+        }, 1000);
+
+        return () => {
+            clearInterval(progressInterval);
+            clearInterval(messageInterval);
+        };
+    }, []);
+
     return (
         <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background animate-in fade-in duration-500">
             <style>
                 {`
-                @keyframes pulsate-glow {
-                    0%, 100% { 
-                        transform: scale(1);
+                @keyframes float-logo {
+                    0% { transform: translateY(0px); }
+                    50% { transform: translateY(-15px); }
+                    100% { transform: translateY(0px); }
+                }
+                .animate-float-logo {
+                    animation: float-logo 6s ease-in-out infinite;
+                }
+                @keyframes logo-glow {
+                     0%, 100% { 
                         filter: drop-shadow(0 0 10px hsl(var(--primary) / 0.4));
                     }
                     50% { 
-                        transform: scale(1.05);
                         filter: drop-shadow(0 0 25px hsl(var(--primary) / 0.6));
                     }
                 }
-                .animate-pulsate-glow {
-                    animation: pulsate-glow 2.5s ease-in-out infinite;
+                .animate-logo-glow {
+                    animation: float-logo 3s ease-in-out infinite, logo-glow 3s ease-in-out infinite;
                 }
                 `}
             </style>
-            <div className="animate-pulsate-glow">
+            <div className="animate-logo-glow">
                 <Logo />
             </div>
-            <p className="mt-4 text-muted-foreground animate-pulse">Memuat...</p>
+
+            <div className="w-40 mt-8">
+                <div className="h-1 rounded-full bg-primary/10 overflow-hidden">
+                    <div 
+                        className="h-full bg-primary rounded-full transition-all duration-300 ease-linear"
+                        style={{ width: `${progress}%` }}
+                    />
+                </div>
+                <p className="mt-3 text-center text-xs text-muted-foreground transition-opacity duration-500">
+                   {loadingMessages[messageIndex]}
+                </p>
+            </div>
         </div>
     );
 }
