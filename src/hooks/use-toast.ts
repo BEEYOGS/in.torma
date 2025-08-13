@@ -153,13 +153,6 @@ function toast({ ...props }: Toast) {
     })
   const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id })
 
-  // Play notification sound
-  if (typeof window !== "undefined") {
-    const audio = new Audio("https://www.myinstants.com/media/sounds/blop-1.mp3");
-    audio.volume = 0.3;
-    audio.play().catch(err => console.error("Failed to play notification sound:", err));
-  }
-
   dispatch({
     type: "ADD_TOAST",
     toast: {
@@ -175,7 +168,7 @@ function toast({ ...props }: Toast) {
   // Automatically dismiss the toast after a delay
   setTimeout(() => {
     dismiss()
-  }, TOAST_REMOVE_DELAY)
+  }, TOAST_REMOVE_DELAY - 500)
 
 
   return {
@@ -187,6 +180,17 @@ function toast({ ...props }: Toast) {
 
 function useToast() {
   const [state, setState] = React.useState<State>(memoryState)
+  const previousToastCount = React.useRef(state.toasts.length);
+  
+  React.useEffect(() => {
+    if (state.toasts.length > 0 && state.toasts.length > previousToastCount.current) {
+        const audio = new Audio("https://www.myinstants.com/media/sounds/blop-1.mp3");
+        audio.volume = 0.3;
+        audio.play().catch(err => console.error("Failed to play notification sound:", err));
+    }
+    previousToastCount.current = state.toasts.length;
+  }, [state.toasts])
+
 
   React.useEffect(() => {
     listeners.push(setState)
