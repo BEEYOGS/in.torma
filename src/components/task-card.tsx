@@ -81,16 +81,8 @@ const sourceDisplayMap: Record<TaskSource, string> = {
 const useTypingAnimation = (text: string, speed = 75) => {
   const [displayText, setDisplayText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
-  const [hasFinished, setHasFinished] = useState(false);
 
   useEffect(() => {
-    // Only run animation if it hasn't finished yet
-    if (hasFinished) {
-      setDisplayText(text);
-      setIsTyping(false);
-      return;
-    }
-
     setDisplayText('');
     setIsTyping(true);
     let currentIndex = 0;
@@ -102,12 +94,11 @@ const useTypingAnimation = (text: string, speed = 75) => {
       } else {
         clearInterval(typingInterval);
         setIsTyping(false);
-        setHasFinished(true); // Mark as finished
       }
     }, speed);
 
     return () => clearInterval(typingInterval);
-  }, [text, hasFinished, speed]); // Depend on hasFinished to prevent re-runs
+  }, [text, speed]);
 
   return { displayText, isTyping };
 };
