@@ -91,13 +91,11 @@ const useTypingAnimation = (text: string, speed = 75, delay = 2000) => {
       let i = 0;
       typingInterval = setInterval(() => {
         if (i < text.length) {
-          // Correctly build the string from the beginning
-          setDisplayText(text.substring(0, i + 1));
+          setDisplayText(prev => prev + text.charAt(i));
           i++;
         } else {
           clearInterval(typingInterval);
           setIsTyping(false);
-          // Wait for a bit, then restart
           delayTimeout = setTimeout(startTyping, delay);
         }
       }, speed);
@@ -369,5 +367,3 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 });
 
 TaskCard.displayName = "TaskCard";
-
-    
