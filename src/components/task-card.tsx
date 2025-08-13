@@ -78,11 +78,17 @@ const sourceDisplayMap: Record<TaskSource, string> = {
     'G': 'Group'
 };
 
-const useTypingAnimation = (text: string, speed = 75, delay = 2000) => {
+const useTypingAnimation = (text: string, enabled: boolean, speed = 75, delay = 2000) => {
   const [displayText, setDisplayText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
 
   useEffect(() => {
+    if (!enabled) {
+      setDisplayText(text);
+      setIsTyping(false);
+      return;
+    }
+
     let typingInterval: NodeJS.Timeout;
     let delayTimeout: NodeJS.Timeout;
     
@@ -108,7 +114,7 @@ const useTypingAnimation = (text: string, speed = 75, delay = 2000) => {
       clearInterval(typingInterval);
       clearTimeout(delayTimeout);
     };
-  }, [text, speed, delay]);
+  }, [text, speed, delay, enabled]);
 
   return { displayText, isTyping };
 };
@@ -126,7 +132,9 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 
   const [rotate, setRotate] = useState({ x: 0, y: 0 });
   const [glow, setGlow] = useState({ x: '50%', y: '50%', opacity: 0 });
-  const { displayText, isTyping } = useTypingAnimation(task.status, 75, 2500);
+  
+  // Only enable typing animation on desktop
+  const { displayText, isTyping } = useTypingAnimation(task.status, !isMobile);
   
   useEffect(() => {
     if (isMobile && orientation.gamma !== null && orientation.beta !== null) {
@@ -185,8 +193,9 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const displayDate = task.dueDate ? new Date(`${task.dueDate}T00:00:00`) : null;
 
   const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    // On mobile, the whole card is tappable to edit. On desktop, only if not clicking an action.
+    // Prevent clicks on interactive elements from triggering the edit dialog
     if (targetIsAction(e.target as HTMLElement)) return;
+    
     if (onEdit) {
       playOpenDialogSound();
       onEdit(task);
@@ -256,7 +265,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
     </DropdownMenu>
   );
   
-  const cardStyle: React.CSSProperties = isOverlay ? {} : {
+  const cardStyle: React.CSSProperties = isOverlay || isMobile ? {} : {
     '--glow-x': glow.x,
     '--glow-y': glow.y,
     '--glow-opacity': glow.opacity,
