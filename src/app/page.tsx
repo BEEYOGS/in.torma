@@ -46,12 +46,12 @@ function DynamicIslandNotification({ notification }: { notification: FooterNotif
     return (
         <div className={cn(
             "fixed top-4 left-1/2 -translate-x-1/2 z-50 md:hidden",
-            "transition-all duration-500 ease-in-out",
-            isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
+            "transition-all duration-300 ease-in-out",
+            isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95 -translate-y-4"
         )}>
             <div className={cn(
                 "flex items-center gap-3 pl-3 pr-4 py-2 rounded-full shadow-lg text-xs font-medium",
-                "bg-black/80 backdrop-blur-md border border-white/10 text-white"
+                "bg-black text-white"
             )}>
                 {icon}
                 <span className="font-semibold">{notification.message}</span>
