@@ -17,7 +17,7 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-4 left-1/2 -translate-x-1/2 z-[200] flex max-h-screen w-full max-w-md flex-col-reverse p-4 sm:bottom-4 sm:right-4 sm:top-auto sm:left-auto sm:translate-x-0 sm:w-full sm:max-w-sm",
+      "fixed top-4 left-1/2 -translate-x-1/2 z-[200] flex max-h-screen w-full max-w-sm flex-col-reverse p-4 sm:bottom-4 sm:right-4 sm:top-auto sm:left-auto sm:translate-x-0 sm:w-full",
       className
     )}
     {...props}
@@ -51,30 +51,16 @@ const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
     VariantProps<typeof toastVariants>
->(({ className, variant = "default", ...props }, ref) => {
-  const statusColorClass = 
-      variant === "prosesDesain" ? "before:bg-orange-500"
-    : variant === "prosesAcc" ? "before:bg-sky-500"
-    : variant === "selesai" ? "before:bg-green-500"
-    : variant === "success" ? "before:bg-green-500"
-    : variant === "destructive" ? "before:bg-red-500"
-    : variant === "warning" ? "before:bg-orange-500"
-    : variant === "info" ? "before:bg-sky-500"
-    : "";
-
+>(({ className, variant, ...props }, ref) => {
   return (
     <ToastPrimitives.Root
       ref={ref}
       className={cn(
         toastVariants({ variant }), 
-        "before:absolute before:left-0 before:top-0 before:h-full before:w-1",
-        statusColorClass,
         className
       )}
       {...props}
-    >
-      {props.children}
-    </ToastPrimitives.Root>
+    />
   )
 })
 Toast.displayName = ToastPrimitives.Root.displayName
