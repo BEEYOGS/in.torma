@@ -99,7 +99,7 @@ Asisten: Selamat pagi! Sepertinya semua tugas sudah selesai. Hari ini kita bisa 
     }
 
     const { media } = await ai.generate({
-        model: 'googleai/gemini-2.5-flash-preview-tts',
+        model: 'googleai/gemini-2.5-flash-preview-tts-001',
         config: {
           responseModalities: ['AUDIO'],
           speechConfig: {
