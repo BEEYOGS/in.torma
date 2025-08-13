@@ -9,7 +9,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import wav from 'wav';
+const wav = require('wav');
 
 const TextToSpeechInputSchema = z.string().describe('The text to convert to speech.');
 export type TextToSpeechInput = z.infer<typeof TextToSpeechInputSchema>;
@@ -77,7 +77,7 @@ async function toWav(
 
     let bufs = [] as any[];
     writer.on('error', reject);
-    writer.on('data', function (d) {
+    writer.on('data', function (d: any) {
       bufs.push(d);
     });
     writer.on('end', function () {
