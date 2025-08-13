@@ -19,6 +19,9 @@ const config = {
       },
     },
     extend: {
+      fontSize: {
+        'xxs': ['0.625rem', { lineHeight: '0.75rem' }],
+      },
       fontFamily: {
         body: ['var(--font-inter)', 'sans-serif'],
         headline: ['var(--font-space-grotesk)', 'sans-serif'],
