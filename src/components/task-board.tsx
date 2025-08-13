@@ -30,8 +30,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CSS } from '@dnd-kit/utilities';
 import { useSound } from '@/hooks/use-sound';
 import { useToast } from '@/hooks/use-toast';
-import { ToastProps } from '../ui/toast';
-import { File } from 'lucide-react';
+import type { ToastProps } from '../ui/toast';
 
 const statuses: TaskStatus[] = ['Proses Desain', 'Proses ACC', 'Selesai'];
 
@@ -180,14 +179,15 @@ export function TaskBoard({
             setTasksInStorage(finalOrderedTasks);
         }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [findContainer, playDropSound, tasks, tasksByStatus, toast, isMobile, onShowNotification]);
 
   if (isMobile) {
     return (
         <Tabs defaultValue="Proses Desain" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-card/60 p-1 h-auto backdrop-blur-sm">
+            <TabsList className="grid w-full grid-cols-3 bg-card/60 p-1 h-auto backdrop-blur-sm sticky top-16 z-20">
                 {statuses.map(status => (
-                    <TabsTrigger key={status} value={status} className="text-xs data-[state=active]:bg-background/80">
+                    <TabsTrigger key={status} value={status} className="text-xs data-[state=active]:bg-background/80 data-[state=active]:backdrop-blur-sm">
                         {status} ({tasksByStatus[status].length})
                     </TabsTrigger>
                 ))}
@@ -337,6 +337,3 @@ function SortableTaskCard({ task, onEdit, isNew }: { task: Task, onEdit: (task: 
         />
     )
 }
-
-
-    

@@ -138,7 +138,6 @@ export function Header({
 
 
   return (
-    <>
     <header className={cn("sticky top-0 z-30 flex h-16 items-center gap-4 border-b px-4 backdrop-blur-lg sm:px-6", "glass-header border-white/10")}>
       <div className="flex items-center gap-3">
         <Logo />
@@ -163,7 +162,7 @@ export function Header({
         <MainMenu />
       </nav>
        <div className="flex items-center gap-1 md:hidden ml-auto">
-         <MainMenu />
+         {/* Mobile header is kept clean, actions are in the footer */}
        </div>
       
       <Button onClick={handleNewTaskClick} className="hidden md:inline-flex">
@@ -171,6 +170,5 @@ export function Header({
         Tambah Tugas
       </Button>
     </header>
-    </>
   );
 }

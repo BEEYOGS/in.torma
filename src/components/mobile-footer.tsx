@@ -12,7 +12,6 @@ import type { FooterNotificationState } from '@/app/page';
 import { DailyBriefing } from './daily-briefing';
 import { useSound } from '@/hooks/use-sound';
 import { cn } from '@/lib/utils';
-import { statusStyles as taskStatusStyles } from './task-card';
 
 interface MobileFooterProps {
     tasks: Task[];
@@ -31,7 +30,6 @@ const statusStyles: Record<TaskStatus, { bg: string, text: string }> = {
     'Selesai': { bg: 'bg-green-500/20', text: 'text-green-400' },
 };
 
-
 const FooterNotification = ({ notification }: { notification: FooterNotificationState | null }) => {
     if (!notification) {
       return <div className="w-1/4" />; // Spacer
@@ -44,7 +42,7 @@ const FooterNotification = ({ notification }: { notification: FooterNotification
       <div className="w-1/4 flex items-center justify-center">
         <div
             className={cn(
-            'px-2 py-1 rounded-md text-xxs font-medium animate-in fade-in-50 slide-in-from-bottom-2',
+            'px-2 py-1 rounded-md text-xs font-medium animate-in fade-in-50 slide-in-from-bottom-2',
             style.bg,
             style.text
             )}
@@ -55,7 +53,6 @@ const FooterNotification = ({ notification }: { notification: FooterNotification
     );
 };
   
-
 export function MobileFooter({ 
     tasks,
     onNewTask, 
@@ -110,21 +107,20 @@ export function MobileFooter({
                         </AiTaskCreator>
                     </div>
 
-                    {/* Spacer to push items to the sides of the FAB */}
-                    <div className="w-12" /> 
+                    {/* Spacer for FAB, containing the notification */}
+                    <div className="w-20 flex items-center justify-center">
+                        <FooterNotification notification={notification} />
+                    </div>
 
-                    <div className="flex-1 flex items-center justify-end text-center">
-                       <FooterNotification notification={notification} />
-                       <div className="flex-1 grid grid-cols-2 gap-1">
-                            <IconButton label="Dasbor" onClick={handleAnalyticsOpen}>
-                            <LayoutDashboard className="h-6 w-6" />
+                    <div className="flex-1 grid grid-cols-2 gap-1 text-center">
+                        <IconButton label="Dasbor" onClick={handleAnalyticsOpen}>
+                        <LayoutDashboard className="h-6 w-6" />
+                        </IconButton>
+                        <DailyBriefing onBriefingOpen={onBriefingOpen}>
+                            <IconButton label="Briefing">
+                                    <Presentation className="h-6 w-6" />
                             </IconButton>
-                            <DailyBriefing onBriefingOpen={onBriefingOpen}>
-                                <IconButton label="Briefing">
-                                        <Presentation className="h-6 w-6" />
-                                </IconButton>
-                            </DailyBriefing>
-                       </div>
+                        </DailyBriefing>
                     </div>
                 </div>
             </div>
