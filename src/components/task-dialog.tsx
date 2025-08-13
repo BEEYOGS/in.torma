@@ -79,7 +79,7 @@ const sourceDisplayMap: Record<TaskSource, string> = {
 export function TaskDialog({ isOpen, onOpenChange, task, prefillData, onTaskAdded }: TaskDialogProps) {
   const { toast } = useToast();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const playSuccessSound = useSound('https://www.myinstants.com/media/sounds/success-fanfare-trumpets.mp3', 0.3);
+  const playSuccessSound = useSound('/sounds/success-fanfare-trumpets.mp3', 0.3);
 
   const getDefaultValues = () => {
     const data = task || prefillData;
@@ -141,7 +141,7 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData, onTaskAdde
         });
         onTaskAdded?.(newId);
       }
-      playSuccessSound();
+      // playSuccessSound();
       onOpenChange(false);
     } catch (error) {
       toast({

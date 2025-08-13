@@ -31,7 +31,7 @@ export function AiTaskCreator({ onTaskCreated, children }: AiTaskCreatorProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [aiAnswer, setAiAnswer] = useState<string | null>(null);
   const { toast } = useToast();
-  const playOpenDialogSound = useSound('https://www.myinstants.com/media/sounds/swoosh-1.mp3', 0.5);
+  const playOpenDialogSound = useSound('/sounds/swoosh-1.mp3', 0.5);
 
   const handleAiSubmit = async () => {
     if (!userInput.trim()) return;
@@ -73,7 +73,7 @@ export function AiTaskCreator({ onTaskCreated, children }: AiTaskCreatorProps) {
       setUserInput('');
       setAiAnswer(null);
     } else {
-        playOpenDialogSound();
+        // playOpenDialogSound();
     }
     setIsDialogOpen(open);
   }

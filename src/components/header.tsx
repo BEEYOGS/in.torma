@@ -34,15 +34,15 @@ export function Header({
   onAnalyticsOpenChange,
   onBriefingOpen
 }: HeaderProps) {
-  const playOpenDialogSound = useSound('https://www.myinstants.com/media/sounds/swoosh-1.mp3', 0.5);
+  const playOpenDialogSound = useSound('/sounds/swoosh-1.mp3', 0.5);
 
   const handleNewTaskClick = () => {
-    playOpenDialogSound();
+    // playOpenDialogSound();
     onNewTask();
   }
 
   const handleAnalyticsOpen = () => {
-    playOpenDialogSound();
+    // playOpenDialogSound();
     onAnalyticsOpenChange(true);
   }
 

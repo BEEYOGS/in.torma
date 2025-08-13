@@ -28,15 +28,15 @@ export function MobileFooter({
     onSearchTermChange,
 }: MobileFooterProps) {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const playOpenDialogSound = useSound('https://www.myinstants.com/media/sounds/swoosh-1.mp3', 0.5);
+    const playOpenDialogSound = useSound('/sounds/swoosh-1.mp3', 0.5);
 
     const handleNewTaskClick = () => {
-        playOpenDialogSound();
+        // playOpenDialogSound();
         onNewTask();
     }
         
     const handleSearchOpen = () => {
-        playOpenDialogSound();
+        // playOpenDialogSound();
         setIsSearchOpen(true);
     }
     

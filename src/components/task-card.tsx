@@ -118,8 +118,8 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const orientation = useDeviceOrientation();
   const [isConceptDialogOpen, setIsConceptDialogOpen] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-  const playDeleteSound = useSound('https://www.myinstants.com/media/sounds/wind-whoosh-2.mp3', 0.3);
-  const playOpenDialogSound = useSound('https://www.myinstants.com/media/sounds/swoosh-1.mp3', 0.5);
+  const playDeleteSound = useSound('/sounds/wind-whoosh-2.mp3', 0.3);
+  const playOpenDialogSound = useSound('/sounds/swoosh-1.mp3', 0.5);
 
   const [rotate, setRotate] = useState({ x: 0, y: 0 });
   const [glow, setGlow] = useState({ x: '50%', y: '50%', opacity: 0 });
@@ -163,7 +163,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 
   const handleDelete = async () => {
     try {
-      playDeleteSound();
+      // playDeleteSound();
       await deleteTask(task.id);
       toast({
         variant: 'destructive',
@@ -187,7 +187,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
     if (targetIsAction(e.target as HTMLElement)) return;
     
     if (onEdit) {
-      playOpenDialogSound();
+      // playOpenDialogSound();
       onEdit(task);
     }
   };
@@ -200,14 +200,14 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const handleEditClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation(); // Prevent card click from firing
       if (onEdit) {
-        playOpenDialogSound();
+        // playOpenDialogSound();
         onEdit(task);
       }
   }
   
   const handleConceptClick = (e: React.MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
-      playOpenDialogSound();
+      // playOpenDialogSound();
       setIsConceptDialogOpen(true);
   }
 
@@ -237,7 +237,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                     onSelect={(e) => {
                         e.stopPropagation();
                         setIsConceptDialogOpen(true);
-                        playOpenDialogSound();
+                        // playOpenDialogSound();
                     }}
                 >
                     <Sparkles className="mr-2 h-4 w-4 text-primary" />

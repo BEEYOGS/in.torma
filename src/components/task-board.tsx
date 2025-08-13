@@ -58,7 +58,7 @@ export function TaskBoard({
   const [tasks, setTasks] = useState(initialTasks);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const isMobile = useIsMobile();
-  const playDropSound = useSound('https://www.myinstants.com/media/sounds/merlin-whoosh-cast-spell.mp3', 0.2);
+  const playDropSound = useSound('/sounds/merlin-whoosh-cast-spell.mp3', 0.2);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -135,7 +135,7 @@ export function TaskBoard({
 
     if (activeContainer !== overContainer) {
         // Task moved to a new column
-        playDropSound();
+        // playDropSound();
         const updatedTasks = tasks.map(t => t.id === activeId ? { ...t, status: overContainer } : t);
         const movedTask = updatedTasks.find(t => t.id === activeId);
         setTasks(updatedTasks);
@@ -179,7 +179,7 @@ export function TaskBoard({
             setTasksInStorage(finalOrderedTasks);
         }
     }
-  }, [tasks, tasksById, playDropSound, isMobile, onShowNotification, toast, tasksByStatus]);
+  }, [tasks, tasksById, isMobile, onShowNotification, toast, tasksByStatus]);
 
   if (isMobile) {
     return (

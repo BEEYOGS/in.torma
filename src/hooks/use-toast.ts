@@ -209,9 +209,9 @@ function useToast() {
 
   React.useEffect(() => {
     if (state.toasts.length > 0 && state.toasts.length > previousToastCount.current) {
-        const audio = new Audio("https://www.myinstants.com/media/sounds/blop-1.mp3");
-        audio.volume = 0.3;
-        audio.play().catch(err => console.error("Failed to play notification sound:", err));
+        // const audio = new Audio("https://www.myinstants.com/media/sounds/blop-1.mp3");
+        // audio.volume = 0.3;
+        // audio.play().catch(err => console.error("Failed to play notification sound:", err));
     }
     previousToastCount.current = state.toasts.length;
   }, [state.toasts])

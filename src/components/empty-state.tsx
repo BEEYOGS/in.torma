@@ -9,7 +9,7 @@ import { useSound } from '@/hooks/use-sound';
 export function EmptyState({ onAddTask }: { onAddTask: () => void }) {
   const [eyePosition, setEyePosition] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
-  const playOpenDialogSound = useSound('https://www.myinstants.com/media/sounds/swoosh-1.mp3', 0.5);
+  const playOpenDialogSound = useSound('/sounds/swoosh-1.mp3', 0.5);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
@@ -36,7 +36,7 @@ export function EmptyState({ onAddTask }: { onAddTask: () => void }) {
   }
 
   const handleAddTaskClick = () => {
-    playOpenDialogSound();
+    // playOpenDialogSound();
     onAddTask();
   }
 
