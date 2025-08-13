@@ -19,10 +19,10 @@ interface FooterNotificationState {
   status: TaskStatus;
 }
 
-const statusStyles: Record<TaskStatus, { bg: string, text: string, icon: React.ReactNode }> = {
-    'Proses Desain': { bg: 'bg-orange-500', text: 'text-white', icon: <AlertTriangle className="h-4 w-4" /> },
-    'Proses ACC': { bg: 'bg-sky-500', text: 'text-white', icon: <Info className="h-4 w-4" /> },
-    'Selesai': { bg: 'bg-green-500', text: 'text-white', icon: <CheckCircle2 className="h-4 w-4" /> },
+const statusIcons: Record<TaskStatus, React.ReactNode> = {
+    'Proses Desain': <AlertTriangle className="h-4 w-4 text-orange-400" />,
+    'Proses ACC': <Info className="h-4 w-4 text-sky-400" />,
+    'Selesai': <CheckCircle2 className="h-4 w-4 text-green-400" />,
 };
 
 
@@ -34,28 +34,27 @@ function DynamicIslandNotification({ notification }: { notification: FooterNotif
             setIsVisible(true);
             const timer = setTimeout(() => {
                 setIsVisible(false);
-            }, 2500); // Notification stays for 2.5 seconds
+            }, 3000); // Notification stays for 3 seconds
             return () => clearTimeout(timer);
         }
     }, [notification]);
 
     if (!notification) return null;
 
-    const style = statusStyles[notification.status];
+    const icon = statusIcons[notification.status];
 
     return (
         <div className={cn(
             "fixed top-4 left-1/2 -translate-x-1/2 z-50 md:hidden",
-            "transition-all duration-300 ease-in-out",
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-12"
+            "transition-all duration-500 ease-in-out",
+            isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
         )}>
             <div className={cn(
-                "flex items-center gap-2 px-4 py-2 rounded-full shadow-lg text-xs font-medium",
-                style.bg,
-                style.text
+                "flex items-center gap-3 pl-3 pr-4 py-2 rounded-full shadow-lg text-xs font-medium",
+                "bg-black/80 backdrop-blur-md border border-white/10 text-white"
             )}>
-                {style.icon}
-                <span>{notification.message}</span>
+                {icon}
+                <span className="font-semibold">{notification.message}</span>
             </div>
         </div>
     );
