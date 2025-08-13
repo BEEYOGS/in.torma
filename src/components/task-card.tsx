@@ -91,7 +91,7 @@ const useTypingAnimation = (text: string, speed = 75, delay = 2000) => {
       let i = 0;
       typingInterval = setInterval(() => {
         if (i < text.length) {
-          setDisplayText(prev => prev + text[i]);
+          setDisplayText(prev => prev + text.charAt(i));
           i++;
         } else {
           clearInterval(typingInterval);
