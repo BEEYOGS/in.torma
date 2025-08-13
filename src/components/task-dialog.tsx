@@ -137,13 +137,8 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
     try {
       if (task) {
         await updateTask(task.id, taskData);
-        const statusToVariant: Record<TaskStatus, ToastProps['variant']> = {
-            'Proses Desain': 'prosesDesain',
-            'Proses ACC': 'prosesAcc',
-            'Selesai': 'selesai',
-        };
         toast({ 
-            variant: statusToVariant[data.status],
+            variant: 'info',
             title: 'Tugas Diperbarui', 
             description: `Tugas untuk ${data.customerName} telah diperbarui.` 
         });

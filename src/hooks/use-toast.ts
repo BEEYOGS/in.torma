@@ -33,6 +33,20 @@ function genId() {
   return count.toString()
 }
 
+// Helper to show system notifications
+const showSystemNotification = (title: string, body: string) => {
+    if (!('Notification' in window)) {
+        console.error("Browser tidak mendukung notifikasi desktop.");
+        return;
+    }
+    if (Notification.permission === "granted") {
+        new Notification(title, {
+            body: body,
+            icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='hsl(40, 90%25, 60%25)' /%3E%3Cstop offset='100%25' stop-color='hsl(260, 85%25, 65%25)' /%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath fill='url(%23g)' d='M50,5 A45,45 0 1 1 5,50 A45,45 0 0 1 50,5 M50,15 A35,35 0 1 0 85,50 A35,35 0 0 0 50,15z'/%3E%3C/svg%3E",
+        });
+    }
+};
+
 type ActionType = typeof actionTypes
 
 type Action =
@@ -165,6 +179,11 @@ function toast({ ...props }: Toast) {
     },
   })
 
+  // Fire system notification
+  if (props.title && props.description) {
+    showSystemNotification(props.title.toString(), props.description.toString());
+  }
+
   // Automatically dismiss the toast after a delay
   setTimeout(() => {
     dismiss()
@@ -182,6 +201,12 @@ function useToast() {
   const [state, setState] = React.useState<State>(memoryState)
   const previousToastCount = React.useRef(state.toasts.length);
   
+  React.useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+  }, []);
+
   React.useEffect(() => {
     if (state.toasts.length > 0 && state.toasts.length > previousToastCount.current) {
         const audio = new Audio("https://www.myinstants.com/media/sounds/blop-1.mp3");

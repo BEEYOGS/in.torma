@@ -30,7 +30,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CSS } from '@dnd-kit/utilities';
 import { useSound } from '@/hooks/use-sound';
 import { useToast } from '@/hooks/use-toast';
-import { showSystemNotification } from '@/lib/notifications';
 
 const statuses: TaskStatus[] = ['Proses Desain', 'Proses ACC', 'Selesai'];
 
@@ -166,10 +165,11 @@ export function TaskBoard({
         updateTaskStatus(activeId, overContainer);
         
         if (movedTask) {
-             showSystemNotification(
-                'Status Tugas Diperbarui', 
-                `Tugas "${movedTask.description}" dipindahkan ke "${overContainer}".`
-            );
+            toast({
+                variant: 'info',
+                title: 'Status Tugas Diperbarui',
+                description: `Tugas "${movedTask.description}" dipindahkan ke "${overContainer}".`,
+            });
         }
 
     } else {
@@ -192,7 +192,7 @@ export function TaskBoard({
             setTasksInStorage(finalOrderedTasks);
         }
     }
-  }, [findContainer, playDropSound, tasks, tasksByStatus, toast, isMobile]);
+  }, [findContainer, playDropSound, tasks, tasksByStatus, toast]);
 
   if (isMobile) {
     return (

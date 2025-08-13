@@ -11,7 +11,6 @@ import type { Task } from '@/types/task';
 import { ScrollArea } from './ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback } from './ui/avatar';
-import { showSystemNotification } from '@/lib/notifications';
 
 interface DailyBriefingDialogProps {
   tasks: Task[];
@@ -58,10 +57,11 @@ export function DailyBriefingDialog({ tasks, isOpen, onOpenChange }: DailyBriefi
         setAudio(audioInstance);
         audioInstance.play();
         setIsPlaying(true);
-        showSystemNotification(
-            "Rangkuman Harian Siap", 
-            "Ringkasan tugas aktif Anda telah selesai dibuat."
-        );
+        toast({
+            variant: 'info',
+            title: 'Rangkuman Harian Siap',
+            description: 'Ringkasan tugas aktif Anda telah selesai dibuat.',
+        });
         audioInstance.onended = () => {
             setIsPlaying(false);
             setAudio(null);
