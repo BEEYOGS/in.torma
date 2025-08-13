@@ -17,7 +17,7 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-0 z-[200] flex w-full flex-col-reverse p-4 sm:bottom-4 sm:right-4 sm:top-auto sm:w-auto sm:max-w-md",
+      "fixed z-[200] flex flex-col-reverse p-4 sm:bottom-4 sm:right-4 sm:flex-col",
       className
     )}
     {...props}
@@ -30,15 +30,11 @@ const toastVariants = cva(
   {
     variants: {
       variant: {
-        default: "border bg-background/80 backdrop-blur-lg text-foreground border-primary/30",
-        destructive:
-          "destructive group border-red-500/50 bg-background/80 backdrop-blur-lg text-foreground",
-        success:
-          "success group border-green-500/50 bg-background/80 backdrop-blur-lg text-foreground",
-        warning:
-          "warning group border-orange-500/50 bg-background/80 backdrop-blur-lg text-foreground",
-        info:
-          "info group border-sky-500/50 bg-background/80 backdrop-blur-lg text-foreground",
+        default: "border bg-background/80 backdrop-blur-lg text-foreground",
+        destructive: "destructive group border-red-500/50 bg-red-900/40 backdrop-blur-lg text-red-100",
+        success: "success group border-green-500/50 bg-green-900/40 backdrop-blur-lg text-green-100",
+        warning: "warning group border-orange-500/50 bg-orange-900/40 backdrop-blur-lg text-orange-100",
+        info: "info group border-sky-500/50 bg-sky-900/40 backdrop-blur-lg text-sky-100",
       },
     },
     defaultVariants: {
@@ -46,6 +42,7 @@ const toastVariants = cva(
     },
   }
 )
+
 
 const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
@@ -58,7 +55,7 @@ const Toast = React.forwardRef<
       className={cn(toastVariants({ variant }), className)}
       {...props}
     >
-      <div className="absolute inset-0 w-full h-full animate-toast-progress-charge opacity-10" />
+       <div className="absolute left-0 bottom-0 h-1 w-full animate-toast-progress-charge bg-white/20 origin-left" />
       {props.children}
     </ToastPrimitives.Root>
   )
@@ -72,9 +69,11 @@ const ToastAction = React.forwardRef<
   <ToastPrimitives.Action
     ref={ref}
     className={cn(
-      "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-secondary/20 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-      "group-[.destructive]:border-muted/40 group-[.destructive]:hover:border-destructive/30 group-[.destructive]:hover:bg-destructive group-[.destructive]:hover:text-destructive-foreground group-[.destructive]:focus:ring-destructive",
-      "group-[.success]:border-muted/40 group-[.success]:hover:border-green-500/30 group-[.success]:hover:bg-green-500 group-[.success]:hover:text-white",
+      "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+      "group-[.destructive]:border-red-100/40 group-[.destructive]:hover:bg-red-800",
+      "group-[.success]:border-green-100/40 group-[.success]:hover:bg-green-800",
+      "group-[.warning]:border-orange-100/40 group-[.warning]:hover:bg-orange-800",
+      "group-[.info]:border-sky-100/40 group-[.info]:hover:bg-sky-800",
       className
     )}
     {...props}
@@ -89,7 +88,7 @@ const ToastClose = React.forwardRef<
   <ToastPrimitives.Close
     ref={ref}
     className={cn(
-      "absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:ring-2 group-hover:opacity-100",
+      "absolute right-2 top-2 rounded-md p-1 text-inherit/50 opacity-0 transition-opacity hover:text-inherit focus:opacity-100 focus:ring-2 group-hover:opacity-100",
       className
     )}
     toast-close=""
@@ -131,10 +130,10 @@ type ToastActionElement = React.ReactElement<typeof ToastAction>
 const ToastIcon = ({ variant }: { variant: ToastProps["variant"] }) => {
     const iconClass = "h-5 w-5";
     const iconMap = {
-        destructive: <AlertCircle className={cn(iconClass, "text-red-500")} />,
-        success: <CheckCircle2 className={cn(iconClass, "text-green-500")} />,
-        warning: <AlertTriangle className={cn(iconClass, "text-orange-500")} />,
-        info: <Info className={cn(iconClass, "text-sky-500")} />,
+        destructive: <AlertCircle className={cn(iconClass, "text-red-400")} />,
+        success: <CheckCircle2 className={cn(iconClass, "text-green-400")} />,
+        warning: <AlertTriangle className={cn(iconClass, "text-orange-400")} />,
+        info: <Info className={cn(iconClass, "text-sky-400")} />,
         default: <Info className={cn(iconClass, "text-primary")} />,
     };
   
