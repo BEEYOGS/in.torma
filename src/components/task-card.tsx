@@ -78,11 +78,13 @@ const sourceDisplayMap: Record<TaskSource, string> = {
     'G': 'Group'
 };
 
-const useTypingAnimation = (text: string, speed = 50) => {
+const useTypingAnimation = (text: string, speed = 100) => {
     const [displayText, setDisplayText] = useState('');
     
     useEffect(() => {
         setDisplayText('');
+        if (!text) return;
+
         let i = 0;
         const type = () => {
             if (i < text.length) {
@@ -93,7 +95,7 @@ const useTypingAnimation = (text: string, speed = 50) => {
                 // When done, restart immediately
                 i = 0;
                 setDisplayText('');
-                setTimeout(type, speed);
+                setTimeout(type, 0); // Restart with no delay
             }
         };
 
