@@ -30,6 +30,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CSS } from '@dnd-kit/utilities';
 import { useSound } from '@/hooks/use-sound';
 import { useToast } from '@/hooks/use-toast';
+import { ToastProps } from './ui/toast';
 
 const statuses: TaskStatus[] = ['Proses Desain', 'Proses ACC', 'Selesai'];
 
@@ -163,8 +164,15 @@ export function TaskBoard({
         const movedTask = updatedTasks.find(t => t.id === activeId);
         setTasks(updatedTasks);
         updateTaskStatus(activeId, overContainer);
+
+        const statusToVariant: Record<TaskStatus, ToastProps['variant']> = {
+            'Proses Desain': 'prosesDesain',
+            'Proses ACC': 'prosesAcc',
+            'Selesai': 'selesai',
+        };
+
         toast({
-            variant: 'success',
+            variant: statusToVariant[overContainer] || 'default',
             title: 'Status Tugas Diperbarui',
             description: `Tugas "${movedTask?.description}" dipindahkan ke "${overContainer}".`,
         });

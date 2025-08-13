@@ -4,7 +4,7 @@
 import * as React from "react"
 import * as ToastPrimitives from "@radix-ui/react-toast"
 import { cva, type VariantProps } from "class-variance-authority"
-import { X, CheckCircle2, AlertCircle, Info, AlertTriangle } from "lucide-react"
+import { X, CheckCircle2, AlertCircle, Info, AlertTriangle, Palette, Check, Wrench } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -31,10 +31,13 @@ const toastVariants = cva(
     variants: {
       variant: {
         default: "border bg-background/80 backdrop-blur-lg text-foreground",
-        destructive: "destructive group border-red-500/50 bg-red-900/40 backdrop-blur-lg text-red-100",
+        destructive: "destructive group border-red-500/50 bg-background/80 backdrop-blur-lg text-foreground",
         success: "success group border-green-500/50 bg-background/80 backdrop-blur-lg text-foreground",
-        warning: "warning group border-orange-500/50 bg-orange-900/40 backdrop-blur-lg text-orange-100",
-        info: "info group border-sky-500/50 bg-sky-900/40 backdrop-blur-lg text-sky-100",
+        warning: "warning group border-orange-500/50 bg-background/80 backdrop-blur-lg text-foreground",
+        info: "info group border-sky-500/50 bg-background/80 backdrop-blur-lg text-foreground",
+        prosesDesain: "proses-desain group border-orange-500/50 bg-background/80 backdrop-blur-lg text-foreground",
+        prosesAcc: "proses-acc group border-sky-500/50 bg-background/80 backdrop-blur-lg text-foreground",
+        selesai: "selesai group border-green-500/50 bg-background/80 backdrop-blur-lg text-foreground",
       },
     },
     defaultVariants: {
@@ -55,7 +58,6 @@ const Toast = React.forwardRef<
       className={cn(toastVariants({ variant }), className)}
       {...props}
     >
-       <div className="absolute left-0 bottom-0 h-1 w-full animate-toast-progress-charge bg-white/20 origin-left" />
       {props.children}
     </ToastPrimitives.Root>
   )
@@ -74,6 +76,9 @@ const ToastAction = React.forwardRef<
       "group-[.success]:border-green-100/40 group-[.success]:hover:bg-green-800",
       "group-[.warning]:border-orange-100/40 group-[.warning]:hover:bg-orange-800",
       "group-[.info]:border-sky-100/40 group-[.info]:hover:bg-sky-800",
+      "group-[.proses-desain]:border-orange-100/40 group-[.proses-desain]:hover:bg-orange-800",
+      "group-[.proses-acc]:border-sky-100/40 group-[.proses-acc]:hover:bg-sky-800",
+      "group-[.selesai]:border-green-100/40 group-[.selesai]:hover:bg-green-800",
       className
     )}
     {...props}
@@ -132,9 +137,12 @@ const ToastIcon = ({ variant }: { variant: ToastProps["variant"] }) => {
     const iconMap = {
         destructive: <AlertCircle className={cn(iconClass, "text-red-400")} />,
         success: <CheckCircle2 className={cn(iconClass, "text-green-400")} />,
+        selesai: <CheckCircle2 className={cn(iconClass, "text-green-400")} />,
         warning: <AlertTriangle className={cn(iconClass, "text-orange-400")} />,
         info: <Info className={cn(iconClass, "text-sky-400")} />,
         default: <Info className={cn(iconClass, "text-primary")} />,
+        prosesDesain: <Palette className={cn(iconClass, "text-orange-400")} />,
+        prosesAcc: <Wrench className={cn(iconClass, "text-sky-400")} />,
     };
   
   const icon = variant ? iconMap[variant] : iconMap.default;
