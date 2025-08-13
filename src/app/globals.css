@@ -133,7 +133,7 @@ body {
 
 /* For mobile tab trigger active state */
 .dark .data-\[state\=active\]\:bg-background {
-    --tw-bg-opacity: 0.8;
+    background-color: hsl(var(--background) / 0.8);
     backdrop-filter: blur(16px);
 }
 
