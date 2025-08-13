@@ -20,11 +20,16 @@ interface FooterNotificationState {
 }
 
 const statusIcons: Record<TaskStatus, React.ReactNode> = {
-    'Proses Desain': <AlertTriangle className="h-4 w-4 text-orange-400" />,
-    'Proses ACC': <Info className="h-4 w-4 text-sky-400" />,
-    'Selesai': <CheckCircle2 className="h-4 w-4 text-green-400" />,
+    'Proses Desain': <AlertTriangle className="h-3 w-3" />,
+    'Proses ACC': <Info className="h-3 w-3" />,
+    'Selesai': <CheckCircle2 className="h-3 w-3" />,
 };
 
+const statusColors: Record<TaskStatus, string> = {
+  'Proses Desain': 'bg-orange-900/70 border-orange-600/50 text-orange-200',
+  'Proses ACC': 'bg-sky-900/70 border-sky-600/50 text-sky-200',
+  'Selesai': 'bg-green-900/70 border-green-600/50 text-green-200',
+}
 
 function DynamicIslandNotification({ notification }: { notification: FooterNotificationState | null }) {
     const [isVisible, setIsVisible] = useState(false);
@@ -42,6 +47,7 @@ function DynamicIslandNotification({ notification }: { notification: FooterNotif
     if (!notification) return null;
 
     const icon = statusIcons[notification.status];
+    const colors = statusColors[notification.status];
 
     return (
         <div className={cn(
@@ -50,8 +56,8 @@ function DynamicIslandNotification({ notification }: { notification: FooterNotif
             isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95 -translate-y-4"
         )}>
             <div className={cn(
-                "flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full shadow-lg text-xs font-medium",
-                "bg-black text-white"
+                "flex items-center gap-2 pl-2 pr-2.5 py-1 rounded-full shadow-lg text-xs font-medium border backdrop-blur-md",
+                colors
             )}>
                 {icon}
                 <span className="font-semibold">{notification.message}</span>
