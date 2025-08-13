@@ -91,7 +91,8 @@ const useTypingAnimation = (text: string, speed = 75, delay = 2000) => {
       let i = 0;
       typingInterval = setInterval(() => {
         if (i < text.length) {
-          setDisplayText(prev => prev + text.charAt(i));
+          // Correctly build the string from the beginning
+          setDisplayText(text.substring(0, i + 1));
           i++;
         } else {
           clearInterval(typingInterval);
@@ -113,6 +114,7 @@ const useTypingAnimation = (text: string, speed = 75, delay = 2000) => {
   return { displayText, isTyping };
 };
 
+
 export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   ({ task, onEdit, isOverlay, ...props }, ref) => {
   const { toast } = useToast();
@@ -125,7 +127,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 
   const [rotate, setRotate] = useState({ x: 0, y: 0 });
   const [glow, setGlow] = useState({ x: '50%', y: '50%', opacity: 0 });
-  const { displayText, isTyping } = useTypingAnimation(task.status, 75);
+  const { displayText, isTyping } = useTypingAnimation(task.status, 75, 2500);
   
   useEffect(() => {
     if (isMobile && orientation.gamma !== null && orientation.beta !== null) {
@@ -367,3 +369,5 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 });
 
 TaskCard.displayName = "TaskCard";
+
+    
