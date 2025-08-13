@@ -1,5 +1,5 @@
 
-import type {Metadata} from 'next';
+import type {Metadata, Viewport} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { Inter, Space_Grotesk } from 'next/font/google';
@@ -8,7 +8,16 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 export const metadata: Metadata = {
   title: 'in.torma: Collaborative Task Board',
   description: 'A collaborative task board for teams.',
-  manifest: '/manifest.webmanifest',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'in.torma',
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#101116',
 };
 
 const inter = Inter({
