@@ -17,7 +17,7 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-4 left-1/2 -translate-x-1/2 z-[200] flex max-h-screen w-full max-w-sm flex-col-reverse p-4 sm:bottom-4 sm:right-4 sm:top-auto sm:left-auto sm:translate-x-0 sm:max-w-sm",
+      "fixed top-4 left-1/2 -translate-x-1/2 z-[200] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-4 sm:right-4 sm:top-auto sm:left-auto sm:translate-x-0 max-w-xs",
       className
     )}
     {...props}
@@ -31,13 +31,13 @@ const toastVariants = cva(
     variants: {
       variant: {
         default: "border bg-background/80 backdrop-blur-lg text-foreground",
-        destructive: "destructive group border-red-500/50 bg-background/80 backdrop-blur-lg text-foreground",
-        success: "success group border-green-500/50 bg-background/80 backdrop-blur-lg text-foreground",
-        warning: "warning group border-orange-500/50 bg-background/80 backdrop-blur-lg text-foreground",
-        info: "info group border-sky-500/50 bg-background/80 backdrop-blur-lg text-foreground",
-        prosesDesain: "proses-desain group border-orange-500/50 bg-background/80 backdrop-blur-lg text-foreground",
-        prosesAcc: "proses-acc group border-sky-500/50 bg-background/80 backdrop-blur-lg text-foreground",
-        selesai: "selesai group border-green-500/50 bg-background/80 backdrop-blur-lg text-foreground",
+        destructive: "destructive group border-destructive bg-destructive/10 text-foreground",
+        success: "success group border-green-500 bg-green-500/10 text-foreground",
+        warning: "warning group border-orange-500 bg-orange-500/10 text-foreground",
+        info: "info group border-sky-500 bg-sky-500/10 text-foreground",
+        prosesDesain: "proses-desain group border-orange-500 bg-background/80 backdrop-blur-lg text-foreground",
+        prosesAcc: "proses-acc group border-sky-500 bg-background/80 backdrop-blur-lg text-foreground",
+        selesai: "selesai group border-green-500 bg-background/80 backdrop-blur-lg text-foreground",
       },
     },
     defaultVariants: {
