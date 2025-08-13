@@ -153,6 +153,13 @@ function toast({ ...props }: Toast) {
     })
   const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id })
 
+  // Play notification sound
+  if (typeof window !== "undefined") {
+    const audio = new Audio("https://www.myinstants.com/media/sounds/blop-1.mp3");
+    audio.volume = 0.3;
+    audio.play().catch(err => console.error("Failed to play notification sound:", err));
+  }
+
   dispatch({
     type: "ADD_TOAST",
     toast: {
