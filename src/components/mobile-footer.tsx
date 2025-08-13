@@ -8,59 +8,24 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Input } from './ui/input';
 import { AiTaskCreator } from './ai-task-creator';
 import type { Task, TaskStatus } from '@/types/task';
-import type { FooterNotificationState } from '@/app/page';
 import { useSound } from '@/hooks/use-sound';
-import { cn } from '@/lib/utils';
 
 interface MobileFooterProps {
-    tasks: Task[];
     onNewTask: () => void;
     onAiTaskCreate: (data: Partial<Task & { dueDate?: string | Date }>) => void;
     onAnalyticsOpen: () => void;
     onBriefingOpen: () => void;
     searchTerm: string;
     onSearchTermChange: (term: string) => void;
-    notification: FooterNotificationState | null;
 }
 
-const statusStyles: Record<TaskStatus, { bg: string, text: string }> = {
-    'Proses Desain': { bg: 'bg-orange-500/20', text: 'text-orange-400' },
-    'Proses ACC': { bg: 'bg-sky-500/20', text: 'text-sky-400' },
-    'Selesai': { bg: 'bg-green-500/20', text: 'text-green-400' },
-};
-
-const FooterNotification = ({ notification }: { notification: FooterNotificationState | null }) => {
-    if (!notification) {
-      return <div className="w-1/4" />; // Spacer
-    }
-  
-    const { message, status } = notification;
-    const style = statusStyles[status];
-  
-    return (
-      <div className="w-1/4 flex items-center justify-center">
-        <div
-            className={cn(
-            'px-2 py-1 rounded-md text-xs font-medium animate-in fade-in-50 slide-in-from-bottom-2',
-            style.bg,
-            style.text
-            )}
-        >
-            {message}
-        </div>
-      </div>
-    );
-};
-  
 export function MobileFooter({ 
-    tasks,
     onNewTask, 
     onAiTaskCreate, 
     onAnalyticsOpen,
     onBriefingOpen,
     searchTerm, 
     onSearchTermChange,
-    notification,
 }: MobileFooterProps) {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const playOpenDialogSound = useSound('https://www.myinstants.com/media/sounds/swoosh-1.mp3', 0.5);
@@ -101,10 +66,8 @@ export function MobileFooter({
                         </AiTaskCreator>
                     </div>
 
-                    {/* Spacer for FAB, containing the notification */}
-                    <div className="w-20 flex items-center justify-center">
-                        <FooterNotification notification={notification} />
-                    </div>
+                    {/* Spacer for FAB */}
+                    <div className="w-20" />
 
                     <div className="flex-1 grid grid-cols-2 gap-1 text-center">
                          <IconButton label="Briefing" onClick={onBriefingOpen}>

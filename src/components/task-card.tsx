@@ -78,34 +78,36 @@ const sourceDisplayMap: Record<TaskSource, string> = {
     'G': 'Group'
 };
 
-const useTypingAnimation = (text: string, enabled: boolean, speed = 75, delay = 2000) => {
+const useTypingAnimation = (text: string, speed = 75) => {
   const [displayText, setDisplayText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
+  const [hasFinished, setHasFinished] = useState(false);
 
   useEffect(() => {
-    if (!enabled) {
+    // Only run animation if it hasn't finished yet
+    if (hasFinished) {
       setDisplayText(text);
       setIsTyping(false);
       return;
     }
 
-    setIsTyping(true); // Always start in typing state if enabled
+    setDisplayText('');
+    setIsTyping(true);
     let currentIndex = 0;
     
     const typingInterval = setInterval(() => {
-      if (currentIndex <= text.length) {
-        setDisplayText(text.substring(0, currentIndex));
+      if (currentIndex < text.length) {
+        setDisplayText(prev => prev + text[currentIndex]);
         currentIndex++;
       } else {
         clearInterval(typingInterval);
         setIsTyping(false);
+        setHasFinished(true); // Mark as finished
       }
     }, speed);
 
-    return () => {
-      clearInterval(typingInterval);
-    };
-  }, [text, speed, enabled]);
+    return () => clearInterval(typingInterval);
+  }, [text, hasFinished, speed]); // Depend on hasFinished to prevent re-runs
 
   return { displayText, isTyping };
 };
@@ -124,8 +126,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const [rotate, setRotate] = useState({ x: 0, y: 0 });
   const [glow, setGlow] = useState({ x: '50%', y: '50%', opacity: 0 });
   
-  // Enable typing animation on all devices.
-  const { displayText, isTyping } = useTypingAnimation(task.status, true);
+  const { displayText, isTyping } = useTypingAnimation(task.status);
   
   useEffect(() => {
     if (isMobile && orientation.gamma !== null && orientation.beta !== null) {

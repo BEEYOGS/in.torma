@@ -4,18 +4,63 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Header } from '@/components/header';
 import { TaskBoard } from '@/components/task-board';
-import { listenToTasks, addTask as serviceAddTask } from '@/services/task-service';
+import { listenToTasks } from '@/services/task-service';
 import type { Task, TaskStatus } from '@/types/task';
 import { TaskDialog } from '@/components/task-dialog';
 import { EmptyState } from '@/components/empty-state';
 import { MobileFooter } from '@/components/mobile-footer';
 import { TaskAnalytics } from '@/components/task-analytics';
 import { DailyBriefingDialog } from '@/components/briefing-dialog';
+import { cn } from '@/lib/utils';
+import { CheckCircle2, Info, AlertTriangle } from 'lucide-react';
 
-export interface FooterNotificationState {
+interface FooterNotificationState {
   message: string;
   status: TaskStatus;
 }
+
+const statusStyles: Record<TaskStatus, { bg: string, text: string, icon: React.ReactNode }> = {
+    'Proses Desain': { bg: 'bg-orange-500', text: 'text-white', icon: <AlertTriangle className="h-4 w-4" /> },
+    'Proses ACC': { bg: 'bg-sky-500', text: 'text-white', icon: <Info className="h-4 w-4" /> },
+    'Selesai': { bg: 'bg-green-500', text: 'text-white', icon: <CheckCircle2 className="h-4 w-4" /> },
+};
+
+
+function DynamicIslandNotification({ notification }: { notification: FooterNotificationState | null }) {
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        if (notification) {
+            setIsVisible(true);
+            const timer = setTimeout(() => {
+                setIsVisible(false);
+            }, 2500); // Notification stays for 2.5 seconds
+            return () => clearTimeout(timer);
+        }
+    }, [notification]);
+
+    if (!notification) return null;
+
+    const style = statusStyles[notification.status];
+
+    return (
+        <div className={cn(
+            "fixed top-4 left-1/2 -translate-x-1/2 z-50 md:hidden",
+            "transition-all duration-300 ease-in-out",
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-12"
+        )}>
+            <div className={cn(
+                "flex items-center gap-2 px-4 py-2 rounded-full shadow-lg text-xs font-medium",
+                style.bg,
+                style.text
+            )}>
+                {style.icon}
+                <span>{notification.message}</span>
+            </div>
+        </div>
+    );
+}
+
 
 export default function Home() {
   const [allTasks, setAllTasks] = useState<Task[]>([]);
@@ -79,10 +124,8 @@ export default function Home() {
   }
 
   const handleShowFooterNotification = (message: string, status: TaskStatus) => {
+    // Use a unique key to re-trigger the notification even if the message is the same
     setFooterNotification({ message, status });
-    setTimeout(() => {
-        setFooterNotification(null);
-    }, 3000); // Hide after 3 seconds
   };
   
   // Memoize the filtered tasks to avoid re-calculating on every render
@@ -109,6 +152,7 @@ export default function Home() {
         onAnalyticsOpenChange={setIsAnalyticsOpen}
         onBriefingOpen={() => setIsBriefingOpen(true)}
       />
+       <DynamicIslandNotification notification={footerNotification} />
       <main className="flex-grow p-4 md:p-8 pb-24 md:pb-8">
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -143,14 +187,12 @@ export default function Home() {
       <TaskAnalytics tasks={allTasks} isOpen={isAnalyticsOpen} onOpenChange={setIsAnalyticsOpen} />
       <DailyBriefingDialog tasks={allTasks} isOpen={isBriefingOpen} onOpenChange={setIsBriefingOpen} />
       <MobileFooter
-        tasks={allTasks}
         onNewTask={() => handleOpenDialogForNewTask()}
         onAiTaskCreate={handleAiTaskCreate}
         onAnalyticsOpen={() => setIsAnalyticsOpen(true)}
         onBriefingOpen={() => setIsBriefingOpen(true)}
         searchTerm={searchTerm}
         onSearchTermChange={setSearchTerm}
-        notification={footerNotification}
       />
     </div>
   );
