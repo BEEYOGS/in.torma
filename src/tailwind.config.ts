@@ -1,4 +1,3 @@
-
 import type {Config} from 'tailwindcss';
 
 const config = {
@@ -85,15 +84,18 @@ const config = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
-        'toast-progress-charge': {
-          '0%': { transform: 'translateX(-100%)' },
-          '100%': { transform: 'translateX(0%)' },
-        }
+        'toast-progress': {
+            from: { width: '100%' },
+            to: { width: '0%' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'toast-progress-charge': 'toast-progress-charge 5s linear forwards',
+        'background-pan': 'background-pan 15s ease-in-out infinite',
+        'status-pulse': 'status-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'blinking-caret': 'blinking-caret 1s infinite',
+        'toast-progress': 'toast-progress 5s linear forwards',
       },
     },
   },
