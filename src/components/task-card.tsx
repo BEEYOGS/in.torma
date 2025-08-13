@@ -133,8 +133,8 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const [rotate, setRotate] = useState({ x: 0, y: 0 });
   const [glow, setGlow] = useState({ x: '50%', y: '50%', opacity: 0 });
   
-  // Only enable typing animation on desktop
-  const { displayText, isTyping } = useTypingAnimation(task.status, !isMobile);
+  // Enable typing animation on all devices.
+  const { displayText, isTyping } = useTypingAnimation(task.status, true);
   
   useEffect(() => {
     if (isMobile && orientation.gamma !== null && orientation.beta !== null) {
@@ -305,7 +305,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
             "absolute left-0 top-0 h-full w-1 bg-gradient-to-b", 
             statusStyles[task.status].gradFrom, 
             statusStyles[task.status].gradTo,
-            isMobile && 'mobile-status-pulse'
+            'mobile-status-pulse'
         )} />
         <CardHeader className="relative p-4 pb-2" data-dnd-handle={!isMobile}>
             <div className="flex justify-between items-start gap-2">
@@ -338,7 +338,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
             <div className="flex items-center gap-2 flex-shrink-0">
                 {displayDate && (
                   <Badge variant="outline" className="border-white/20 bg-black/10">
-                      {format(displayDate, 'dd MMM')}
+                      {format(displayDate, 'PPP')}
                   </Badge>
                 )}
                 <Badge variant="secondary" className="bg-black/20 text-muted-foreground px-2 py-1 h-auto font-mono text-xs">
