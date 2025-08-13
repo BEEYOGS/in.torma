@@ -25,10 +25,9 @@ export function DailyBriefing({ children, onBriefingOpen }: DailyBriefingProps) 
     onClick: handleOpenBriefing,
   }
 
-  const trigger = React.cloneElement(children, childProps);
-
+  // Clone the child element and add the onClick handler
   if (React.isValidElement(children)) {
-    return trigger;
+    return React.cloneElement(children, childProps);
   }
 
   // Fallback for non-element children or legacy usage
@@ -51,3 +50,5 @@ export function DailyBriefing({ children, onBriefingOpen }: DailyBriefingProps) 
     </Tooltip>
   );
 }
+
+    
