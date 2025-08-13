@@ -117,6 +117,8 @@ export function Header({
                     <span>Rangkuman Harian</span>
                 </DropdownMenuItem>
             </DailyBriefing>
+            <DropdownMenuSeparator className="hidden md:flex" />
+            <DropdownMenuLabel>Pintasan</DropdownMenuLabel>
             <div className="grid grid-cols-2 gap-1 px-1">
                 <DropdownMenuItem asChild className="p-0 justify-center">
                     <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center p-2 rounded-md hover:bg-accent w-full h-full">
