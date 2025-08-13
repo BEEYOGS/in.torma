@@ -311,12 +311,12 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                 </div>
             </div>
         </CardHeader>
-        <CardContent className="relative p-4 pt-2 mt-auto flex justify-between items-center">
-             <div className="flex items-center gap-2">
+        <CardContent className="relative p-4 pt-2 mt-auto flex justify-between items-center gap-2">
+             <div className="flex items-center gap-2 min-w-0">
                  <TaskDescriptionSpeaker task={task} />
                  <span
                     className={cn(
-                        "text-xs font-medium h-4",
+                        "text-xs font-medium h-4 truncate",
                         statusStyles[task.status].text,
                         isTyping && 'typing-cursor'
                     )}
@@ -326,7 +326,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                 </span>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-shrink-0">
                 {displayDate && (
                   <Badge variant="outline" className="border-white/20 bg-black/10">
                       {format(displayDate, 'dd MMM')}
@@ -399,3 +399,5 @@ export function MobileEmptyColumn() {
        </div>
     )
 }
+
+    
