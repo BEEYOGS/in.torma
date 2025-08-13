@@ -1,32 +1,25 @@
+
 'use client';
 
 import { Bell } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { SidebarMenuButton } from './ui/sidebar';
+import { DropdownMenuItem } from './ui/dropdown-menu';
 
 export function ToastDemo() {
   const { toast } = useToast();
 
   const handleShowToast = () => {
     toast({
-      title: 'Notifikasi Baru!',
-      description: 'Ini adalah contoh notifikasi toast.',
-      action: (
-        <a href="#" className="font-bold">
-          Lihat
-        </a>
-      ),
+      variant: 'default',
+      title: 'Sistem Notifikasi',
+      description: 'Ini adalah notifikasi dari sistem.',
     });
   };
 
   return (
-    <SidebarMenuButton
-      onClick={handleShowToast}
-      className="w-full justify-start"
-      tooltip="Tampilkan Notifikasi"
-    >
-      <Bell />
-      <span className="group-data-[collapsible=icon]:hidden">Notifikasi</span>
-    </SidebarMenuButton>
+    <DropdownMenuItem onSelect={handleShowToast}>
+      <Bell className="mr-2 h-4 w-4" />
+      <span>Notifikasi Sistem</span>
+    </DropdownMenuItem>
   );
 }
