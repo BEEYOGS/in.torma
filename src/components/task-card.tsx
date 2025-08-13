@@ -78,7 +78,7 @@ const sourceDisplayMap: Record<TaskSource, string> = {
     'G': 'Group'
 };
 
-const useTypingAnimation = (text: string, speed = 50) => {
+const useTypingAnimation = (text: string, speed = 150) => {
     const [displayText, setDisplayText] = useState('');
     
     useEffect(() => {
@@ -354,8 +354,8 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
         </Dialog>
         <AlertDialogContent className="glass-card max-w-[calc(100vw-2rem)] sm:max-w-md">
             <AlertDialogHeader>
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/20 mb-4 border border-destructive/30">
-                    <AlertCircle className="h-6 w-6 text-destructive" />
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 mb-4 border border-primary/30">
+                    <AlertCircle className="h-6 w-6 text-primary" />
                 </div>
                 <AlertDialogTitle className="text-center">Apakah Anda yakin?</AlertDialogTitle>
                 <AlertDialogDescription className="text-center">
@@ -365,7 +365,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
             <AlertDialogFooter className="flex-row items-center justify-center gap-2 pt-4">
                 <AlertDialogCancel className="mt-0">Batal</AlertDialogCancel>
                 <AlertDialogAction 
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90"
                     onClick={handleDelete}
                 >
                     Ya, Hapus
