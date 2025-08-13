@@ -30,7 +30,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CSS } from '@dnd-kit/utilities';
 import { useSound } from '@/hooks/use-sound';
 import { useToast } from '@/hooks/use-toast';
-import { ToastProps } from './ui/toast';
+import { showSystemNotification } from '@/lib/notifications';
 
 const statuses: TaskStatus[] = ['Proses Desain', 'Proses ACC', 'Selesai'];
 
@@ -164,20 +164,14 @@ export function TaskBoard({
         const movedTask = updatedTasks.find(t => t.id === activeId);
         setTasks(updatedTasks);
         updateTaskStatus(activeId, overContainer);
-
-        const statusToVariant: Record<TaskStatus, ToastProps['variant']> = {
-            'Proses Desain': 'prosesDesain',
-            'Proses ACC': 'prosesAcc',
-            'Selesai': 'selesai',
-        };
-
-        if (!isMobile) {
-            toast({
-                variant: statusToVariant[overContainer] || 'default',
-                title: 'Status Tugas Diperbarui',
-                description: `Tugas "${movedTask?.description}" dipindahkan ke "${overContainer}".`,
-            });
+        
+        if (movedTask) {
+             showSystemNotification(
+                'Status Tugas Diperbarui', 
+                `Tugas "${movedTask.description}" dipindahkan ke "${overContainer}".`
+            );
         }
+
     } else {
         // Task reordered within the same column
         const itemsInColumn = tasksByStatus[activeContainer] || [];
