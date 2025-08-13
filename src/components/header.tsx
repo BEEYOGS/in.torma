@@ -12,7 +12,6 @@ import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { AiTaskCreator } from './ai-task-creator';
 import { useSound } from '@/hooks/use-sound';
-import { SystemNotificationDemo } from './toast-demo';
 
 interface HeaderProps {
   tasks: Task[];
@@ -119,7 +118,6 @@ export function Header({
                     <span>Rangkuman Harian</span>
                 </DropdownMenuItem>
             </DailyBriefing>
-            <SystemNotificationDemo />
             <DropdownMenuSeparator />
             <DropdownMenuLabel>Pintasan</DropdownMenuLabel>
             <div className="grid grid-cols-2 gap-1 px-1">
