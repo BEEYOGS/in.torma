@@ -78,7 +78,7 @@ const sourceDisplayMap: Record<TaskSource, string> = {
     'G': 'Group'
 };
 
-const useTypingAnimation = (text: string, speed = 50, delay = 2000) => {
+const useTypingAnimation = (text: string, speed = 200, delay = 2500) => {
     const [displayText, setDisplayText] = useState('');
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
