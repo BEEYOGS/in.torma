@@ -3,16 +3,14 @@
 
 import React, { useState } from 'react';
 import { Button } from './ui/button';
-import { Plus, Search, Wand2, LayoutDashboard, Presentation, Ellipsis } from 'lucide-react';
+import { Plus, Search, Wand2, LayoutDashboard, Presentation } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from './ui/dialog';
 import { Input } from './ui/input';
 import { AiTaskCreator } from './ai-task-creator';
 import type { Task, TaskStatus } from '@/types/task';
 import type { FooterNotificationState } from '@/app/page';
-import { DailyBriefing } from './daily-briefing';
 import { useSound } from '@/hooks/use-sound';
 import { cn } from '@/lib/utils';
-import { Separator } from './ui/separator';
 
 interface MobileFooterProps {
     tasks: Task[];
@@ -65,7 +63,6 @@ export function MobileFooter({
     notification,
 }: MobileFooterProps) {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const playOpenDialogSound = useSound('https://www.myinstants.com/media/sounds/swoosh-1.mp3', 0.5);
 
     const handleNewTaskClick = () => {
@@ -77,36 +74,7 @@ export function MobileFooter({
         playOpenDialogSound();
         setIsSearchOpen(true);
     }
-
-    const handleMenuOpen = () => {
-        playOpenDialogSound();
-        setIsMenuOpen(true);
-    }
     
-    const handleMenuAnalyticsOpen = () => {
-        setIsMenuOpen(false);
-        onAnalyticsOpen();
-    }
-    
-    const handleMenuBriefingOpen = () => {
-        setIsMenuOpen(false);
-        onBriefingOpen();
-    }
-    
-    const YoutubeIcon = () => (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 20" fill="none" className="h-5 w-auto">
-          <path d="M27.4722 3.0625C27.1611 1.85417 26.2306 0.923611 25.0222 0.6125C22.8333 0 14 0 14 0C14 0 5.16667 0 2.97778 0.6125C1.76944 0.923611 0.838889 1.85417 0.527778 3.0625C0 5.25347 0 10 0 10C0 10 0 14.7465 0.527778 16.9375C0.838889 18.1458 1.76944 19.0764 2.97778 19.3875C5.16667 20 14 20 14 20C14 20 22.8333 20 25.0222 19.3875C26.2306 19.0764 27.1611 18.1458 27.4722 16.9375C28 14.7465 28 10 28 10C28 10 28 5.25347 27.4722 3.0625ZM11.2 14.2882V5.71181L18.48 10L11.2 14.2882Z" fill="#FF0000"/>
-      </svg>
-    );
-
-    const YoutubeMusicIcon = () => (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-6 w-6">
-        <circle cx="12" cy="12" r="12" fill="#FF0000"/>
-        <circle cx="12" cy="12" r="6" fill="transparent" stroke="black" strokeWidth="1"/>
-        <path d="M10 15V9L15 12L10 15Z" fill="black"/>
-      </svg>
-    );
-
     return (
         <div className="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[90vw] max-w-sm">
             <div className="relative animate-in slide-in-from-bottom-10 duration-500">
@@ -142,8 +110,8 @@ export function MobileFooter({
                          <IconButton label="Briefing" onClick={onBriefingOpen}>
                             <Presentation className="h-6 w-6" />
                         </IconButton>
-                        <IconButton label="Menu" onClick={handleMenuOpen}>
-                            <Ellipsis className="h-6 w-6" />
+                         <IconButton label="Dasbor" onClick={onAnalyticsOpen}>
+                            <LayoutDashboard className="h-6 w-6" />
                         </IconButton>
                     </div>
                 </div>
@@ -173,42 +141,6 @@ export function MobileFooter({
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-            
-            {/* Features & Shortcuts Menu Dialog */}
-            <Dialog open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-                <DialogContent className="sm:max-w-md max-w-[90vw] glass-card border-white/10">
-                    <DialogHeader>
-                        <DialogTitle>Fitur & Pintasan</DialogTitle>
-                    </DialogHeader>
-                    <div className="grid grid-cols-1 gap-2 py-4">
-                       <Button variant="outline" className="justify-start text-base py-6" onClick={handleMenuAnalyticsOpen}>
-                           <LayoutDashboard className="mr-3 h-5 w-5 text-primary" />
-                           Dasbor Analitik
-                       </Button>
-                       <DailyBriefing onBriefingOpen={handleMenuBriefingOpen}>
-                           <Button variant="outline" className="justify-start text-base py-6 w-full">
-                               <Presentation className="mr-3 h-5 w-5 text-primary" />
-                               Rangkuman Harian
-                           </Button>
-                       </DailyBriefing>
-                       
-                       <Separator className="my-2 bg-white/10"/>
-
-                        <div className="grid grid-cols-2 gap-2">
-                           <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full">
-                               <Button variant="outline" className="w-full h-16 text-base">
-                                   <YoutubeIcon/>
-                               </Button>
-                           </a>
-                           <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer" className="w-full">
-                               <Button variant="outline" className="w-full h-16 text-base">
-                                   <YoutubeMusicIcon />
-                               </Button>
-                           </a>
-                       </div>
-                    </div>
-                </DialogContent>
-            </Dialog>
 
         </div>
     );
@@ -231,5 +163,3 @@ const IconButton = React.forwardRef<
     </Button>
 ));
 IconButton.displayName = 'IconButton';
-
-    

@@ -161,8 +161,10 @@ export function Header({
         <AiTaskCreator onTaskCreated={onAiTaskCreate} />
         <MainMenu />
       </nav>
+      
        <div className="flex items-center gap-1 md:hidden ml-auto">
-         {/* Mobile header is kept clean, actions are in the footer */}
+         <AiTaskCreator onTaskCreated={onAiTaskCreate} />
+         <MainMenu />
        </div>
       
       <Button onClick={handleNewTaskClick} className="hidden md:inline-flex">
