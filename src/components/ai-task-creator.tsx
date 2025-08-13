@@ -103,7 +103,7 @@ export function AiTaskCreator({ onTaskCreated, children }: AiTaskCreatorProps) {
             )}
         </div>
         <DialogFooter>
-            <Button onClick={handleAiSubmit} disabled={isLoading} className="w-full">
+            <Button onClick={handleAiSubmit} disabled={isLoading} className="w-full shadow-lg shadow-primary/50">
             {isLoading ? 'Memproses...' : 'Proses'}
             </Button>
         </DialogFooter>
