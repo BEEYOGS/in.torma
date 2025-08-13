@@ -118,16 +118,6 @@ export function Header({
                     <span>Rangkuman Harian</span>
                 </DropdownMenuItem>
             </DailyBriefing>
-            <div className="md:hidden">
-                <DropdownMenuItem onSelect={() => onAnalyticsOpenChange(true)}>
-                    <LayoutDashboard className="mr-2 h-4 w-4"/>
-                    <span>Dasbor Analitik</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={onBriefingOpen}>
-                    <Presentation className="mr-2 h-4 w-4"/>
-                    <span>Rangkuman Harian</span>
-                </DropdownMenuItem>
-            </div>
             <DropdownMenuSeparator />
             <DropdownMenuLabel>Pintasan</DropdownMenuLabel>
             <div className="grid grid-cols-2 gap-1 px-1">
