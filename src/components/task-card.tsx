@@ -78,38 +78,42 @@ const sourceDisplayMap: Record<TaskSource, string> = {
     'G': 'Group'
 };
 
-const useTypingAnimation = (text: string, speed = 50) => {
-  const [displayText, setDisplayText] = useState('');
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+const useTypingAnimation = (text: string, speed = 50, delay = 2000) => {
+    const [displayText, setDisplayText] = useState('');
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-    setDisplayText('');
-
-    if (text) {
+    useEffect(() => {
         let i = 0;
+
         const type = () => {
             if (i < text.length) {
-                setDisplayText(prev => prev + text.charAt(i));
+                setDisplayText(prev => text.substring(0, i + 1));
                 i++;
                 timerRef.current = setTimeout(type, speed);
+            } else {
+                // When typing is finished, wait for the delay then reset
+                timerRef.current = setTimeout(() => {
+                    setDisplayText('');
+                    i = 0;
+                    type(); // Start typing again
+                }, delay);
             }
         };
+
+        // Start the animation
         type();
-    }
-    
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, [text, speed]);
 
-  const isTyping = displayText.length < text.length;
+        // Cleanup function
+        return () => {
+            if (timerRef.current) {
+                clearTimeout(timerRef.current);
+            }
+        };
+    }, [text, speed, delay]);
 
-  return { displayText, isTyping };
+    const isTyping = displayText.length < text.length;
+
+    return { displayText, isTyping };
 };
 
 
