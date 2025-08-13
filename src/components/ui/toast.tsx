@@ -32,10 +32,10 @@ const toastVariants = cva(
       variant: {
         default: "border bg-background text-foreground",
         destructive:
-          "destructive group border-destructive bg-destructive/10 text-foreground",
-        success: "success group border-green-500 bg-green-500/10 text-foreground",
-        warning: "warning group border-orange-500 bg-orange-500/10 text-foreground",
-        info: "info group border-sky-500 bg-sky-500/10 text-foreground",
+          "border-destructive/50 bg-destructive/10 text-foreground",
+        success: "border-green-500/50 bg-green-500/10 text-foreground",
+        warning: "border-orange-500/50 bg-orange-500/10 text-foreground",
+        info: "border-sky-500/50 bg-sky-500/10 text-foreground",
       },
     },
     defaultVariants: {
@@ -127,7 +127,7 @@ type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>
 type ToastActionElement = React.ReactElement<typeof ToastAction>
 
 const ToastIcon = ({ variant }: { variant: ToastProps["variant"] }) => {
-    const iconClass = "h-4 w-4";
+    const iconClass = "h-4 w-4 flex-shrink-0";
     const iconMap = {
         destructive: <AlertCircle className={cn(iconClass, "text-destructive")} />,
         success: <CheckCircle2 className={cn(iconClass, "text-green-500")} />,
@@ -139,7 +139,7 @@ const ToastIcon = ({ variant }: { variant: ToastProps["variant"] }) => {
   const icon = variant ? iconMap[variant] : iconMap.default;
   if (!icon) return null;
 
-  return <div className="flex-shrink-0 mt-0.5">{icon}</div>;
+  return icon;
 };
 
 
