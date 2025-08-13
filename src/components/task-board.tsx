@@ -337,3 +337,6 @@ function SortableTaskCard({ task, onEdit, isNew }: { task: Task, onEdit: (task: 
         />
     )
 }
+
+
+    
