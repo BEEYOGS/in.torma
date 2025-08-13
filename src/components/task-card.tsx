@@ -78,27 +78,36 @@ const sourceDisplayMap: Record<TaskSource, string> = {
     'G': 'Group'
 };
 
-const useTypingAnimation = (text: string, speed = 75) => {
+const useTypingAnimation = (text: string, speed = 50) => {
   const [displayText, setDisplayText] = useState('');
-  const [isTyping, setIsTyping] = useState(true);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
     setDisplayText('');
-    setIsTyping(true);
-    let currentIndex = 0;
-    
-    const typingInterval = setInterval(() => {
-      if (currentIndex < text.length) {
-        setDisplayText(prev => prev + text[currentIndex]);
-        currentIndex++;
-      } else {
-        clearInterval(typingInterval);
-        setIsTyping(false);
-      }
-    }, speed);
 
-    return () => clearInterval(typingInterval);
+    if (text) {
+        let i = 0;
+        const type = () => {
+            if (i < text.length) {
+                setDisplayText(prev => prev + text.charAt(i));
+                i++;
+                timerRef.current = setTimeout(type, speed);
+            }
+        };
+        type();
+    }
+    
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
   }, [text, speed]);
+
+  const isTyping = displayText.length < text.length;
 
   return { displayText, isTyping };
 };
