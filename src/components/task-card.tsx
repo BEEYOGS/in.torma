@@ -305,12 +305,12 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
             "absolute left-0 top-0 h-full w-1 bg-gradient-to-b", 
             statusStyles[task.status].gradFrom, 
             statusStyles[task.status].gradTo,
-            'mobile-status-pulse'
+            isMobile && 'mobile-status-pulse'
         )} />
         <CardHeader className="relative p-4 pb-2" data-dnd-handle={!isMobile}>
             <div className="flex justify-between items-start gap-2">
                 <div className="flex-grow min-w-0">
-                    <CardTitle className="text-base font-headline mb-1 text-foreground truncate">
+                    <CardTitle className="text-base font-headline mb-1 text-primary truncate">
                         {task.customerName}
                     </CardTitle>
                     <CardDescription className="text-sm truncate">{task.description}</CardDescription>
