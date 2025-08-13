@@ -20,9 +20,9 @@ interface FooterNotificationState {
 }
 
 const statusIcons: Record<TaskStatus, React.ReactNode> = {
-    'Proses Desain': <AlertTriangle className="h-3 w-3" />,
-    'Proses ACC': <Info className="h-3 w-3" />,
-    'Selesai': <CheckCircle2 className="h-3 w-3" />,
+    'Proses Desain': <AlertTriangle className="h-4 w-4" />,
+    'Proses ACC': <Info className="h-4 w-4" />,
+    'Selesai': <CheckCircle2 className="h-4 w-4" />,
 };
 
 const statusColors: Record<TaskStatus, string> = {
