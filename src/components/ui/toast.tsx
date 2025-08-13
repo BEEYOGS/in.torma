@@ -18,7 +18,7 @@ const ToastViewport = React.forwardRef<
     ref={ref}
     className={cn(
       "fixed z-[200] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-4 sm:right-4 sm:flex-col md:max-w-[420px]",
-      "bottom-20 sm:bottom-4 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0",
+      "top-4 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:top-auto sm:translate-x-0",
       className
     )}
     {...props}
@@ -27,7 +27,7 @@ const ToastViewport = React.forwardRef<
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName
 
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center space-x-4 overflow-hidden rounded-md border p-4 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=open]:slide-in-from-bottom-full data-[state=closed]:slide-out-to-right-full",
+  "group pointer-events-auto relative flex w-full items-center space-x-4 overflow-hidden rounded-md border p-4 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=open]:slide-in-from-top-full data-[state=closed]:slide-out-to-right-full sm:data-[state=open]:slide-in-from-bottom-full",
   {
     variants: {
       variant: {
@@ -53,10 +53,25 @@ const Toast = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
     VariantProps<typeof toastVariants>
 >(({ className, variant = "default", ...props }, ref) => {
+  const statusColorClass = 
+      variant === "prosesDesain" ? "before:bg-orange-500"
+    : variant === "prosesAcc" ? "before:bg-sky-500"
+    : variant === "selesai" ? "before:bg-green-500"
+    : variant === "success" ? "before:bg-green-500"
+    : variant === "destructive" ? "before:bg-red-500"
+    : variant === "warning" ? "before:bg-orange-500"
+    : variant === "info" ? "before:bg-sky-500"
+    : "";
+
   return (
     <ToastPrimitives.Root
       ref={ref}
-      className={cn(toastVariants({ variant }), className)}
+      className={cn(
+        toastVariants({ variant }), 
+        "before:absolute before:left-0 before:top-0 before:h-full before:w-1",
+        statusColorClass,
+        className
+      )}
       {...props}
     >
       {props.children}
