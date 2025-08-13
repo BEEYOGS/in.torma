@@ -23,6 +23,13 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
+    // Request notification permission on initial load
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  useEffect(() => {
     const unsubscribe = listenToTasks((fetchedTasks) => {
       setAllTasks(fetchedTasks);
       setLoading(false);
