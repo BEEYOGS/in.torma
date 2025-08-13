@@ -13,6 +13,7 @@ import { TaskAnalytics } from '@/components/task-analytics';
 import { DailyBriefingDialog } from '@/components/briefing-dialog';
 import { cn } from '@/lib/utils';
 import { CheckCircle2, Info, AlertTriangle } from 'lucide-react';
+import { LoadingScreen } from '@/components/loading-screen';
 
 interface FooterNotificationState {
   message: string;
@@ -90,7 +91,8 @@ export default function Home() {
   useEffect(() => {
     const unsubscribe = listenToTasks((fetchedTasks) => {
       setAllTasks(fetchedTasks);
-      setLoading(false);
+      // Add a small delay to prevent flickering on fast loads
+      setTimeout(() => setLoading(false), 500);
     });
     return () => unsubscribe();
   }, []);
@@ -144,6 +146,9 @@ export default function Home() {
     );
   }, [allTasks, searchTerm]);
 
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-transparent">
@@ -159,13 +164,7 @@ export default function Home() {
       />
        <DynamicIslandNotification notification={footerNotification} />
       <main className="flex-grow p-4 md:p-8 pb-24 md:pb-8">
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            <div className="h-[500px] w-full animate-pulse rounded-md bg-muted/50" />
-            <div className="h-[500px] w-full animate-pulse rounded-md bg-muted/50" />
-            <div className="h-[500px] w-full animate-pulse rounded-md bg-muted/50" />
-          </div>
-        ) : filteredTasks.length === 0 && searchTerm ? (
+        {filteredTasks.length === 0 && searchTerm ? (
             <div className="text-center mt-16 text-muted-foreground">
                 <h3 className="text-lg font-semibold">Tidak ada hasil</h3>
                 <p>Coba kata kunci pencarian yang lain.</p>
