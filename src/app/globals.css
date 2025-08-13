@@ -100,20 +100,15 @@
   }
 }
 
-@keyframes shine {
-  from {
-    transform: translateX(-100%) skewX(-20deg);
-  }
-  to {
-    transform: translateX(200%) skewX(-20deg);
-  }
-}
-
-
 @keyframes status-pulse {
   50% {
     opacity: 0.5;
   }
+}
+
+@keyframes blinking-caret {
+  from, to { border-color: transparent }
+  50% { border-color: var(--caret-color, hsl(var(--primary))); }
 }
 
 body {
@@ -140,4 +135,14 @@ body {
 .dark .data-\[state\=active\]\:bg-background {
     --tw-bg-opacity: 0.8;
     backdrop-filter: blur(16px);
+}
+
+.typing-cursor::after {
+  content: '';
+  display: inline-block;
+  width: 1px;
+  height: 1em;
+  margin-left: 2px;
+  border-right: 2px solid var(--caret-color, hsl(var(--primary)));
+  animation: blinking-caret 1s infinite;
 }

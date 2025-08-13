@@ -77,6 +77,33 @@ const sourceDisplayMap: Record<TaskSource, string> = {
     'G': 'Group'
 };
 
+const useTypingAnimation = (text: string, speed = 50) => {
+  const [displayText, setDisplayText] = useState('');
+  const [isTyping, setIsTyping] = useState(true);
+
+  useEffect(() => {
+    setDisplayText('');
+    setIsTyping(true);
+    let i = 0;
+    const typingInterval = setInterval(() => {
+      if (i < text.length) {
+        setDisplayText(prevText => prevText + text.charAt(i));
+        i++;
+      } else {
+        clearInterval(typingInterval);
+        setIsTyping(false);
+      }
+    }, speed);
+
+    return () => {
+      clearInterval(typingInterval);
+      setIsTyping(false);
+    };
+  }, [text, speed]);
+
+  return { displayText, isTyping };
+};
+
 export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   ({ task, onEdit, isOverlay, ...props }, ref) => {
   const { toast } = useToast();
@@ -89,6 +116,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 
   const [rotate, setRotate] = useState({ x: 0, y: 0 });
   const [glow, setGlow] = useState({ x: '50%', y: '50%', opacity: 0 });
+  const { displayText, isTyping } = useTypingAnimation(task.status, 75);
   
   useEffect(() => {
     if (isMobile && orientation.gamma !== null && orientation.beta !== null) {
@@ -273,10 +301,12 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                  <span
                     className={cn(
                         "text-xs font-medium h-4",
-                        statusStyles[task.status].text
+                        statusStyles[task.status].text,
+                        isTyping && 'typing-cursor'
                     )}
+                    style={{ '--caret-color': statusStyles[task.status].caretColor } as React.CSSProperties}
                  >
-                    {task.status}
+                    {displayText}
                 </span>
             </div>
 
