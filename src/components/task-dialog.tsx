@@ -38,12 +38,11 @@ import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import type { Task, TaskSource, TaskStatus } from '@/types/task';
 import { addTask, updateTask } from '@/services/task-service';
 import { useToast } from '@/hooks/use-toast';
-import { ToastProps } from '@/components/ui/toast';
 import { useSound } from '@/hooks/use-sound';
 
 const taskSchema = z.object({
@@ -61,6 +60,7 @@ interface TaskDialogProps {
   onOpenChange: (open: boolean) => void;
   task?: Task | null;
   prefillData?: Partial<TaskFormValues & { dueDate?: string | Date }>;
+  onTaskAdded?: (id: string) => void;
 }
 
 const statusColorMap: Record<TaskStatus, string> = {
@@ -76,34 +76,25 @@ const sourceDisplayMap: Record<TaskSource, string> = {
     'G': 'Group',
 };
 
-export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDialogProps) {
+export function TaskDialog({ isOpen, onOpenChange, task, prefillData, onTaskAdded }: TaskDialogProps) {
   const { toast } = useToast();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const playSuccessSound = useSound('https://www.myinstants.com/media/sounds/success-fanfare-trumpets.mp3', 0.3);
 
   const getDefaultValues = () => {
-    if (task) {
-      return { ...task, dueDate: task.dueDate ? parseISO(task.dueDate) : undefined };
+    const data = task || prefillData;
+    let dueDate;
+    if (data?.dueDate) {
+        // Handles both Date objects and "YYYY-MM-DD" strings
+        dueDate = typeof data.dueDate === 'string' ? new Date(`${data.dueDate}T00:00:00`) : data.dueDate;
     }
-    if (prefillData) {
-      return {
-        customerName: prefillData.customerName || '',
-        description: prefillData.description || '',
-        status: prefillData.status || 'Proses Desain',
-        source: prefillData.source || 'CS',
-        dueDate: prefillData.dueDate
-          ? typeof prefillData.dueDate === 'string'
-            ? parseISO(prefillData.dueDate)
-            : prefillData.dueDate
-          : undefined,
-      };
-    }
+    
     return {
-      customerName: '',
-      description: '',
-      status: 'Proses Desain' as TaskStatus,
-      source: 'CS' as TaskSource,
-      dueDate: undefined,
+      customerName: data?.customerName || '',
+      description: data?.description || '',
+      status: data?.status || 'Proses Desain',
+      source: data?.source || 'CS',
+      dueDate: dueDate,
     };
   };
 
@@ -122,11 +113,10 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
   const onSubmit = async (data: TaskFormValues) => {
     const toYYYYMMDD = (date: Date | undefined) => {
         if (!date) return undefined;
-        // This will format the date in the local timezone, but to YYYY-MM-DD format.
-        // The issue was in parsing it back.
-        const d = new Date(date);
-        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-        return d.toISOString().split('T')[0];
+        // This ensures the date is treated as local and converted correctly to YYYY-MM-DD string.
+        const tempDate = new Date(date);
+        tempDate.setMinutes(tempDate.getMinutes() - tempDate.getTimezoneOffset());
+        return tempDate.toISOString().split('T')[0];
     };
 
     const taskData = {
@@ -143,12 +133,13 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
             description: `Tugas untuk ${data.customerName} telah diperbarui.` 
         });
       } else {
-        await addTask(taskData as Omit<Task, 'id'>);
+        const newId = await addTask(taskData as Omit<Task, 'id'>);
         toast({ 
             variant: 'success', 
             title: 'Tugas Ditambahkan', 
             description: `Tugas baru untuk ${data.customerName} telah ditambahkan.` 
         });
+        onTaskAdded?.(newId);
       }
       playSuccessSound();
       onOpenChange(false);
@@ -277,6 +268,7 @@ export function TaskDialog({ isOpen, onOpenChange, task, prefillData }: TaskDial
                         <PopoverContent className="w-auto p-0 glass-card" align="start">
                         <Calendar
                             mode="single"
+                            selected={field.value}
                             onSelect={(date) => {
                                 field.onChange(date);
                                 setIsCalendarOpen(false);

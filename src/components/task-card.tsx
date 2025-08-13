@@ -9,12 +9,12 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Pencil, Sparkles, Trash2, MoreVertical, AlertCircle } from 'lucide-react';
+import { Pencil, Sparkles, Trash2, MoreVertical, AlertCircle, File } from 'lucide-react';
 import type { Task, TaskSource, TaskStatus } from '@/types/task';
 import { deleteTask } from '@/services/task-service';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from './ui/badge';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { ConceptImageGenerator } from './concept-image-generator';
 import { TaskDescriptionSpeaker } from './task-description-speaker';
@@ -41,6 +41,7 @@ interface TaskCardProps extends React.HTMLAttributes<HTMLDivElement> {
   task: Task;
   onEdit?: (task: Task) => void;
   isOverlay?: boolean;
+  isNew?: boolean;
 }
 
 const statusStyles: Record<TaskStatus, { text: string; color: string, gradFrom: string, gradTo: string, glow: string, caretColor: string }> = {
@@ -114,7 +115,7 @@ const useTypingAnimation = (text: string, speed = 75, delay = 2000) => {
 
 
 export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
-  ({ task, onEdit, isOverlay, ...props }, ref) => {
+  ({ task, onEdit, isOverlay, isNew, ...props }, ref) => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const orientation = useDeviceOrientation();
@@ -277,6 +278,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
         "relative group overflow-hidden glass-card transition-all duration-300",
         "cursor-pointer", // Make it clear it's clickable
         isOverlay && "ring-2 ring-primary shadow-2xl shadow-primary/50",
+        isNew && "animate-shine bg-gradient-to-r from-transparent via-primary/10 to-transparent bg-[length:200%_100%]"
     )}>
        {!isOverlay && !isMobile && (
           <>
@@ -290,7 +292,12 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
           </>
         )}
       <div className="relative z-10 flex flex-col h-full">
-        <div className={cn("absolute left-0 top-0 h-full w-1 bg-gradient-to-b", statusStyles[task.status].gradFrom, statusStyles[task.status].gradTo)} />
+        <div className={cn(
+            "absolute left-0 top-0 h-full w-1 bg-gradient-to-b", 
+            statusStyles[task.status].gradFrom, 
+            statusStyles[task.status].gradTo,
+            isMobile && 'mobile-status-pulse'
+        )} />
         <CardHeader className="relative p-4 pb-2" data-dnd-handle={!isMobile}>
             <div className="flex justify-between items-start gap-2">
                 <div className="flex-grow min-w-0">
@@ -322,7 +329,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
             <div className="flex items-center gap-2">
                 {displayDate && (
                   <Badge variant="outline" className="border-white/20 bg-black/10">
-                      {format(displayDate, 'dd/MM/yy')}
+                      {format(displayDate, 'dd MMM')}
                   </Badge>
                 )}
                 <Badge variant="secondary" className="bg-black/20 text-muted-foreground px-2 py-1 h-auto font-mono text-xs">
@@ -344,7 +351,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
         </Dialog>
         <AlertDialogContent className="glass-card max-w-[calc(100vw-2rem)] sm:max-w-md">
             <AlertDialogHeader>
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 mb-4">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/20 mb-4 border border-destructive/30">
                     <AlertCircle className="h-6 w-6 text-destructive" />
                 </div>
                 <AlertDialogTitle className="text-center">Apakah Anda yakin?</AlertDialogTitle>
@@ -356,9 +363,9 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                 <AlertDialogCancel className="mt-0">Batal</AlertDialogCancel>
                 <AlertDialogAction 
                     onClick={handleDelete}
-                    className="bg-primary text-primary-foreground hover:bg-primary/90"
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 >
-                    Lanjutkan
+                    Ya, Hapus
                 </AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
@@ -367,3 +374,28 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
 });
 
 TaskCard.displayName = "TaskCard";
+
+export function MobileEmptyColumn() {
+    return (
+        <div 
+            className="text-center text-muted-foreground pt-12 flex flex-col items-center gap-4"
+        >
+             <style>
+                {`
+                @keyframes float-file {
+                    0% { transform: translateY(0px) rotate(-3deg); }
+                    50% { transform: translateY(-10px) rotate(3deg); }
+                    100% { transform: translateY(0px) rotate(-3deg); }
+                }
+                .animate-float-file {
+                    animation: float-file 6s ease-in-out infinite;
+                }
+                `}
+            </style>
+            <div className="relative w-[80px] h-[80px] animate-float-file text-muted-foreground/30">
+                 <File className="w-full h-full" strokeWidth={1}/>
+            </div>
+            <p className="text-sm">Kolom ini kosong.</p>
+       </div>
+    )
+}

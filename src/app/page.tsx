@@ -4,7 +4,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Header } from '@/components/header';
 import { TaskBoard } from '@/components/task-board';
-import { listenToTasks } from '@/services/task-service';
+import { listenToTasks, addTask as serviceAddTask } from '@/services/task-service';
 import type { Task, TaskStatus } from '@/types/task';
 import { TaskDialog } from '@/components/task-dialog';
 import { EmptyState } from '@/components/empty-state';
@@ -21,6 +21,8 @@ export default function Home() {
   const [prefillData, setPrefillData] = useState<Partial<Task & {dueDate?: string | Date}> | undefined>(undefined);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [newTaskId, setNewTaskId] = useState<string | null>(null);
+
 
   useEffect(() => {
     // Request notification permission on initial load
@@ -62,6 +64,13 @@ export default function Home() {
         setPrefillData(undefined);
     }
   }
+
+  const handleNewTaskAdded = (id: string) => {
+    setNewTaskId(id);
+    setTimeout(() => {
+      setNewTaskId(null);
+    }, 1200);
+  }
   
   // Memoize the filtered tasks to avoid re-calculating on every render
   const filteredTasks = useMemo(() => {
@@ -100,11 +109,12 @@ export default function Home() {
                 <p>Coba kata kunci pencarian yang lain.</p>
             </div>
         ) : allTasks.length === 0 ? (
-          <EmptyState />
+          <EmptyState onAddTask={() => handleOpenDialogForNewTask()} />
         ) : (
           <TaskBoard 
             tasks={filteredTasks} 
             onEditTask={handleOpenDialogForEdit}
+            newTaskId={newTaskId}
           />
         )}
       </main>
@@ -114,6 +124,7 @@ export default function Home() {
           onOpenChange={handleDialogChange} 
           task={editingTask}
           prefillData={prefillData}
+          onTaskAdded={handleNewTaskAdded}
       />
       <TaskAnalytics tasks={allTasks} isOpen={isAnalyticsOpen} onOpenChange={setIsAnalyticsOpen} />
       <DailyBriefingDialog tasks={allTasks} isOpen={isBriefingOpen} onOpenChange={setIsBriefingOpen} />

@@ -3,7 +3,7 @@
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import type { Task, TaskStatus } from '@/types/task';
-import { TaskCard } from './task-card';
+import { TaskCard, MobileEmptyColumn } from './task-card';
 import {
   DndContext,
   closestCenter,
@@ -35,31 +35,6 @@ import { File } from 'lucide-react';
 
 const statuses: TaskStatus[] = ['Proses Desain', 'Proses ACC', 'Selesai'];
 
-function MobileEmptyColumn() {
-    return (
-        <div 
-            className="text-center text-muted-foreground pt-12 flex flex-col items-center gap-4"
-        >
-             <style>
-                {`
-                @keyframes float-file {
-                    0% { transform: translateY(0px) rotate(-3deg); }
-                    50% { transform: translateY(-10px) rotate(3deg); }
-                    100% { transform: translateY(0px) rotate(-3deg); }
-                }
-                .animate-float-file {
-                    animation: float-file 6s ease-in-out infinite;
-                }
-                `}
-            </style>
-            <div className="relative w-[80px] h-[80px] animate-float-file text-muted-foreground/30">
-                 <File className="w-full h-full" strokeWidth={1}/>
-            </div>
-            <p className="text-sm">Kolom ini kosong.</p>
-       </div>
-    )
-}
-
 function DesktopEmptyColumn() {
   return (
     <div className="flex flex-col items-center justify-center text-center p-4 text-xs text-muted-foreground/50 border-2 border-dashed border-border/20 rounded-lg min-h-[100px]">
@@ -71,11 +46,13 @@ function DesktopEmptyColumn() {
 interface TaskBoardProps {
     tasks: Task[];
     onEditTask: (task: Task) => void;
+    newTaskId: string | null;
 }
 
 export function TaskBoard({ 
     tasks: initialTasks, 
-    onEditTask, 
+    onEditTask,
+    newTaskId,
 }: TaskBoardProps) {
   const [tasks, setTasks] = useState(initialTasks);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -218,6 +195,7 @@ export function TaskBoard({
                                     key={task.id} 
                                     task={task} 
                                     onEdit={() => onEditTask(task)}
+                                    isNew={task.id === newTaskId}
                                 />
                             ))
                         ) : (
@@ -246,6 +224,7 @@ export function TaskBoard({
                 tasks={tasksByStatus[status]}
                 onEditTask={onEditTask}
                 activeTask={activeTask}
+                newTaskId={newTaskId}
             />
         ))}
       </div>
@@ -266,6 +245,7 @@ interface ColumnProps {
   tasks: Task[];
   onEditTask: (task: Task) => void;
   activeTask: Task | null;
+  newTaskId: string | null;
 }
 
 const statusStyles: Record<TaskStatus, { indicator: string }> = {
@@ -274,7 +254,7 @@ const statusStyles: Record<TaskStatus, { indicator: string }> = {
     'Selesai': { indicator: 'bg-green-500' },
 };
 
-function Column({ id, status, tasks, onEditTask, activeTask }: ColumnProps) {
+function Column({ id, status, tasks, onEditTask, activeTask, newTaskId }: ColumnProps) {
     const { indicator } = statusStyles[status];
     
     const { setNodeRef } = useSortable({
@@ -307,6 +287,7 @@ function Column({ id, status, tasks, onEditTask, activeTask }: ColumnProps) {
                         key={task.id}
                         task={task}
                         onEdit={() => onEditTask(task)}
+                        isNew={task.id === newTaskId}
                     />
                 ))}
                 {isColumnEmpty && !isDraggingOverEmptyColumn && <DesktopEmptyColumn />}
@@ -316,7 +297,7 @@ function Column({ id, status, tasks, onEditTask, activeTask }: ColumnProps) {
     );
 }
 
-function SortableTaskCard({ task, onEdit }: { task: Task, onEdit: (task: Task) => void }) {
+function SortableTaskCard({ task, onEdit, isNew }: { task: Task, onEdit: (task: Task) => void, isNew?: boolean }) {
     const {
         attributes,
         listeners,
@@ -344,6 +325,7 @@ function SortableTaskCard({ task, onEdit }: { task: Task, onEdit: (task: Task) =
             style={style}
             task={task}
             onEdit={onEdit}
+            isNew={isNew}
             {...attributes}
             {...listeners}
         />

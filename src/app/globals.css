@@ -146,3 +146,20 @@ body {
   border-right: 2px solid var(--caret-color, hsl(var(--primary)));
   animation: blinking-caret 1s infinite;
 }
+
+.animate-shine {
+    animation: shine 1s cubic-bezier(0.1, 0.5, 0.9, 1);
+}
+
+@keyframes shine {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.mobile-status-pulse {
+  animation: status-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

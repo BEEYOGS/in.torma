@@ -2,10 +2,14 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
+import { Button } from './ui/button';
+import { Plus } from 'lucide-react';
+import { useSound } from '@/hooks/use-sound';
 
-export function EmptyState() {
+export function EmptyState({ onAddTask }: { onAddTask: () => void }) {
   const [eyePosition, setEyePosition] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
+  const playOpenDialogSound = useSound('https://www.myinstants.com/media/sounds/swoosh-1.mp3', 0.5);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
@@ -29,6 +33,11 @@ export function EmptyState() {
   
   const resetEyePosition = () => {
     setEyePosition({ x: 0, y: 0 });
+  }
+
+  const handleAddTaskClick = () => {
+    playOpenDialogSound();
+    onAddTask();
   }
 
   return (
@@ -121,9 +130,13 @@ export function EmptyState() {
         />
       </div>
       <h3 className="mt-8 text-lg font-semibold text-foreground">Sistem siap...</h3>
-      <p className="mt-2 text-sm">
-        Belum ada tugas terdeteksi. Menunggu perintah baru.
+      <p className="mt-2 text-sm max-w-xs">
+        Belum ada tugas terdeteksi. Klik tombol di bawah untuk membuat tugas pertama Anda.
       </p>
+      <Button onClick={handleAddTaskClick} className="mt-6">
+        <Plus className="mr-2 h-4 w-4" />
+        Tambah Tugas
+      </Button>
     </div>
   );
 }
