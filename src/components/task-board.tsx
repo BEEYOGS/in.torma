@@ -30,6 +30,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CSS } from '@dnd-kit/utilities';
 import { useSound } from '@/hooks/use-sound';
 import { useToast } from '@/hooks/use-toast';
+import { ToastProps } from '../ui/toast';
+import { File } from 'lucide-react';
 
 const statuses: TaskStatus[] = ['Proses Desain', 'Proses ACC', 'Selesai'];
 
@@ -50,11 +52,8 @@ function MobileEmptyColumn() {
                 }
                 `}
             </style>
-            <div className="relative w-[80px] h-[80px] animate-float-file">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground/30">
-                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                </svg>
+            <div className="relative w-[80px] h-[80px] animate-float-file text-muted-foreground/30">
+                 <File className="w-full h-full" strokeWidth={1}/>
             </div>
             <p className="text-sm">Kolom ini kosong.</p>
        </div>
@@ -165,8 +164,14 @@ export function TaskBoard({
         updateTaskStatus(activeId, overContainer);
         
         if (movedTask) {
+            const statusToVariant: Record<TaskStatus, ToastProps['variant']> = {
+                'Proses Desain': 'warning',
+                'Proses ACC': 'info',
+                'Selesai': 'success',
+            }
+
             toast({
-                variant: 'info',
+                variant: statusToVariant[overContainer],
                 title: 'Status Tugas Diperbarui',
                 description: `Tugas "${movedTask.description}" dipindahkan ke "${overContainer}".`,
             });
@@ -206,7 +211,7 @@ export function TaskBoard({
             </TabsList>
             {statuses.map(status => (
                 <TabsContent key={status} value={status}>
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-4 py-4">
                         {tasksByStatus[status].length > 0 ? (
                             tasksByStatus[status].map(task => (
                                 <TaskCard 
