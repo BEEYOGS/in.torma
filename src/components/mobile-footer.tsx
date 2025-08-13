@@ -7,9 +7,12 @@ import { Plus, Search, Wand2, LayoutDashboard, Presentation } from 'lucide-react
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from './ui/dialog';
 import { Input } from './ui/input';
 import { AiTaskCreator } from './ai-task-creator';
-import type { Task } from '@/types/task';
+import type { Task, TaskStatus } from '@/types/task';
+import type { FooterNotificationState } from '@/app/page';
 import { DailyBriefing } from './daily-briefing';
 import { useSound } from '@/hooks/use-sound';
+import { cn } from '@/lib/utils';
+import { statusStyles as taskStatusStyles } from './task-card';
 
 interface MobileFooterProps {
     tasks: Task[];
@@ -19,7 +22,39 @@ interface MobileFooterProps {
     onBriefingOpen: () => void;
     searchTerm: string;
     onSearchTermChange: (term: string) => void;
+    notification: FooterNotificationState | null;
 }
+
+const statusStyles: Record<TaskStatus, { bg: string, text: string }> = {
+    'Proses Desain': { bg: 'bg-orange-500/20', text: 'text-orange-400' },
+    'Proses ACC': { bg: 'bg-sky-500/20', text: 'text-sky-400' },
+    'Selesai': { bg: 'bg-green-500/20', text: 'text-green-400' },
+};
+
+
+const FooterNotification = ({ notification }: { notification: FooterNotificationState | null }) => {
+    if (!notification) {
+      return <div className="w-1/4" />; // Spacer
+    }
+  
+    const { message, status } = notification;
+    const style = statusStyles[status];
+  
+    return (
+      <div className="w-1/4 flex items-center justify-center">
+        <div
+            className={cn(
+            'px-2 py-1 rounded-md text-xxs font-medium animate-in fade-in-50 slide-in-from-bottom-2',
+            style.bg,
+            style.text
+            )}
+        >
+            {message}
+        </div>
+      </div>
+    );
+};
+  
 
 export function MobileFooter({ 
     tasks,
@@ -28,7 +63,8 @@ export function MobileFooter({
     onAnalyticsOpen,
     onBriefingOpen,
     searchTerm, 
-    onSearchTermChange 
+    onSearchTermChange,
+    notification,
 }: MobileFooterProps) {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const playOpenDialogSound = useSound('https://www.myinstants.com/media/sounds/swoosh-1.mp3', 0.5);
@@ -77,15 +113,18 @@ export function MobileFooter({
                     {/* Spacer to push items to the sides of the FAB */}
                     <div className="w-12" /> 
 
-                    <div className="flex-1 grid grid-cols-2 gap-1 text-center">
-                       <IconButton label="Dasbor" onClick={handleAnalyticsOpen}>
-                          <LayoutDashboard className="h-6 w-6" />
-                       </IconButton>
-                       <DailyBriefing onBriefingOpen={onBriefingOpen}>
-                           <IconButton label="Briefing">
-                                <Presentation className="h-6 w-6" />
-                           </IconButton>
-                       </DailyBriefing>
+                    <div className="flex-1 flex items-center justify-end text-center">
+                       <FooterNotification notification={notification} />
+                       <div className="flex-1 grid grid-cols-2 gap-1">
+                            <IconButton label="Dasbor" onClick={handleAnalyticsOpen}>
+                            <LayoutDashboard className="h-6 w-6" />
+                            </IconButton>
+                            <DailyBriefing onBriefingOpen={onBriefingOpen}>
+                                <IconButton label="Briefing">
+                                        <Presentation className="h-6 w-6" />
+                                </IconButton>
+                            </DailyBriefing>
+                       </div>
                     </div>
                 </div>
             </div>

@@ -12,6 +12,11 @@ import { MobileFooter } from '@/components/mobile-footer';
 import { TaskAnalytics } from '@/components/task-analytics';
 import { DailyBriefingDialog } from '@/components/briefing-dialog';
 
+export interface FooterNotificationState {
+  message: string;
+  status: TaskStatus;
+}
+
 export default function Home() {
   const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,6 +27,7 @@ export default function Home() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [newTaskId, setNewTaskId] = useState<string | null>(null);
+  const [footerNotification, setFooterNotification] = useState<FooterNotificationState | null>(null);
 
 
   useEffect(() => {
@@ -71,6 +77,13 @@ export default function Home() {
       setNewTaskId(null);
     }, 1200);
   }
+
+  const handleShowFooterNotification = (message: string, status: TaskStatus) => {
+    setFooterNotification({ message, status });
+    setTimeout(() => {
+        setFooterNotification(null);
+    }, 3000); // Hide after 3 seconds
+  };
   
   // Memoize the filtered tasks to avoid re-calculating on every render
   const filteredTasks = useMemo(() => {
@@ -115,6 +128,7 @@ export default function Home() {
             tasks={filteredTasks} 
             onEditTask={handleOpenDialogForEdit}
             newTaskId={newTaskId}
+            onShowNotification={handleShowFooterNotification}
           />
         )}
       </main>
@@ -136,6 +150,7 @@ export default function Home() {
         onBriefingOpen={() => setIsBriefingOpen(true)}
         searchTerm={searchTerm}
         onSearchTermChange={setSearchTerm}
+        notification={footerNotification}
       />
     </div>
   );

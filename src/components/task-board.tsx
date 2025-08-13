@@ -47,12 +47,14 @@ interface TaskBoardProps {
     tasks: Task[];
     onEditTask: (task: Task) => void;
     newTaskId: string | null;
+    onShowNotification: (message: string, status: TaskStatus) => void;
 }
 
 export function TaskBoard({ 
     tasks: initialTasks, 
     onEditTask,
     newTaskId,
+    onShowNotification,
 }: TaskBoardProps) {
   const [tasks, setTasks] = useState(initialTasks);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -141,17 +143,21 @@ export function TaskBoard({
         updateTaskStatus(activeId, overContainer);
         
         if (movedTask) {
-            const statusToVariant: Record<TaskStatus, ToastProps['variant']> = {
-                'Proses Desain': 'warning',
-                'Proses ACC': 'info',
-                'Selesai': 'success',
-            }
+            if (isMobile) {
+                onShowNotification(`Status: ${overContainer}`, overContainer);
+            } else {
+                const statusToVariant: Record<TaskStatus, ToastProps['variant']> = {
+                    'Proses Desain': 'warning',
+                    'Proses ACC': 'info',
+                    'Selesai': 'success',
+                }
 
-            toast({
-                variant: statusToVariant[overContainer],
-                title: 'Status Tugas Diperbarui',
-                description: `Tugas "${movedTask.description}" dipindahkan ke "${overContainer}".`,
-            });
+                toast({
+                    variant: statusToVariant[overContainer],
+                    title: 'Status Tugas Diperbarui',
+                    description: `Tugas "${movedTask.description}" dipindahkan ke "${overContainer}".`,
+                });
+            }
         }
 
     } else {
@@ -174,7 +180,7 @@ export function TaskBoard({
             setTasksInStorage(finalOrderedTasks);
         }
     }
-  }, [findContainer, playDropSound, tasks, tasksByStatus, toast]);
+  }, [findContainer, playDropSound, tasks, tasksByStatus, toast, isMobile, onShowNotification]);
 
   if (isMobile) {
     return (
