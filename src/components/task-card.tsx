@@ -20,7 +20,7 @@ import { ConceptImageGenerator } from './concept-image-generator';
 import { TaskDescriptionSpeaker } from './task-description-speaker';
 import { useIsMobile } from '@/hooks/use-mobile';
 import React, { useState, useRef, useEffect } from 'react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from './ui/dropdown-menu';
 import { Dialog, DialogTrigger } from './ui/dialog';
 import {
   AlertDialog,
@@ -78,7 +78,7 @@ const sourceDisplayMap: Record<TaskSource, string> = {
     'G': 'Group'
 };
 
-const useTypingAnimation = (text: string, speed = 200, delay = 2500) => {
+const useTypingAnimation = (text: string, speed = 200) => {
     const [displayText, setDisplayText] = useState('');
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -91,17 +91,15 @@ const useTypingAnimation = (text: string, speed = 200, delay = 2500) => {
                 i++;
                 timerRef.current = setTimeout(type, speed);
             } else {
-                // When typing is finished, wait for the delay then reset
-                timerRef.current = setTimeout(() => {
-                    setDisplayText('');
-                    i = 0;
-                    type(); // Start typing again
-                }, delay);
+                // When typing is finished, reset immediately to start again.
+                setDisplayText('');
+                i = 0;
+                type();
             }
         };
 
         // Start the animation
-        type();
+        timerRef.current = setTimeout(type, speed);
 
         // Cleanup function
         return () => {
@@ -109,7 +107,7 @@ const useTypingAnimation = (text: string, speed = 200, delay = 2500) => {
                 clearTimeout(timerRef.current);
             }
         };
-    }, [text, speed, delay]);
+    }, [text, speed]);
 
     const isTyping = displayText.length < text.length;
 
@@ -251,6 +249,7 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                 </DropdownMenuItem>
             </DialogTrigger>
 
+            <DropdownMenuSeparator />
             <AlertDialogTrigger asChild>
                 <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:text-destructive focus:bg-destructive/10">
                     <Trash2 className="mr-2 h-4 w-4" />
