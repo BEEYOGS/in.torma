@@ -50,7 +50,7 @@ function DynamicIslandNotification({ notification }: { notification: FooterNotif
             isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95 -translate-y-4"
         )}>
             <div className={cn(
-                "flex items-center gap-3 pl-3 pr-4 py-2 rounded-full shadow-lg text-xs font-medium",
+                "flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full shadow-lg text-xs font-medium",
                 "bg-black text-white"
             )}>
                 {icon}
