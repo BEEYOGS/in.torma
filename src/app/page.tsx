@@ -92,7 +92,7 @@ export default function Home() {
     const unsubscribe = listenToTasks((fetchedTasks) => {
       setAllTasks(fetchedTasks);
       // Add a small delay to prevent flickering on fast loads
-      setTimeout(() => setLoading(false), 500);
+      setTimeout(() => setLoading(false), 3000);
     });
     return () => unsubscribe();
   }, []);
@@ -192,7 +192,7 @@ export default function Home() {
       <DailyBriefingDialog tasks={allTasks} isOpen={isBriefingOpen} onOpenChange={setIsBriefingOpen} />
       <MobileFooter
         onNewTask={() => handleOpenDialogForNewTask()}
-        onAiTaskCreate={handleAiTaskCreate}
+        onAiTaskCreate={onAiTaskCreate}
         onAnalyticsOpen={() => setIsAnalyticsOpen(true)}
         onBriefingOpen={() => setIsBriefingOpen(true)}
         searchTerm={searchTerm}
