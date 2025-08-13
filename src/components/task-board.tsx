@@ -179,14 +179,14 @@ export function TaskBoard({
             setTasksInStorage(finalOrderedTasks);
         }
     }
-  }, [tasks, tasksById, playDropSound, isMobile, onShowNotification, toast]);
+  }, [tasks, tasksById, playDropSound, isMobile, onShowNotification, toast, tasksByStatus]);
 
   if (isMobile) {
     return (
         <Tabs defaultValue="Proses Desain" className="w-full">
             <TabsList className="grid w-full grid-cols-3 bg-card/60 p-1 h-auto backdrop-blur-sm sticky top-16 z-20">
                 {statuses.map(status => (
-                    <TabsTrigger key={status} value={status} className="text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                    <TabsTrigger key={status} value={status} className="text-xs data-[state=active]:bg-background/80 data-[state=active]:shadow-sm">
                         {status} ({tasksByStatus[status].length})
                     </TabsTrigger>
                 ))}
