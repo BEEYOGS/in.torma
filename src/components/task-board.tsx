@@ -179,8 +179,7 @@ export function TaskBoard({
             setTasksInStorage(finalOrderedTasks);
         }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [findContainer, playDropSound, tasks, tasksByStatus, toast, isMobile, onShowNotification]);
+  }, [tasks, tasksById, playDropSound, isMobile, onShowNotification, toast]);
 
   if (isMobile) {
     return (
