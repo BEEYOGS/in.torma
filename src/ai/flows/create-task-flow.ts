@@ -144,9 +144,13 @@ const createTaskFlow = ai.defineFlow(
         tomorrow: formatDate(tomorrow),
         dayAfterTomorrow: formatDate(dayAfterTomorrow),
         nextWeek: formatDate(nextWeek),
-      }
+      },
     });
 
-    return output!;
+    if (!output) {
+      throw new Error("AI did not produce a valid output.");
+    }
+    
+    return output;
   }
 );
