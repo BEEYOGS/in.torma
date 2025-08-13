@@ -29,6 +29,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CSS } from '@dnd-kit/utilities';
 import { useSound } from '@/hooks/use-sound';
+import { useToast } from '@/hooks/use-toast';
 
 const statuses: TaskStatus[] = ['Proses Desain', 'Proses ACC', 'Selesai'];
 
@@ -81,6 +82,7 @@ export function TaskBoard({
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const isMobile = useIsMobile();
   const playDropSound = useSound('https://www.myinstants.com/media/sounds/merlin-whoosh-cast-spell.mp3', 0.2);
+  const { toast } = useToast();
 
   useEffect(() => {
     setTasks(initialTasks);
@@ -158,8 +160,14 @@ export function TaskBoard({
         // Task moved to a new column
         playDropSound();
         const updatedTasks = tasks.map(t => t.id === activeId ? { ...t, status: overContainer } : t);
+        const movedTask = updatedTasks.find(t => t.id === activeId);
         setTasks(updatedTasks);
         updateTaskStatus(activeId, overContainer);
+        toast({
+            variant: 'success',
+            title: 'Status Tugas Diperbarui',
+            description: `Tugas "${movedTask?.description}" dipindahkan ke "${overContainer}".`,
+        });
     } else {
         // Task reordered within the same column
         const itemsInColumn = tasksByStatus[activeContainer] || [];
@@ -180,7 +188,7 @@ export function TaskBoard({
             setTasksInStorage(finalOrderedTasks);
         }
     }
-  }, [findContainer, playDropSound, tasks, tasksByStatus]);
+  }, [findContainer, playDropSound, tasks, tasksByStatus, toast]);
 
   if (isMobile) {
     return (
