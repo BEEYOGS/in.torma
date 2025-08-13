@@ -78,38 +78,32 @@ const sourceDisplayMap: Record<TaskSource, string> = {
     'G': 'Group'
 };
 
-const useTypingAnimation = (text: string, speed = 200) => {
+const useTypingAnimation = (text: string, speed = 50) => {
     const [displayText, setDisplayText] = useState('');
-    const timerRef = useRef<NodeJS.Timeout | null>(null);
-
+    
     useEffect(() => {
+        setDisplayText('');
         let i = 0;
-
         const type = () => {
             if (i < text.length) {
                 setDisplayText(prev => text.substring(0, i + 1));
                 i++;
-                timerRef.current = setTimeout(type, speed);
+                setTimeout(type, speed);
             } else {
-                // When typing is finished, reset immediately to start again.
-                setDisplayText('');
+                // When done, restart immediately
                 i = 0;
-                type();
+                setDisplayText('');
+                setTimeout(type, speed);
             }
         };
 
-        // Start the animation
-        timerRef.current = setTimeout(type, speed);
+        const timeoutId = setTimeout(type, speed);
+        
+        return () => clearTimeout(timeoutId);
 
-        // Cleanup function
-        return () => {
-            if (timerRef.current) {
-                clearTimeout(timerRef.current);
-            }
-        };
     }, [text, speed]);
 
-    const isTyping = displayText.length < text.length;
+    const isTyping = displayText.length > 0;
 
     return { displayText, isTyping };
 };
@@ -358,8 +352,8 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
         </Dialog>
         <AlertDialogContent className="glass-card max-w-[calc(100vw-2rem)] sm:max-w-md">
             <AlertDialogHeader>
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/20 mb-4 border border-destructive/30">
-                    <AlertCircle className="h-6 w-6 text-destructive" />
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 mb-4 border border-primary/30">
+                    <AlertCircle className="h-6 w-6 text-primary" />
                 </div>
                 <AlertDialogTitle className="text-center">Apakah Anda yakin?</AlertDialogTitle>
                 <AlertDialogDescription className="text-center">
@@ -370,7 +364,6 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
                 <AlertDialogCancel className="mt-0">Batal</AlertDialogCancel>
                 <AlertDialogAction 
                     onClick={handleDelete}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 >
                     Ya, Hapus
                 </AlertDialogAction>
