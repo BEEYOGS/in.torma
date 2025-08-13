@@ -106,8 +106,7 @@ export function Header({
                 <p>Menu Lainnya</p>
             </TooltipContent>
         </Tooltip>
-        <DropdownMenuContent align="end" className="bg-popover/80 backdrop-blur-lg border-white/10 w-56">
-            <DropdownMenuLabel>Fitur</DropdownMenuLabel>
+        <DropdownMenuContent align="end" className="bg-popover/80 backdrop-blur-lg border-white/10 w-auto">
             <DropdownMenuItem onSelect={handleAnalyticsOpen} className="hidden md:flex">
                 <LayoutDashboard className="mr-2 h-4 w-4"/>
                 <span>Dasbor Analitik</span>
@@ -118,8 +117,6 @@ export function Header({
                     <span>Rangkuman Harian</span>
                 </DropdownMenuItem>
             </DailyBriefing>
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel>Pintasan</DropdownMenuLabel>
             <div className="grid grid-cols-2 gap-1 px-1">
                 <DropdownMenuItem asChild className="p-0 justify-center">
                     <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center p-2 rounded-md hover:bg-accent w-full h-full">
