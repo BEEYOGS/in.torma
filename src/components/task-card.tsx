@@ -34,7 +34,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { useDeviceOrientation } from '@/hooks/use-device-orientation';
-import { useSound } from '@/hooks/use-sound';
 
 
 interface TaskCardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -118,8 +117,6 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
   const orientation = useDeviceOrientation();
   const [isConceptDialogOpen, setIsConceptDialogOpen] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-  const playDeleteSound = useSound('/sounds/wind-whoosh-2.mp3', 0.3);
-  const playOpenDialogSound = useSound('/sounds/swoosh-1.mp3', 0.5);
 
   const [rotate, setRotate] = useState({ x: 0, y: 0 });
   const [glow, setGlow] = useState({ x: '50%', y: '50%', opacity: 0 });
@@ -316,7 +313,6 @@ export const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(
         </CardHeader>
         <CardContent className="relative p-4 pt-2 mt-auto flex justify-between items-center gap-2">
              <div className="flex items-center gap-2 min-w-0">
-                 <TaskDescriptionSpeaker task={task} />
                  <span
                     className={cn(
                         "text-xs font-medium h-4 truncate",
